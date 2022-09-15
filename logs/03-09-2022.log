@@ -1,0 +1,344 @@
+03-09-2022 21:28:57: app.py: INFO - table applicants already exists
+03-09-2022 21:28:57: app.py: INFO - table experts already exists
+03-09-2022 21:28:57: app.py: INFO - table meetings already exists
+03-09-2022 21:28:57: app.py: INFO - table admins already exists
+03-09-2022 21:28:57: app.py: INFO - Bot is running
+04-09-2022 06:16:58: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:30: applicant_profile.py: DEBUG - Applicant 567213956 entered check_profile_a handler
+04-09-2022 06:17:32: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_menu handler
+04-09-2022 06:17:33: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:35: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:36: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 06:17:37: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_menu handler
+04-09-2022 06:17:38: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:39: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:40: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 06:17:41: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_menu handler
+04-09-2022 06:17:45: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:52: applicant_profile.py: DEBUG - Applicant 567213956 entered check_profile_a handler
+04-09-2022 06:17:55: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_menu handler
+04-09-2022 06:17:57: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:59: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:17:59: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:01: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:01: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 06:18:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+04-09-2022 12:55:28: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:35: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:36: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:41: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:41: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:42: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:42: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:48: start.py: DEBUG - Applicant 400853596 use /menu command
+04-09-2022 12:55:49: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:55:57: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_meetings handler and got 1 his meetings
+04-09-2022 12:55:57: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 12:56:06: start.py: DEBUG - Applicant 400853596 use /menu command
+04-09-2022 12:56:07: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:10: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:10: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:11: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:11: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:13: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:13: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:13: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:13: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:13: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:18: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:18: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:19: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:19: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:19: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 12:56:24: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:09:52: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:09:53: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:09:54: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:04: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:09: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_menu handler
+04-09-2022 13:10:12: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:14: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:14: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:14: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:14: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:17: applicant_profile.py: DEBUG - Applicant 400853596 entered check_profile_a handler
+04-09-2022 13:10:23: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_menu handler
+04-09-2022 13:10:25: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:27: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:27: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:27: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:27: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:28: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:28: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:28: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:28: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:33: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_meetings handler and got 1 his meetings
+04-09-2022 13:10:33: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 13:10:35: applicant_menu.py: DEBUG - Applicant 400853596 entered check_meeting handler with meeting 30
+04-09-2022 13:10:38: notifications.py: DEBUG - Expert 37084758 got notif_cancel_to_expert notification about 02.09.2022 16:15 meeting
+04-09-2022 13:10:38: applicant_menu.py: DEBUG - Applicant 400853596 entered meeting_cancelation handler with meeting 30
+04-09-2022 13:10:43: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:44: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:47: start.py: DEBUG - Applicant 400853596 use /menu command
+04-09-2022 13:10:48: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:50: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:50: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:50: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:50: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:10:54: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 13:10:58: applicant_menu.py: DEBUG - Applicant 400853596 entered applicant_menu handler
+04-09-2022 13:10:59: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:00: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:00: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:01: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:01: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:04: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:04: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:05: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:05: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:05: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:11: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:12: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 13:11:12: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+04-09-2022 15:00:00: notifications.py: DEBUG - Applicant 670735742 got notif_1day notification
+04-09-2022 15:00:17: applicant_menu.py: DEBUG - Applicant 670735742 entered applicant_meetings handler and got 1 his meetings
+04-09-2022 15:00:17: applicant_menu.py: DEBUG - Applicant 670735742 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 15:40:41: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:45: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:46: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:46: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:47: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:47: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:51: applicant_menu.py: DEBUG - Applicant 676195864 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 15:40:54: applicant_menu.py: DEBUG - Applicant 676195864 entered applicant_menu handler
+04-09-2022 15:40:55: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:58: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:40:58: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:05: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:05: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:05: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:05: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:08: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:10: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:11: applicant_menu.py: DEBUG - Applicant 676195864 entered applicant_meetings handler but he doesn't have meetings yet
+04-09-2022 15:41:14: applicant_menu.py: DEBUG - Applicant 676195864 entered applicant_menu handler
+04-09-2022 15:41:15: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:16: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:16: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:16: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:16: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:22: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:23: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+04-09-2022 15:41:32: applicant_menu.py: DEBUG - Applicant 676195864 entered search_experts handler
+05-09-2022 06:26:43: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+05-09-2022 06:26:55: applicant_menu.py: DEBUG - Applicant 400853596 entered search_experts handler
+05-09-2022 08:30:09: start.py: DEBUG - User 577500158 start bot
+05-09-2022 08:30:12: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_start handler
+05-09-2022 08:30:17: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_1 handler
+05-09-2022 08:30:21: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_2 handler
+05-09-2022 08:32:29: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_3 handler
+05-09-2022 08:33:53: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_4 handler
+05-09-2022 08:34:14: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_5 handler
+05-09-2022 08:34:42: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_6 handler
+05-09-2022 08:34:46: applicant_form.py: DEBUG - Applicant 577500158 entered applicant_7 handler
+05-09-2022 09:17:22: start.py: DEBUG - User 1052948979 start bot
+05-09-2022 09:17:28: applicant_form.py: DEBUG - Applicant 1052948979 entered applicant_start handler
+05-09-2022 09:17:35: applicant_form.py: DEBUG - Applicant 1052948979 entered applicant_1 handler
+05-09-2022 09:17:39: applicant_form.py: DEBUG - Applicant 1052948979 entered applicant_2 handler
+05-09-2022 09:18:00: start.py: DEBUG - User 944326625 start bot
+05-09-2022 10:51:20: start.py: DEBUG - User 1616775026 start bot
+05-09-2022 10:51:26: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_start handler
+05-09-2022 10:51:33: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_1 handler
+05-09-2022 10:52:40: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_2 handler
+05-09-2022 10:53:49: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_3 handler
+05-09-2022 10:55:04: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_4 handler
+05-09-2022 10:55:53: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_5 handler
+05-09-2022 10:56:20: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_6 handler
+05-09-2022 10:56:28: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_7 handler
+05-09-2022 10:58:10: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8 handler
+05-09-2022 10:58:17: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 1 and sd {'list': [1]}
+05-09-2022 10:58:29: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 2 and sd {'list': [1, 2]}
+05-09-2022 10:58:52: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 9 and sd {'list': [1, 2, 9]}
+05-09-2022 10:59:01: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 3 and sd {'list': [1, 2, 9, 3]}
+05-09-2022 10:59:08: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 3 and sd {'list': [1, 2, 9]}
+05-09-2022 10:59:13: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 3 and sd {'list': [1, 2, 9, 3]}
+05-09-2022 10:59:20: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd 7 and sd {'list': [1, 2, 9, 3, 7]}
+05-09-2022 10:59:22: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_8_1 handler with cd done and sd {'list': [1, 2, 9, 3, 7]}
+05-09-2022 11:00:11: applicant_form.py: DEBUG - Applicant 1616775026 entered applicant_9 handler
+05-09-2022 11:00:48: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:00:50: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:00:52: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:01:56: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:02:21: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:02:29: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:02:41: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:02:41: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:02:41: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:03:25: applicant_menu.py: DEBUG - Applicant 1616775026 entered applicant_meetings handler but he doesn't have meetings yet
+05-09-2022 11:03:33: applicant_menu.py: DEBUG - Applicant 1616775026 entered applicant_menu handler
+05-09-2022 11:03:46: applicant_menu.py: DEBUG - Applicant 1616775026 entered search_experts handler
+05-09-2022 11:20:58: start.py: DEBUG - User 814801673 start bot
+05-09-2022 11:22:48: start.py: DEBUG - Applicant 567213956 use /menu command
+05-09-2022 11:32:28: start.py: DEBUG - User 1129573544 start bot
+05-09-2022 11:32:34: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_start handler
+05-09-2022 11:32:43: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_1 handler
+05-09-2022 11:32:52: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_2 handler
+05-09-2022 11:33:09: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_3 handler
+05-09-2022 11:33:43: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_4 handler
+05-09-2022 11:33:54: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_5 handler
+05-09-2022 11:34:00: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_6 handler
+05-09-2022 11:34:05: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_7 handler
+05-09-2022 11:34:28: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_8 handler
+05-09-2022 11:34:36: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_8_1 handler with cd 1 and sd {'list': [1]}
+05-09-2022 11:34:42: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_8_1 handler with cd 2 and sd {'list': [1, 2]}
+05-09-2022 11:34:46: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_8_1 handler with cd done and sd {'list': [1, 2]}
+05-09-2022 11:35:01: applicant_form.py: DEBUG - Applicant 1129573544 entered applicant_9 handler
+05-09-2022 11:40:52: start.py: DEBUG - User 1146320954 start bot
+05-09-2022 11:46:20: start.py: DEBUG - User 1525536448 start bot
+05-09-2022 11:46:25: applicant_form.py: DEBUG - Applicant 1525536448 entered applicant_start handler
+05-09-2022 11:46:29: applicant_form.py: DEBUG - Applicant 1525536448 entered applicant_1 handler
+05-09-2022 11:46:38: applicant_form.py: DEBUG - Applicant 1525536448 entered applicant_2 handler
+05-09-2022 11:46:54: applicant_form.py: DEBUG - Applicant 1525536448 entered applicant_3 handler
+05-09-2022 11:49:35: start.py: DEBUG - User 1731485978 start bot
+05-09-2022 11:49:39: applicant_form.py: DEBUG - Applicant 1731485978 entered applicant_start handler
+05-09-2022 11:49:44: start.py: DEBUG - User 385601215 start bot
+05-09-2022 11:49:48: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_start handler
+05-09-2022 11:49:54: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_1 handler
+05-09-2022 11:50:00: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_2 handler
+05-09-2022 11:50:07: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_3 handler
+05-09-2022 11:50:17: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_4 handler
+05-09-2022 11:50:29: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_5 handler
+05-09-2022 11:50:34: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_6 handler
+05-09-2022 11:50:39: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_7 handler
+05-09-2022 11:50:51: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_8 handler
+05-09-2022 11:50:54: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_8_1 handler with cd 1 and sd {'list': [1]}
+05-09-2022 11:50:59: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_8_1 handler with cd done and sd {'list': [1]}
+05-09-2022 11:51:05: applicant_form.py: DEBUG - Applicant 385601215 entered applicant_9 handler
+05-09-2022 12:00:00: notifications.py: DEBUG - Applicant 670735742 got notif_3hours notification about 28 meeting
+05-09-2022 12:06:34: start.py: DEBUG - User 1206927547 start bot
+05-09-2022 12:07:00: applicant_form.py: DEBUG - Applicant 1206927547 entered applicant_start handler
+05-09-2022 12:08:38: applicant_form.py: DEBUG - Applicant 1206927547 entered applicant_1 handler
+05-09-2022 12:08:53: applicant_form.py: DEBUG - Applicant 1206927547 entered applicant_2 handler
+05-09-2022 12:09:14: applicant_form.py: DEBUG - Applicant 1206927547 entered applicant_3 handler
+05-09-2022 12:21:30: start.py: DEBUG - User 991551059 start bot
+05-09-2022 12:21:33: applicant_form.py: DEBUG - Applicant 991551059 entered applicant_start handler
+05-09-2022 12:21:45: applicant_form.py: DEBUG - Applicant 991551059 entered applicant_1 handler
+05-09-2022 12:21:53: applicant_form.py: DEBUG - Applicant 991551059 entered applicant_2 handler
+05-09-2022 12:22:02: applicant_form.py: DEBUG - Applicant 991551059 entered applicant_3 handler
+05-09-2022 12:57:24: start.py: DEBUG - User 1117597608 start bot
+05-09-2022 12:57:29: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_start handler
+05-09-2022 12:57:36: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_1 handler
+05-09-2022 12:57:43: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_2 handler
+05-09-2022 12:58:02: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_3 handler
+05-09-2022 12:58:22: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_4 handler
+05-09-2022 12:58:42: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_5 handler
+05-09-2022 12:58:51: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_6 handler
+05-09-2022 12:58:58: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_7 handler
+05-09-2022 12:59:06: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8 handler
+05-09-2022 12:59:19: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [6]}
+05-09-2022 12:59:47: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': []}
+05-09-2022 12:59:54: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd done and sd {'list': []}
+05-09-2022 12:59:54: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd done and sd {'list': []}
+05-09-2022 12:59:57: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [6]}
+05-09-2022 13:00:21: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': []}
+05-09-2022 13:01:19: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [6]}
+05-09-2022 13:01:44: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': []}
+05-09-2022 13:01:50: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 9 and sd {'list': [9]}
+05-09-2022 13:01:51: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 9 and sd {'list': []}
+05-09-2022 13:01:53: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 9 and sd {'list': [9]}
+05-09-2022 13:02:04: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 7 and sd {'list': [9, 7]}
+05-09-2022 13:02:06: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [9, 7, 6]}
+05-09-2022 13:02:07: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 7 and sd {'list': [9, 6]}
+05-09-2022 13:02:08: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [9]}
+05-09-2022 13:02:09: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [9, 6]}
+05-09-2022 13:02:10: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 9 and sd {'list': [6]}
+05-09-2022 13:02:11: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': []}
+05-09-2022 13:02:11: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [6]}
+05-09-2022 13:02:12: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': []}
+05-09-2022 13:02:12: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 6 and sd {'list': [6]}
+05-09-2022 13:02:19: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd 9 and sd {'list': [6, 9]}
+05-09-2022 13:02:20: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_8_1 handler with cd done and sd {'list': [6, 9]}
+05-09-2022 13:02:31: applicant_form.py: DEBUG - Applicant 1117597608 entered applicant_9 handler
+05-09-2022 13:02:50: applicant_profile.py: DEBUG - Applicant 1117597608 entered check_profile_a handler
+05-09-2022 13:02:54: applicant_profile.py: DEBUG - Applicant 1117597608 entered change_profile_a handler
+05-09-2022 13:02:57: applicant_profile.py: DEBUG - Applicant 1117597608 entered cha_topics_details handler
+05-09-2022 13:03:23: applicant_profile.py: DEBUG - Applicant 1117597608 entered cha_topics_details2 handler
+05-09-2022 13:03:27: applicant_profile.py: DEBUG - Applicant 1117597608 entered check_profile_a handler
+05-09-2022 13:03:29: applicant_menu.py: DEBUG - Applicant 1117597608 entered applicant_menu handler
+05-09-2022 13:03:33: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:34: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:36: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:37: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:38: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:38: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:57: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:58: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:03:59: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:00: applicant_menu.py: DEBUG - Applicant 1117597608 entered applicant_meetings handler but he doesn't have meetings yet
+05-09-2022 13:04:03: applicant_menu.py: DEBUG - Applicant 1117597608 entered applicant_menu handler
+05-09-2022 13:04:04: start.py: DEBUG - User 949780391 start bot
+05-09-2022 13:04:04: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:09: applicant_menu.py: DEBUG - Applicant 1117597608 entered add_photo handler
+05-09-2022 13:04:11: applicant_menu.py: DEBUG - Applicant 1117597608 entered update_photo handler
+05-09-2022 13:04:14: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_start handler
+05-09-2022 13:04:51: applicant_menu.py: DEBUG - Applicant 1117597608 entered uploading_photo handler
+05-09-2022 13:04:54: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:55: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:56: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:57: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:57: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:59: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:04:59: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:05:00: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:05:00: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:05:00: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:05:14: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_1 handler
+05-09-2022 13:05:21: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_2 handler
+05-09-2022 13:05:28: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_3 handler
+05-09-2022 13:06:38: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:06:40: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:06:50: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:06:50: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:06:51: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:06:51: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:07:27: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_4 handler
+05-09-2022 13:07:36: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_5 handler
+05-09-2022 13:07:55: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_6 handler
+05-09-2022 13:08:05: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_7 handler
+05-09-2022 13:08:24: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_8 handler
+05-09-2022 13:08:38: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_8_1 handler with cd 4 and sd {'list': [4]}
+05-09-2022 13:08:40: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_8_1 handler with cd 6 and sd {'list': [4, 6]}
+05-09-2022 13:08:42: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_8_1 handler with cd 6 and sd {'list': [4]}
+05-09-2022 13:08:43: applicant_form.py: DEBUG - Applicant 949780391 entered applicant_8_1 handler with cd done and sd {'list': [4]}
+05-09-2022 13:15:02: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:15:04: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:15:05: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:15:06: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:15:25: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:15:26: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:04: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:05: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:07: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:22: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:50: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:51: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:51: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:16:56: applicant_menu.py: DEBUG - Applicant 1117597608 entered search_experts handler
+05-09-2022 13:19:02: applicant_menu.py: DEBUG - Applicant 567213956 entered search_experts handler
+05-09-2022 13:21:25: start.py: DEBUG - User 548893941 start bot
+05-09-2022 13:22:38: applicant_form.py: DEBUG - Applicant 548893941 entered applicant_start handler
+05-09-2022 13:22:45: applicant_form.py: DEBUG - Applicant 548893941 entered applicant_1 handler
+05-09-2022 13:22:51: applicant_form.py: DEBUG - Applicant 548893941 entered applicant_2 handler
+05-09-2022 13:51:59: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_meetings handler but he doesn't have meetings yet
+05-09-2022 13:52:00: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+05-09-2022 13:52:02: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler
+05-09-2022 13:54:50: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_meetings handler but he doesn't have meetings yet
+05-09-2022 13:54:52: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+05-09-2022 13:54:54: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler
+05-09-2022 13:58:25: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_meetings handler but he doesn't have meetings yet
+05-09-2022 13:58:27: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+05-09-2022 13:58:28: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler

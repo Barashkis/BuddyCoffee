@@ -1,0 +1,86 @@
+10-08-2022 08:59:37: app.py: INFO - table applicants already exists
+10-08-2022 08:59:37: app.py: INFO - table experts already exists
+10-08-2022 08:59:37: app.py: INFO - table meetings already exists
+10-08-2022 08:59:37: app.py: INFO - table admins already exists
+10-08-2022 08:59:37: app.py: INFO - Bot is running
+10-08-2022 08:59:42: expert_menu.py: DEBUG - Expert 259733823 entered exert_meetings handler but he doesn't have meetings yet
+10-08-2022 08:59:44: expert_menu.py: DEBUG - Expert 259733823 entered expert_menu handler
+10-08-2022 08:59:48: start.py: DEBUG - Applicant 259733823 use /menu command
+10-08-2022 08:59:53: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_meetings handler but he doesn't have meetings yet
+10-08-2022 08:59:54: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+10-08-2022 08:59:58: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler
+10-08-2022 09:00:05: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_meetings handler but he doesn't have meetings yet
+10-08-2022 09:00:06: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+10-08-2022 09:00:24: start.py: DEBUG - Applicant 1984327268 use /menu command
+10-08-2022 09:00:28: applicant_menu.py: DEBUG - Applicant 1984327268 entered search_experts handler
+10-08-2022 09:00:32: applicant_menu.py: DEBUG - Applicant 1984327268 entered applicant_meetings handler but he doesn't have meetings yet
+10-08-2022 09:00:33: applicant_menu.py: DEBUG - Applicant 1984327268 entered applicant_menu handler
+10-08-2022 09:00:36: applicant_menu.py: DEBUG - Applicant 1984327268 entered add_photo handler
+10-08-2022 09:00:38: start.py: DEBUG - Applicant 1984327268 use /menu command
+10-08-2022 09:01:32: start.py: DEBUG - User 1984327268 start the bot as an applicant
+10-08-2022 09:01:36: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_start handler
+10-08-2022 09:01:39: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_1 handler
+10-08-2022 09:01:40: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_2 handler
+10-08-2022 09:01:42: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_3 handler
+10-08-2022 09:01:43: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_4 handler
+10-08-2022 09:01:44: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_5 handler
+10-08-2022 09:01:45: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_6 handler
+10-08-2022 09:01:46: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_7 handler
+10-08-2022 09:01:47: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_8 handler
+10-08-2022 09:01:49: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_8_1 handler with cd 9 and sd {'list': [9]}
+10-08-2022 09:01:49: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_8_1 handler with cd done and sd {'list': [9]}
+10-08-2022 09:01:50: applicant_form.py: DEBUG - Applicant 1984327268 entered applicant_9 handler
+10-08-2022 09:01:53: applicant_menu.py: DEBUG - Applicant 1984327268 entered applicant_meetings handler but he doesn't have meetings yet
+10-08-2022 09:01:54: applicant_menu.py: DEBUG - Applicant 1984327268 entered applicant_menu handler
+10-08-2022 09:01:55: applicant_menu.py: DEBUG - Applicant 1984327268 entered search_experts handler
+10-08-2022 09:01:55: applicant_menu.py: DEBUG - Search_expert function shows that expert 1984327268 have 0 suitable experts
+10-08-2022 09:01:55: applicant_menu.py: DEBUG - Applicant 1984327268 entered search_experts handler but don't have any suitable applicants
+10-08-2022 09:01:58: applicant_menu.py: DEBUG - Applicant 1984327268 entered applicant_menu handler
+10-08-2022 09:03:12: start.py: DEBUG - User 1984327268 start the bot as an expert
+10-08-2022 09:03:14: expert_form.py: DEBUG - Expert 1984327268 entered expert_start handler
+10-08-2022 09:03:17: expert_form.py: DEBUG - Expert 1984327268 entered expert_1 handler
+10-08-2022 09:03:18: expert_form.py: DEBUG - Expert 1984327268 entered expert_2 handler
+10-08-2022 09:03:23: expert_form.py: DEBUG - Expert 1984327268 entered expert_2_1 handler with cd 12
+10-08-2022 09:03:25: expert_form.py: DEBUG - Expert 1984327268 entered expert_5 handler
+10-08-2022 09:03:40: expert_form.py: DEBUG - Expert 1984327268 entered expert_6 handler
+10-08-2022 09:03:41: expert_form.py: DEBUG - Expert 1984327268 entered expert_6_1 handler with cd 7 and sd {'list': [7]}
+10-08-2022 09:03:42: expert_form.py: DEBUG - Expert 1984327268 entered expert_6_1 handler with cd 8 and sd {'list': [7, 8]}
+10-08-2022 09:03:43: expert_form.py: DEBUG - Expert 1984327268 entered expert_6_1 handler with cd 9 and sd {'list': [7, 8, 9]}
+10-08-2022 09:03:44: expert_form.py: DEBUG - Expert 1984327268 entered expert_6_1 handler with cd done and sd {'list': [7, 8, 9]}
+10-08-2022 09:03:46: expert_menu.py: DEBUG - Expert 1984327268 entered update_timetable handler
+10-08-2022 09:03:52: expert_menu.py: DEBUG - Expert 1984327268 entered update_timetable2 handler
+10-08-2022 09:04:56: expert_menu.py: DEBUG - Expert 1984327268 entered expert_changing_tt but write incorrect slot: ыва
+10-08-2022 09:04:58: expert_menu.py: DEBUG - Expert 1984327268 entered expert_changing_tt but write incorrect slot: в
+10-08-2022 09:05:08: expert_menu.py: DEBUG - Expert 1984327268 entered expert_changing_tt but write incorrect slot: /menu
+10-08-2022 09:05:10: expert_menu.py: DEBUG - Expert 1984327268 entered expert_changing_tt but write incorrect slot: /menu
+10-08-2022 09:05:25: expert_menu.py: DEBUG - Expert 1984327268 entered expert_changing_tt and changed timetable
+10-08-2022 09:05:26: expert_menu.py: DEBUG - Expert 1984327268 entered expert_menu handler
+10-08-2022 09:05:27: expert_menu.py: DEBUG - Expert 1984327268 entered search_applicants handler
+10-08-2022 09:05:27: expert_menu.py: DEBUG - Search_applicant function shows that expert 1984327268 have 7 suitable applicants
+10-08-2022 09:05:30: expert_menu.py: DEBUG - Search_applicant function shows that expert 1984327268 have 7 suitable applicants
+10-08-2022 09:05:30: expert_menu.py: DEBUG - Expert 1984327268 entered page_click_expert handler with page 2
+10-08-2022 09:05:31: expert_menu.py: DEBUG - Expert 1984327268 entered expert_menu handler
+10-08-2022 09:05:35: expert_menu.py: DEBUG - Expert 1984327268 entered exert_meetings handler but he doesn't have meetings yet
+10-08-2022 09:05:36: expert_menu.py: DEBUG - Expert 1984327268 entered expert_menu handler
+10-08-2022 09:05:40: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler
+10-08-2022 09:05:46: start.py: DEBUG - User 259733823 start the bot as an applicant
+10-08-2022 09:05:48: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_start handler
+10-08-2022 09:05:50: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_1 handler
+10-08-2022 09:05:50: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_2 handler
+10-08-2022 09:05:53: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_3 handler
+10-08-2022 09:05:54: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_4 handler
+10-08-2022 09:05:55: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_5 handler
+10-08-2022 09:05:57: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_6 handler
+10-08-2022 09:05:57: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_7 handler
+10-08-2022 09:05:58: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_8 handler
+10-08-2022 09:06:00: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_8_1 handler with cd 9 and sd {'list': [9]}
+10-08-2022 09:06:01: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_8_1 handler with cd done and sd {'list': [9]}
+10-08-2022 09:06:02: applicant_form.py: DEBUG - Applicant 259733823 entered applicant_9 handler
+10-08-2022 09:06:04: applicant_menu.py: DEBUG - Applicant 259733823 entered search_experts handler
+10-08-2022 09:06:04: applicant_menu.py: DEBUG - Search_expert function shows that expert 259733823 have 1 suitable experts
+10-08-2022 09:06:06: applicant_menu.py: DEBUG - Applicant 259733823 entered expert_chosen handler with applicant 1984327268 and 5 free slots
+10-08-2022 09:10:16: app.py: INFO - table applicants already exists
+10-08-2022 09:10:16: app.py: INFO - table experts already exists
+10-08-2022 09:10:16: app.py: INFO - table meetings already exists
+10-08-2022 09:10:16: app.py: INFO - table admins already exists
+10-08-2022 09:10:16: app.py: INFO - Bot is running

@@ -1,0 +1,69 @@
+17-06-2022 10:01:10: app.py: INFO - table applicants already exists
+17-06-2022 10:01:10: app.py: INFO - table experts already exists
+17-06-2022 10:01:10: app.py: INFO - table meetings already exists
+17-06-2022 10:01:10: app.py: INFO - table admins already exists
+17-06-2022 10:01:10: app.py: INFO - Bot is running
+17-06-2022 10:01:24: start.py: DEBUG - Applicant 259733823 use /menu command
+17-06-2022 10:01:28: applicant_profile.py: DEBUG - Applicant 259733823 entered check_profile_a handler
+17-06-2022 10:01:31: applicant_menu.py: DEBUG - Applicant 259733823 entered applicant_menu handler
+17-06-2022 10:04:21: start.py: DEBUG - User 1984327268 start the bot as an expert
+17-06-2022 10:04:23: expert_form.py: DEBUG - Expert 1984327268 entered expert_start handler
+17-06-2022 10:04:29: expert_form.py: DEBUG - Expert 1984327268 entered expert_1 handler
+17-06-2022 14:18:43: start.py: DEBUG - Applicant 567213956 use /menu command
+17-06-2022 14:30:21: start.py: DEBUG - Applicant 567213956 use /menu command
+17-06-2022 14:35:03: applicant_menu.py: DEBUG - Applicant 360694993 entered applicant_meetings handler but he doesn't have meetings yet
+17-06-2022 14:35:06: applicant_menu.py: DEBUG - Applicant 360694993 entered applicant_menu handler
+17-06-2022 14:43:21: start.py: DEBUG - Applicant 567213956 use /menu command
+17-06-2022 14:43:32: start.py: DEBUG - User 567213956 start the bot as an applicant
+17-06-2022 14:43:34: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_start handler
+17-06-2022 14:43:40: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_1 handler
+17-06-2022 14:43:42: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_2 handler
+17-06-2022 14:43:44: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_3 handler
+17-06-2022 14:43:48: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_4 handler
+17-06-2022 14:43:52: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_5 handler
+17-06-2022 14:43:54: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_6 handler
+17-06-2022 14:43:58: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_7 handler
+17-06-2022 14:44:01: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8 handler
+17-06-2022 14:44:02: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 8 and sd {'list': [8]}
+17-06-2022 14:44:03: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 6 and sd {'list': [8, 6]}
+17-06-2022 14:44:03: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 5 and sd {'list': [8, 6, 5]}
+17-06-2022 14:44:03: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 4 and sd {'list': [8, 6, 5, 4]}
+17-06-2022 14:44:04: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 3 and sd {'list': [8, 6, 5, 4, 3]}
+17-06-2022 14:44:08: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 8 and sd {'list': [6, 5, 4, 3]}
+17-06-2022 14:44:09: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 1 and sd {'list': [6, 5, 4, 3, 1]}
+17-06-2022 14:44:09: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 7 and sd {'list': [6, 5, 4, 3, 1, 7]}
+17-06-2022 14:44:09: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 6 and sd {'list': [5, 4, 3, 1, 7]}
+17-06-2022 14:44:10: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 9 and sd {'list': [5, 4, 3, 1, 7, 9]}
+17-06-2022 14:44:14: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd 6 and sd {'list': [5, 4, 3, 1, 7, 9, 6]}
+17-06-2022 14:44:15: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_8_1 handler with cd done and sd {'list': [5, 4, 3, 1, 7, 9, 6]}
+17-06-2022 14:44:19: applicant_form.py: DEBUG - Applicant 567213956 entered applicant_9 handler
+17-06-2022 14:44:21: applicant_profile.py: DEBUG - Applicant 567213956 entered check_profile_a handler
+17-06-2022 14:44:22: applicant_menu.py: DEBUG - Applicant 567213956 entered applicant_menu handler
+17-06-2022 16:57:23: start.py: DEBUG - Applicant 767028281 use /menu command
+17-06-2022 16:57:53: applicant_menu.py: DEBUG - Applicant 767028281 entered applicant_meetings handler but he doesn't have meetings yet
+17-06-2022 16:58:00: applicant_menu.py: DEBUG - Applicant 767028281 entered applicant_menu handler
+17-06-2022 17:22:55: start.py: DEBUG - User 655469564 start the bot as an applicant
+17-06-2022 17:23:10: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_start handler
+17-06-2022 17:23:14: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_1 handler
+17-06-2022 17:23:28: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_2 handler
+17-06-2022 17:23:36: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_3 handler
+17-06-2022 17:23:53: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_4 handler
+17-06-2022 17:24:20: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_5 handler
+17-06-2022 17:24:34: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_6 handler
+17-06-2022 17:24:43: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_7 handler
+17-06-2022 17:25:04: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_8 handler
+17-06-2022 17:25:07: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_8_1 handler with cd 4 and sd {'list': [4]}
+17-06-2022 17:25:09: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_8_1 handler with cd 7 and sd {'list': [4, 7]}
+17-06-2022 17:25:10: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_8_1 handler with cd 8 and sd {'list': [4, 7, 8]}
+17-06-2022 17:25:11: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_8_1 handler with cd done and sd {'list': [4, 7, 8]}
+17-06-2022 17:25:24: applicant_form.py: DEBUG - Applicant 655469564 entered applicant_9 handler
+17-06-2022 17:25:31: applicant_menu.py: DEBUG - Search_expert function shows that expert 655469564 have 0 suitable applicants
+17-06-2022 17:25:31: applicant_menu.py: DEBUG - Applicant 655469564 entered search_experts handler but don't have any suitable applicants
+17-06-2022 17:25:37: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_menu handler
+17-06-2022 17:25:39: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_meetings handler but he doesn't have meetings yet
+17-06-2022 17:25:41: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_menu handler
+17-06-2022 17:25:42: applicant_profile.py: DEBUG - Applicant 655469564 entered check_profile_a handler
+17-06-2022 17:25:56: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_menu handler
+17-06-2022 17:26:49: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_meetings handler but he doesn't have meetings yet
+17-06-2022 17:26:51: applicant_menu.py: DEBUG - Applicant 655469564 entered applicant_menu handler
+19-06-2022 19:46:29: start.py: DEBUG - Applicant 259733823 use /menu command

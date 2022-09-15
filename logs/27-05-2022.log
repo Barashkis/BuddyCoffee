@@ -1,0 +1,104 @@
+27-05-2022 15:26:07: app.py: INFO - table applicants already exists
+27-05-2022 15:26:07: app.py: INFO - table experts already exists
+27-05-2022 15:26:07: app.py: INFO - table meetings already exists
+27-05-2022 15:26:07: app.py: INFO - Bot is running
+27-05-2022 15:26:25: app.py: INFO - Bot stopped
+27-05-2022 15:40:24: app.py: INFO - table applicants already exists
+27-05-2022 15:40:24: app.py: INFO - table experts already exists
+27-05-2022 15:40:24: app.py: INFO - table meetings already exists
+27-05-2022 15:40:24: app.py: INFO - Bot is running
+27-05-2022 15:40:27: app.py: INFO - Bot stopped
+27-05-2022 15:40:50: app.py: INFO - table applicants already exists
+27-05-2022 15:40:50: app.py: INFO - table experts already exists
+27-05-2022 15:40:50: app.py: INFO - table meetings already exists
+27-05-2022 15:40:50: app.py: INFO - near ")": syntax error
+27-05-2022 15:40:50: app.py: INFO - Bot is running
+27-05-2022 15:41:10: app.py: INFO - Bot stopped
+27-05-2022 15:41:13: app.py: INFO - table applicants already exists
+27-05-2022 15:41:13: app.py: INFO - table experts already exists
+27-05-2022 15:41:13: app.py: INFO - table meetings already exists
+27-05-2022 15:41:13: app.py: INFO - Table "admins" is created
+27-05-2022 15:41:13: app.py: INFO - Bot is running
+27-05-2022 15:41:23: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:41:45: app.py: INFO - Bot stopped
+27-05-2022 15:41:48: app.py: INFO - table applicants already exists
+27-05-2022 15:41:48: app.py: INFO - table experts already exists
+27-05-2022 15:41:48: app.py: INFO - table meetings already exists
+27-05-2022 15:41:48: app.py: INFO - table admins already exists
+27-05-2022 15:41:48: app.py: INFO - Bot is running
+27-05-2022 15:41:50: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:42:35: app.py: INFO - Bot stopped
+27-05-2022 15:42:38: app.py: INFO - table applicants already exists
+27-05-2022 15:42:38: app.py: INFO - table experts already exists
+27-05-2022 15:42:38: app.py: INFO - table meetings already exists
+27-05-2022 15:42:38: app.py: INFO - table admins already exists
+27-05-2022 15:42:38: app.py: INFO - Bot is running
+27-05-2022 15:42:41: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:43:12: app.py: INFO - Bot stopped
+27-05-2022 15:43:14: app.py: INFO - table applicants already exists
+27-05-2022 15:43:14: app.py: INFO - table experts already exists
+27-05-2022 15:43:14: app.py: INFO - table meetings already exists
+27-05-2022 15:43:14: app.py: INFO - table admins already exists
+27-05-2022 15:43:14: app.py: INFO - Bot is running
+27-05-2022 15:43:17: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:44:37: app.py: INFO - Bot stopped
+27-05-2022 15:44:40: app.py: INFO - table applicants already exists
+27-05-2022 15:44:40: app.py: INFO - table experts already exists
+27-05-2022 15:44:40: app.py: INFO - table meetings already exists
+27-05-2022 15:44:40: app.py: INFO - near ")": syntax error
+27-05-2022 15:44:40: app.py: INFO - Bot is running
+27-05-2022 15:44:55: app.py: INFO - Bot stopped
+27-05-2022 15:44:57: app.py: INFO - table applicants already exists
+27-05-2022 15:44:57: app.py: INFO - table experts already exists
+27-05-2022 15:44:57: app.py: INFO - table meetings already exists
+27-05-2022 15:44:57: app.py: INFO - Table "admins" is created
+27-05-2022 15:44:57: app.py: INFO - Bot is running
+27-05-2022 15:45:05: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:45:39: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:46:12: app.py: INFO - Bot stopped
+27-05-2022 15:46:15: app.py: INFO - table applicants already exists
+27-05-2022 15:46:15: app.py: INFO - table experts already exists
+27-05-2022 15:46:15: app.py: INFO - table meetings already exists
+27-05-2022 15:46:15: app.py: INFO - table admins already exists
+27-05-2022 15:46:15: app.py: INFO - Bot is running
+27-05-2022 15:46:18: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:47:13: app.py: INFO - Bot stopped
+27-05-2022 15:47:16: app.py: INFO - table applicants already exists
+27-05-2022 15:47:16: app.py: INFO - table experts already exists
+27-05-2022 15:47:16: app.py: INFO - table meetings already exists
+27-05-2022 15:47:16: app.py: INFO - table admins already exists
+27-05-2022 15:47:16: app.py: INFO - Bot is running
+27-05-2022 15:47:22: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:47:35: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:47:43: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:47:51: app.py: INFO - Bot stopped
+27-05-2022 15:47:54: app.py: INFO - table applicants already exists
+27-05-2022 15:47:54: app.py: INFO - table experts already exists
+27-05-2022 15:47:54: app.py: INFO - table meetings already exists
+27-05-2022 15:47:54: app.py: INFO - table admins already exists
+27-05-2022 15:47:54: app.py: INFO - Bot is running
+27-05-2022 15:47:57: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:49:31: app.py: INFO - Bot stopped
+27-05-2022 15:49:34: app.py: INFO - table applicants already exists
+27-05-2022 15:49:34: app.py: INFO - table experts already exists
+27-05-2022 15:49:34: app.py: INFO - table meetings already exists
+27-05-2022 15:49:34: app.py: INFO - table admins already exists
+27-05-2022 15:49:34: app.py: INFO - Bot is running
+27-05-2022 15:49:38: app.py: INFO - Bot stopped
+27-05-2022 15:49:40: app.py: INFO - table applicants already exists
+27-05-2022 15:49:40: app.py: INFO - table experts already exists
+27-05-2022 15:49:40: app.py: INFO - table meetings already exists
+27-05-2022 15:49:40: app.py: INFO - table admins already exists
+27-05-2022 15:49:40: app.py: INFO - Bot is running
+27-05-2022 15:49:43: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:49:50: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:51:00: admin_interface.py: DEBUG - 259733823 entered /add_admin command
+27-05-2022 15:52:02: admin_interface.py: DEBUG - 259733823 entered /notify command
+27-05-2022 15:52:35: app.py: INFO - Bot stopped
+27-05-2022 15:52:38: app.py: INFO - table applicants already exists
+27-05-2022 15:52:38: app.py: INFO - table experts already exists
+27-05-2022 15:52:38: app.py: INFO - table meetings already exists
+27-05-2022 15:52:38: app.py: INFO - table admins already exists
+27-05-2022 15:52:38: app.py: INFO - Bot is running
+27-05-2022 15:52:42: admin_interface.py: DEBUG - 259733823 entered /notify command
+27-05-2022 16:26:42: app.py: INFO - Bot stopped

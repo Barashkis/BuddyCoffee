@@ -1,0 +1,439 @@
+24-05-2022 00:51:13: bot_commands.py: INFO - Команды установлены
+24-05-2022 00:51:13: app.py: INFO - Table "applicants" is created
+24-05-2022 00:51:13: app.py: INFO - Table "experts" is created
+24-05-2022 00:51:13: app.py: INFO - Table "meetings" is created
+24-05-2022 00:51:13: app.py: INFO - Bot is running
+24-05-2022 00:51:18: app.py: INFO - Bot stopped
+24-05-2022 02:04:46: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:04:46: app.py: INFO - table applicants already exists
+24-05-2022 02:04:46: app.py: INFO - table experts already exists
+24-05-2022 02:04:46: app.py: INFO - table meetings already exists
+24-05-2022 02:04:46: app.py: INFO - Bot is running
+24-05-2022 02:07:37: app.py: INFO - Bot stopped
+24-05-2022 02:07:41: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:07:41: app.py: INFO - table applicants already exists
+24-05-2022 02:07:41: app.py: INFO - table experts already exists
+24-05-2022 02:07:41: app.py: INFO - table meetings already exists
+24-05-2022 02:07:41: app.py: INFO - Bot is running
+24-05-2022 02:11:53: app.py: INFO - Bot stopped
+24-05-2022 02:11:56: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:11:56: app.py: INFO - table applicants already exists
+24-05-2022 02:11:56: app.py: INFO - table experts already exists
+24-05-2022 02:11:56: app.py: INFO - table meetings already exists
+24-05-2022 02:11:56: app.py: INFO - Bot is running
+24-05-2022 02:11:59: app.py: INFO - Bot stopped
+24-05-2022 02:12:02: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:12:02: app.py: INFO - table applicants already exists
+24-05-2022 02:12:02: app.py: INFO - table experts already exists
+24-05-2022 02:12:02: app.py: INFO - table meetings already exists
+24-05-2022 02:12:02: app.py: INFO - Bot is running
+24-05-2022 02:12:15: app.py: INFO - Bot stopped
+24-05-2022 02:12:19: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:12:19: app.py: INFO - table applicants already exists
+24-05-2022 02:12:19: app.py: INFO - table experts already exists
+24-05-2022 02:12:19: app.py: INFO - table meetings already exists
+24-05-2022 02:12:19: app.py: INFO - Bot is running
+24-05-2022 02:14:45: app.py: INFO - Bot stopped
+24-05-2022 02:14:48: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:14:48: app.py: INFO - table applicants already exists
+24-05-2022 02:14:48: app.py: INFO - table experts already exists
+24-05-2022 02:14:48: app.py: INFO - table meetings already exists
+24-05-2022 02:14:48: app.py: INFO - Bot is running
+24-05-2022 02:16:10: app.py: INFO - Bot stopped
+24-05-2022 02:16:22: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:16:22: app.py: INFO - table applicants already exists
+24-05-2022 02:16:22: app.py: INFO - table experts already exists
+24-05-2022 02:16:22: app.py: INFO - table meetings already exists
+24-05-2022 02:16:22: app.py: INFO - Bot is running
+24-05-2022 02:19:03: app.py: INFO - Bot stopped
+24-05-2022 02:19:06: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:19:06: app.py: INFO - table applicants already exists
+24-05-2022 02:19:06: app.py: INFO - table experts already exists
+24-05-2022 02:19:06: app.py: INFO - table meetings already exists
+24-05-2022 02:19:06: app.py: INFO - Bot is running
+24-05-2022 02:25:59: app.py: INFO - Bot stopped
+24-05-2022 02:26:02: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:26:02: app.py: INFO - table applicants already exists
+24-05-2022 02:26:02: app.py: INFO - table experts already exists
+24-05-2022 02:26:02: app.py: INFO - table meetings already exists
+24-05-2022 02:26:02: app.py: INFO - Bot is running
+24-05-2022 02:31:11: app.py: INFO - Bot stopped
+24-05-2022 02:31:14: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:31:14: app.py: INFO - table applicants already exists
+24-05-2022 02:31:14: app.py: INFO - table experts already exists
+24-05-2022 02:31:14: app.py: INFO - table meetings already exists
+24-05-2022 02:31:14: app.py: INFO - Bot is running
+24-05-2022 02:31:27: app.py: INFO - Bot stopped
+24-05-2022 02:31:31: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:31:31: app.py: INFO - table applicants already exists
+24-05-2022 02:31:31: app.py: INFO - table experts already exists
+24-05-2022 02:31:31: app.py: INFO - table meetings already exists
+24-05-2022 02:31:31: app.py: INFO - Bot is running
+24-05-2022 02:31:46: app.py: INFO - Bot stopped
+24-05-2022 02:31:50: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:31:50: app.py: INFO - table applicants already exists
+24-05-2022 02:31:50: app.py: INFO - table experts already exists
+24-05-2022 02:31:50: app.py: INFO - table meetings already exists
+24-05-2022 02:31:50: app.py: INFO - Bot is running
+24-05-2022 02:41:28: app.py: INFO - Bot stopped
+24-05-2022 02:41:31: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:41:31: app.py: INFO - table applicants already exists
+24-05-2022 02:41:31: app.py: INFO - table experts already exists
+24-05-2022 02:41:31: app.py: INFO - table meetings already exists
+24-05-2022 02:41:31: app.py: INFO - Bot is running
+24-05-2022 02:43:29: app.py: INFO - Bot stopped
+24-05-2022 02:43:33: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:43:33: app.py: INFO - table applicants already exists
+24-05-2022 02:43:33: app.py: INFO - table experts already exists
+24-05-2022 02:43:33: app.py: INFO - table meetings already exists
+24-05-2022 02:43:33: app.py: INFO - Bot is running
+24-05-2022 02:47:09: app.py: INFO - Bot stopped
+24-05-2022 02:47:12: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:47:12: app.py: INFO - table applicants already exists
+24-05-2022 02:47:12: app.py: INFO - table experts already exists
+24-05-2022 02:47:12: app.py: INFO - table meetings already exists
+24-05-2022 02:47:12: app.py: INFO - Bot is running
+24-05-2022 02:48:42: app.py: INFO - Bot stopped
+24-05-2022 02:48:46: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:48:46: app.py: INFO - table applicants already exists
+24-05-2022 02:48:46: app.py: INFO - table experts already exists
+24-05-2022 02:48:46: app.py: INFO - table meetings already exists
+24-05-2022 02:48:46: app.py: INFO - Bot is running
+24-05-2022 02:56:46: app.py: INFO - Bot stopped
+24-05-2022 02:56:50: bot_commands.py: INFO - Команды установлены
+24-05-2022 02:56:50: app.py: INFO - table applicants already exists
+24-05-2022 02:56:50: app.py: INFO - table experts already exists
+24-05-2022 02:56:50: app.py: INFO - table meetings already exists
+24-05-2022 02:56:50: app.py: INFO - Bot is running
+24-05-2022 03:24:09: app.py: INFO - Bot stopped
+24-05-2022 13:24:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:24:28: app.py: INFO - table applicants already exists
+24-05-2022 13:24:28: app.py: INFO - table experts already exists
+24-05-2022 13:24:28: app.py: INFO - table meetings already exists
+24-05-2022 13:24:28: app.py: INFO - Bot is running
+24-05-2022 13:24:53: start.py: DEBUG - User 259733823 tried to use /start command again: UNIQUE constraint failed: applicants.user_id
+24-05-2022 13:27:25: app.py: INFO - Bot stopped
+24-05-2022 13:27:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:27:28: app.py: INFO - table applicants already exists
+24-05-2022 13:27:28: app.py: INFO - table experts already exists
+24-05-2022 13:27:28: app.py: INFO - table meetings already exists
+24-05-2022 13:27:28: app.py: INFO - Bot is running
+24-05-2022 13:27:46: start.py: DEBUG - User 259733823 tried to use /start command again: UNIQUE constraint failed: applicants.user_id
+24-05-2022 13:29:22: app.py: INFO - Bot stopped
+24-05-2022 13:29:25: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:29:25: app.py: INFO - table applicants already exists
+24-05-2022 13:29:25: app.py: INFO - table experts already exists
+24-05-2022 13:29:25: app.py: INFO - table meetings already exists
+24-05-2022 13:29:25: app.py: INFO - Bot is running
+24-05-2022 13:29:34: start.py: DEBUG - User 259733823 tried to use /start command again: UNIQUE constraint failed: applicants.user_id
+24-05-2022 13:29:50: app.py: INFO - Bot stopped
+24-05-2022 13:29:53: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:29:53: app.py: INFO - table applicants already exists
+24-05-2022 13:29:53: app.py: INFO - table experts already exists
+24-05-2022 13:29:53: app.py: INFO - table meetings already exists
+24-05-2022 13:29:53: app.py: INFO - Bot is running
+24-05-2022 13:30:32: app.py: INFO - Bot stopped
+24-05-2022 13:37:05: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:37:05: app.py: INFO - table applicants already exists
+24-05-2022 13:37:05: app.py: INFO - table experts already exists
+24-05-2022 13:37:05: app.py: INFO - table meetings already exists
+24-05-2022 13:37:05: app.py: INFO - Bot is running
+24-05-2022 13:40:43: app.py: INFO - Bot stopped
+24-05-2022 13:40:46: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:40:46: app.py: INFO - table applicants already exists
+24-05-2022 13:40:46: app.py: INFO - table experts already exists
+24-05-2022 13:40:46: app.py: INFO - table meetings already exists
+24-05-2022 13:40:46: app.py: INFO - Bot is running
+24-05-2022 13:42:25: app.py: INFO - Bot stopped
+24-05-2022 13:42:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:42:28: app.py: INFO - table applicants already exists
+24-05-2022 13:42:28: app.py: INFO - table experts already exists
+24-05-2022 13:42:28: app.py: INFO - table meetings already exists
+24-05-2022 13:42:28: app.py: INFO - Bot is running
+24-05-2022 13:46:07: app.py: INFO - Bot stopped
+24-05-2022 13:46:11: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:46:11: app.py: INFO - table applicants already exists
+24-05-2022 13:46:11: app.py: INFO - table experts already exists
+24-05-2022 13:46:11: app.py: INFO - table meetings already exists
+24-05-2022 13:46:11: app.py: INFO - Bot is running
+24-05-2022 13:47:00: app.py: INFO - Bot stopped
+24-05-2022 13:47:04: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:47:04: app.py: INFO - table applicants already exists
+24-05-2022 13:47:04: app.py: INFO - table experts already exists
+24-05-2022 13:47:04: app.py: INFO - table meetings already exists
+24-05-2022 13:47:04: app.py: INFO - Bot is running
+24-05-2022 13:47:45: app.py: INFO - Bot stopped
+24-05-2022 13:47:48: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:47:48: app.py: INFO - table applicants already exists
+24-05-2022 13:47:48: app.py: INFO - table experts already exists
+24-05-2022 13:47:48: app.py: INFO - table meetings already exists
+24-05-2022 13:47:48: app.py: INFO - Bot is running
+24-05-2022 13:51:34: app.py: INFO - Bot stopped
+24-05-2022 13:51:38: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:51:38: app.py: INFO - table applicants already exists
+24-05-2022 13:51:38: app.py: INFO - table experts already exists
+24-05-2022 13:51:38: app.py: INFO - table meetings already exists
+24-05-2022 13:51:38: app.py: INFO - Bot is running
+24-05-2022 13:54:05: app.py: INFO - Bot stopped
+24-05-2022 13:54:09: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:54:09: app.py: INFO - table applicants already exists
+24-05-2022 13:54:09: app.py: INFO - table experts already exists
+24-05-2022 13:54:09: app.py: INFO - table meetings already exists
+24-05-2022 13:54:09: app.py: INFO - Bot is running
+24-05-2022 13:54:12: start.py: DEBUG - User 259733823 tried to use /start command again: UNIQUE constraint failed: applicants.user_id
+24-05-2022 13:55:48: app.py: INFO - Bot stopped
+24-05-2022 13:55:52: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:55:52: app.py: INFO - table applicants already exists
+24-05-2022 13:55:52: app.py: INFO - table experts already exists
+24-05-2022 13:55:52: app.py: INFO - table meetings already exists
+24-05-2022 13:55:52: app.py: INFO - Bot is running
+24-05-2022 13:59:25: app.py: INFO - Bot stopped
+24-05-2022 13:59:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 13:59:28: app.py: INFO - table applicants already exists
+24-05-2022 13:59:28: app.py: INFO - table experts already exists
+24-05-2022 13:59:28: app.py: INFO - table meetings already exists
+24-05-2022 13:59:28: app.py: INFO - Bot is running
+24-05-2022 14:03:56: app.py: INFO - Bot stopped
+24-05-2022 14:04:00: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:04:00: app.py: INFO - table applicants already exists
+24-05-2022 14:04:00: app.py: INFO - table experts already exists
+24-05-2022 14:04:00: app.py: INFO - table meetings already exists
+24-05-2022 14:04:00: app.py: INFO - Bot is running
+24-05-2022 14:23:12: app.py: INFO - Bot stopped
+24-05-2022 14:23:14: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:23:14: app.py: INFO - table applicants already exists
+24-05-2022 14:23:14: app.py: INFO - table experts already exists
+24-05-2022 14:23:14: app.py: INFO - table meetings already exists
+24-05-2022 14:23:14: app.py: INFO - Bot is running
+24-05-2022 14:24:06: app.py: INFO - Bot stopped
+24-05-2022 14:28:22: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:28:22: app.py: INFO - table applicants already exists
+24-05-2022 14:28:22: app.py: INFO - table experts already exists
+24-05-2022 14:28:22: app.py: INFO - table meetings already exists
+24-05-2022 14:28:22: app.py: INFO - Bot is running
+24-05-2022 14:28:41: app.py: INFO - Bot stopped
+24-05-2022 14:28:43: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:28:43: app.py: INFO - table applicants already exists
+24-05-2022 14:28:43: app.py: INFO - table experts already exists
+24-05-2022 14:28:43: app.py: INFO - table meetings already exists
+24-05-2022 14:28:43: app.py: INFO - Bot is running
+24-05-2022 14:29:19: app.py: INFO - Bot stopped
+24-05-2022 14:29:22: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:29:22: app.py: INFO - table applicants already exists
+24-05-2022 14:29:22: app.py: INFO - table experts already exists
+24-05-2022 14:29:22: app.py: INFO - table meetings already exists
+24-05-2022 14:29:22: app.py: INFO - Bot is running
+24-05-2022 14:30:05: app.py: INFO - Bot stopped
+24-05-2022 14:30:07: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:30:07: app.py: INFO - table applicants already exists
+24-05-2022 14:30:07: app.py: INFO - table experts already exists
+24-05-2022 14:30:07: app.py: INFO - table meetings already exists
+24-05-2022 14:30:07: app.py: INFO - Bot is running
+24-05-2022 14:32:48: app.py: INFO - Bot stopped
+24-05-2022 14:32:50: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:32:50: app.py: INFO - table applicants already exists
+24-05-2022 14:32:50: app.py: INFO - table experts already exists
+24-05-2022 14:32:50: app.py: INFO - table meetings already exists
+24-05-2022 14:32:50: app.py: INFO - Bot is running
+24-05-2022 14:34:29: app.py: INFO - Bot stopped
+24-05-2022 14:34:31: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:34:31: app.py: INFO - table applicants already exists
+24-05-2022 14:34:31: app.py: INFO - table experts already exists
+24-05-2022 14:34:31: app.py: INFO - table meetings already exists
+24-05-2022 14:34:31: app.py: INFO - Bot is running
+24-05-2022 14:36:34: app.py: INFO - Bot stopped
+24-05-2022 14:36:36: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:36:36: app.py: INFO - table applicants already exists
+24-05-2022 14:36:36: app.py: INFO - table experts already exists
+24-05-2022 14:36:36: app.py: INFO - table meetings already exists
+24-05-2022 14:36:36: app.py: INFO - Bot is running
+24-05-2022 14:38:54: app.py: INFO - Bot stopped
+24-05-2022 14:38:57: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:38:57: app.py: INFO - table applicants already exists
+24-05-2022 14:38:57: app.py: INFO - table experts already exists
+24-05-2022 14:38:57: app.py: INFO - table meetings already exists
+24-05-2022 14:38:57: app.py: INFO - Bot is running
+24-05-2022 14:43:21: app.py: INFO - Bot stopped
+24-05-2022 14:43:23: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:43:23: app.py: INFO - table applicants already exists
+24-05-2022 14:43:23: app.py: INFO - table experts already exists
+24-05-2022 14:43:23: app.py: INFO - table meetings already exists
+24-05-2022 14:43:23: app.py: INFO - Bot is running
+24-05-2022 14:55:44: app.py: INFO - Bot stopped
+24-05-2022 14:55:46: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:55:46: app.py: INFO - table applicants already exists
+24-05-2022 14:55:46: app.py: INFO - table experts already exists
+24-05-2022 14:55:46: app.py: INFO - table meetings already exists
+24-05-2022 14:55:46: app.py: INFO - Bot is running
+24-05-2022 14:56:04: start.py: DEBUG - User 259733823 tried to use /start command again: UNIQUE constraint failed: applicants.user_id
+24-05-2022 14:56:26: app.py: INFO - Bot stopped
+24-05-2022 14:56:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:56:28: app.py: INFO - table applicants already exists
+24-05-2022 14:56:28: app.py: INFO - table experts already exists
+24-05-2022 14:56:28: app.py: INFO - table meetings already exists
+24-05-2022 14:56:28: app.py: INFO - Bot is running
+24-05-2022 14:57:52: app.py: INFO - Bot stopped
+24-05-2022 14:57:54: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:57:54: app.py: INFO - table applicants already exists
+24-05-2022 14:57:54: app.py: INFO - table experts already exists
+24-05-2022 14:57:54: app.py: INFO - table meetings already exists
+24-05-2022 14:57:54: app.py: INFO - Bot is running
+24-05-2022 14:58:21: app.py: INFO - Bot stopped
+24-05-2022 14:58:23: bot_commands.py: INFO - Команды установлены
+24-05-2022 14:58:23: app.py: INFO - table applicants already exists
+24-05-2022 14:58:23: app.py: INFO - table experts already exists
+24-05-2022 14:58:23: app.py: INFO - table meetings already exists
+24-05-2022 14:58:23: app.py: INFO - Bot is running
+24-05-2022 15:04:55: app.py: INFO - Bot stopped
+24-05-2022 15:04:57: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:04:57: app.py: INFO - table applicants already exists
+24-05-2022 15:04:57: app.py: INFO - table experts already exists
+24-05-2022 15:04:57: app.py: INFO - table meetings already exists
+24-05-2022 15:04:57: app.py: INFO - Bot is running
+24-05-2022 15:05:24: app.py: INFO - Bot stopped
+24-05-2022 15:05:26: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:05:26: app.py: INFO - table applicants already exists
+24-05-2022 15:05:26: app.py: INFO - table experts already exists
+24-05-2022 15:05:26: app.py: INFO - table meetings already exists
+24-05-2022 15:05:26: app.py: INFO - Bot is running
+24-05-2022 15:06:21: app.py: INFO - Bot stopped
+24-05-2022 15:06:23: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:06:23: app.py: INFO - table applicants already exists
+24-05-2022 15:06:23: app.py: INFO - table experts already exists
+24-05-2022 15:06:23: app.py: INFO - table meetings already exists
+24-05-2022 15:06:23: app.py: INFO - Bot is running
+24-05-2022 15:06:39: app.py: INFO - Bot stopped
+24-05-2022 15:06:41: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:06:41: app.py: INFO - table applicants already exists
+24-05-2022 15:06:41: app.py: INFO - table experts already exists
+24-05-2022 15:06:41: app.py: INFO - table meetings already exists
+24-05-2022 15:06:41: app.py: INFO - Bot is running
+24-05-2022 15:07:20: app.py: INFO - Bot stopped
+24-05-2022 15:07:22: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:07:22: app.py: INFO - table applicants already exists
+24-05-2022 15:07:22: app.py: INFO - table experts already exists
+24-05-2022 15:07:22: app.py: INFO - table meetings already exists
+24-05-2022 15:07:22: app.py: INFO - Bot is running
+24-05-2022 15:13:48: app.py: INFO - Bot stopped
+24-05-2022 15:13:50: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:13:50: app.py: INFO - table applicants already exists
+24-05-2022 15:13:50: app.py: INFO - table experts already exists
+24-05-2022 15:13:50: app.py: INFO - table meetings already exists
+24-05-2022 15:13:50: app.py: INFO - Bot is running
+24-05-2022 15:14:26: app.py: INFO - Bot stopped
+24-05-2022 15:14:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:14:28: app.py: INFO - table applicants already exists
+24-05-2022 15:14:28: app.py: INFO - table experts already exists
+24-05-2022 15:14:28: app.py: INFO - table meetings already exists
+24-05-2022 15:14:28: app.py: INFO - Bot is running
+24-05-2022 15:18:17: app.py: INFO - Bot stopped
+24-05-2022 15:18:20: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:18:20: app.py: INFO - table applicants already exists
+24-05-2022 15:18:20: app.py: INFO - table experts already exists
+24-05-2022 15:18:20: app.py: INFO - table meetings already exists
+24-05-2022 15:18:20: app.py: INFO - Bot is running
+24-05-2022 15:19:29: app.py: INFO - Bot stopped
+24-05-2022 15:19:31: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:19:31: app.py: INFO - table applicants already exists
+24-05-2022 15:19:31: app.py: INFO - table experts already exists
+24-05-2022 15:19:31: app.py: INFO - table meetings already exists
+24-05-2022 15:19:31: app.py: INFO - Bot is running
+24-05-2022 15:21:43: app.py: INFO - Bot stopped
+24-05-2022 15:21:45: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:21:45: app.py: INFO - table applicants already exists
+24-05-2022 15:21:45: app.py: INFO - table experts already exists
+24-05-2022 15:21:45: app.py: INFO - table meetings already exists
+24-05-2022 15:21:45: app.py: INFO - Bot is running
+24-05-2022 15:22:16: app.py: INFO - Bot stopped
+24-05-2022 15:22:18: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:22:18: app.py: INFO - table applicants already exists
+24-05-2022 15:22:18: app.py: INFO - table experts already exists
+24-05-2022 15:22:18: app.py: INFO - table meetings already exists
+24-05-2022 15:22:18: app.py: INFO - Bot is running
+24-05-2022 15:22:43: app.py: INFO - Bot stopped
+24-05-2022 15:22:46: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:22:46: app.py: INFO - table applicants already exists
+24-05-2022 15:22:46: app.py: INFO - table experts already exists
+24-05-2022 15:22:46: app.py: INFO - table meetings already exists
+24-05-2022 15:22:46: app.py: INFO - Bot is running
+24-05-2022 15:46:13: app.py: INFO - Bot stopped
+24-05-2022 15:46:16: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:46:16: app.py: INFO - table applicants already exists
+24-05-2022 15:46:16: app.py: INFO - table experts already exists
+24-05-2022 15:46:16: app.py: INFO - table meetings already exists
+24-05-2022 15:46:16: app.py: INFO - Bot is running
+24-05-2022 15:46:53: app.py: INFO - Bot stopped
+24-05-2022 15:46:56: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:46:56: app.py: INFO - table applicants already exists
+24-05-2022 15:46:56: app.py: INFO - table experts already exists
+24-05-2022 15:46:56: app.py: INFO - table meetings already exists
+24-05-2022 15:46:56: app.py: INFO - Bot is running
+24-05-2022 15:47:58: app.py: INFO - Bot stopped
+24-05-2022 15:48:00: bot_commands.py: INFO - Команды установлены
+24-05-2022 15:48:00: app.py: INFO - table applicants already exists
+24-05-2022 15:48:00: app.py: INFO - table experts already exists
+24-05-2022 15:48:00: app.py: INFO - table meetings already exists
+24-05-2022 15:48:00: app.py: INFO - Bot is running
+24-05-2022 16:03:01: app.py: INFO - Bot stopped
+24-05-2022 16:23:45: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:23:45: app.py: INFO - table applicants already exists
+24-05-2022 16:23:45: app.py: INFO - table experts already exists
+24-05-2022 16:23:45: app.py: INFO - table meetings already exists
+24-05-2022 16:23:45: app.py: INFO - Bot is running
+24-05-2022 16:28:10: app.py: INFO - Bot stopped
+24-05-2022 16:28:21: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:28:21: app.py: INFO - Table "applicants" is created
+24-05-2022 16:28:21: app.py: INFO - Table "experts" is created
+24-05-2022 16:28:21: app.py: INFO - Table "meetings" is created
+24-05-2022 16:28:21: app.py: INFO - Bot is running
+24-05-2022 16:31:51: app.py: INFO - Bot stopped
+24-05-2022 16:31:53: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:31:53: app.py: INFO - table applicants already exists
+24-05-2022 16:31:53: app.py: INFO - table experts already exists
+24-05-2022 16:31:53: app.py: INFO - table meetings already exists
+24-05-2022 16:31:53: app.py: INFO - Bot is running
+24-05-2022 16:31:56: start.py: DEBUG - User 259733823 tried to use /start command again
+24-05-2022 16:33:02: app.py: INFO - Bot stopped
+24-05-2022 16:46:19: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:46:19: app.py: INFO - table applicants already exists
+24-05-2022 16:46:19: app.py: INFO - table experts already exists
+24-05-2022 16:46:19: app.py: INFO - table meetings already exists
+24-05-2022 16:46:19: app.py: INFO - Bot is running
+24-05-2022 16:46:27: start.py: DEBUG - User 259733823 tried to use /start command again
+24-05-2022 16:49:47: app.py: INFO - Bot stopped
+24-05-2022 16:49:49: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:49:49: app.py: INFO - table applicants already exists
+24-05-2022 16:49:49: app.py: INFO - table experts already exists
+24-05-2022 16:49:49: app.py: INFO - table meetings already exists
+24-05-2022 16:49:49: app.py: INFO - Bot is running
+24-05-2022 16:50:36: app.py: INFO - Bot stopped
+24-05-2022 16:50:38: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:50:38: app.py: INFO - table applicants already exists
+24-05-2022 16:50:38: app.py: INFO - table experts already exists
+24-05-2022 16:50:38: app.py: INFO - table meetings already exists
+24-05-2022 16:50:38: app.py: INFO - Bot is running
+24-05-2022 16:51:10: app.py: INFO - Bot stopped
+24-05-2022 16:51:13: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:51:13: app.py: INFO - table applicants already exists
+24-05-2022 16:51:13: app.py: INFO - table experts already exists
+24-05-2022 16:51:13: app.py: INFO - table meetings already exists
+24-05-2022 16:51:13: app.py: INFO - Bot is running
+24-05-2022 16:52:03: app.py: INFO - Bot stopped
+24-05-2022 16:52:05: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:52:05: app.py: INFO - table applicants already exists
+24-05-2022 16:52:05: app.py: INFO - table experts already exists
+24-05-2022 16:52:05: app.py: INFO - table meetings already exists
+24-05-2022 16:52:05: app.py: INFO - Bot is running
+24-05-2022 16:52:26: app.py: INFO - Bot stopped
+24-05-2022 16:52:28: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:52:28: app.py: INFO - table applicants already exists
+24-05-2022 16:52:28: app.py: INFO - table experts already exists
+24-05-2022 16:52:28: app.py: INFO - table meetings already exists
+24-05-2022 16:52:28: app.py: INFO - Bot is running
+24-05-2022 16:52:48: app.py: INFO - Bot stopped
+24-05-2022 16:52:50: bot_commands.py: INFO - Команды установлены
+24-05-2022 16:52:50: app.py: INFO - table applicants already exists
+24-05-2022 16:52:50: app.py: INFO - table experts already exists
+24-05-2022 16:52:50: app.py: INFO - table meetings already exists
+24-05-2022 16:52:50: app.py: INFO - Bot is running
+24-05-2022 16:55:50: app.py: INFO - Bot stopped
