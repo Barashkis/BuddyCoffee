@@ -198,6 +198,20 @@ async def applicant_meetings(call: CallbackQuery):
     logger.debug(f"Applicant {call.from_user.id} entered applicant_meetings handler but he doesn't have meetings yet")
 
 
+@dp.callback_query_handler(Regexp(r'^show_contacts_a_'))
+async def show_contacts_a(call: CallbackQuery):
+    db.update_stat("applicants")
+
+    expert_id = int(call.data[16:])
+    ed = db.get_expert(expert_id)
+
+    await call.answer()
+    await call.message.answer(f"Если по каким-то причинам ты хочешь связаться с экспертом лично, вот его контакты - @{ed[2]}. "
+                              "Обрати внимание, если ты видишь @None вместо контакта, значит, с этим пользователем "
+                              "можно связаться, только запланировав встречу в нашем боте")
+    logger.debug(f"Applicant {call.from_user.id} entered show_contacts handler")
+
+
 @dp.callback_query_handler(Regexp(r'^mkbp_a_'))
 async def expert_chosen(call: CallbackQuery):
     page = int(call.data[7:])

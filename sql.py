@@ -99,6 +99,15 @@ class Database:
 """
         self.execute(sql, commit=True)
 
+    def cr_table_stats(self):
+        sql = """
+        CREATE TABLE stats (
+            role TEXT,
+            total_pressed INTEGER DEFAULT 0
+            );
+"""
+        self.execute(sql, commit=True)
+
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join([
@@ -125,6 +134,13 @@ class Database:
         """
         return self.execute(sql, commit=True)
 
+    def add_initial_stats(self):
+        sql = f"""
+        INSERT INTO stats(role) 
+        VALUES('experts'), ('applicants');
+        """
+        return self.execute(sql, commit=True)
+
     def get_admins(self):
         sql = f"""
         SELECT * FROM admins
@@ -136,6 +152,12 @@ class Database:
         UPDATE {table} SET {column}=? WHERE user_id={user_id}
         '''
         return self.execute(sql, parameters=(data,), commit=True)
+
+    def remove_user(self, table, user_id):
+        sql = f'''
+        DELETE FROM {table} WHERE user_id={user_id};
+        '''
+        return self.execute(sql, commit=True)
 
     def update_meeting(self, column, meeting_id, data):
         sql = f'''
@@ -211,6 +233,17 @@ class Database:
         '''
         return self.execute(sql, fetchone=True)
 
+    def get_stats(self):
+        sql = '''
+        SELECT * FROM stats;
+        '''
+        return self.execute(sql, fetchall=True)
+
+    def update_stat(self, role):
+        sql = f'''
+        UPDATE stats SET total_pressed=total_pressed+1 WHERE role='{role}';
+        '''
+        return self.execute(sql, commit=True)
 
     def get_meeting_fb_e(self):
         sql = f'''

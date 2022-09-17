@@ -9,6 +9,11 @@ from my_logger import logger
 
 @dp.callback_query_handler(text='expert_start')
 async def expert_start(call: CallbackQuery, state: FSMContext):
+    if db.get_applicant(call.from_user.id) is not None:
+        db.remove_user("applicants", call.from_user.id)
+
+        logger.debug(f"Applicant {call.from_user.id} was removed from database")
+
     logger.debug(f"Expert {call.from_user.id} entered expert_start handler")
     date = call.message.date.strftime('%d.%m.%Y %H:%M')
     try:

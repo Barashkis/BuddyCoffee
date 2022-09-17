@@ -82,6 +82,7 @@ division_kb = InlineKeyboardMarkup(
         [InlineKeyboardButton(text=divisions_list.get(10), callback_data='10')],
         [InlineKeyboardButton(text=divisions_list.get(11), callback_data='11')],
         [InlineKeyboardButton(text=divisions_list.get(12), callback_data='12')],
+        [InlineKeyboardButton(text=divisions_list.get(13), callback_data='13')],
         [InlineKeyboardButton(text='Другой', callback_data='other')]
     ]
 )
@@ -195,7 +196,8 @@ def suitable_experts_kb2(suitable_experts: list, page: int = 1):
     n_experts = len(suitable_experts)
     if page > 1:
         prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sekbp_{page - 1}')
-        choose_b = InlineKeyboardButton(text='Выбрать', callback_data=f"choosee_{suitable_experts[page-1].get('user_id')}")
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"choosee_{suitable_experts[page - 1].get('user_id')}")
         if n_experts > page:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')
         else:
@@ -203,7 +205,8 @@ def suitable_experts_kb2(suitable_experts: list, page: int = 1):
 
     else:
         prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        choose_b = InlineKeyboardButton(text='Выбрать', callback_data=f"choosee_{suitable_experts[page-1].get('user_id')}")
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"choosee_{suitable_experts[page - 1].get('user_id')}")
         if n_experts > page:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')
         else:
@@ -250,7 +253,8 @@ def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
     n_applicants = len(suitable_applicants)
     if page > 1:
         prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sakbp_{page - 1}')
-        choose_b = InlineKeyboardButton(text='Выбрать', callback_data=f"choosea_{suitable_applicants[page-1].get('user_id')}")
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"choosea_{suitable_applicants[page - 1].get('user_id')}")
         if n_applicants > page:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sakbp_{page + 1}')
         else:
@@ -258,7 +262,8 @@ def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
 
     else:
         prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        choose_b = InlineKeyboardButton(text='Выбрать', callback_data=f"choosea_{suitable_applicants[page-1].get('user_id')}")
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"choosea_{suitable_applicants[page - 1].get('user_id')}")
         if n_applicants > page:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sakbp_{page + 1}')
         else:
@@ -291,11 +296,13 @@ def slots_a_kb(expert_id: int, slots: list, page: int = 1):
         else:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}')
         slots_keyboard.row(prev_b, next_b)
+        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_a_{expert_id}'))
         slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forme_{expert_id}'))
     else:
         for i in range(0, l):
             slots_keyboard.add(InlineKeyboardButton(text=slots[i],
                                                     callback_data=choosing_time_a_cd.new(expert_id=expert_id, slot=i)))
+        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_a_{expert_id}'))
         slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forme_{expert_id}'))
     return slots_keyboard
 
@@ -323,12 +330,14 @@ def slots_e_kb(expert_id: int, applicant_id: int, slots: list, page: int = 1):
         else:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}')
         slots_keyboard.row(prev_b, next_b)
+        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_e_{applicant_id}'))
         slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forma_{expert_id}'))
     else:
         for i in range(0, l):
             slots_keyboard.add(InlineKeyboardButton(text=slots[i],
                                                     callback_data=choosing_time_e_cd.new(applicant_id=applicant_id,
                                                                                          slot=i)))
+        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_e_{applicant_id}'))
         slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'search_applicants'))
     return slots_keyboard
 

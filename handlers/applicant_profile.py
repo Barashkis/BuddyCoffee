@@ -1,7 +1,7 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 from config import directions_list, topics_list
-from keyboards import directions_kb, topics_kb, kb2b, applicant_profile_bk
+from keyboards import directions_kb, topics_kb, kb3b, kb2b, applicant_profile_bk
 from loader import dp, db
 from my_logger import logger
 
@@ -30,9 +30,24 @@ async def check_profile_a(call: CallbackQuery):
                               f"<b>Хобби:</b> {hobby}\n"
                               f"<b>Темы на обсуждение:</b> {topics}\n"
                               f"<b>Вопросы ко встрече:</b> {topics_details}",
-                         reply_markup=kb2b("Хочу изменить", "change_prof_a2","Все ок","applicant_menu"),
+                         reply_markup=kb3b("Хочу изменить", "change_prof_a2", "Все ок", "applicant_menu", "Сменить роль", "warn_change_role_a"),
                          disable_notification=True)
     logger.debug(f'Applicant {call.from_user.id} entered check_profile_a handler')
+
+
+@dp.callback_query_handler(text='warn_change_role_a')
+async def warn_change_role_a(call: CallbackQuery):
+    await call.message.answer(
+        """Ты точно хочешь сменить роль?
+Студент — учащийся или выпускник, который хочет узнать больше о карьере в Росатоме и получить консультацию от эксперта
+Эксперты — сотрудники Росатома, которые консультируют соискателей
+""",
+        reply_markup=kb2b("Да, я уверен", "expert_start", "Назад", "change_prof_a"),
+        disable_notification=True
+    )
+    await call.message.edit_reply_markup()
+    logger.debug(f'Applicant {call.from_user.id} entered warn_change_role_a handler')
+
 
 @dp.callback_query_handler(text='change_prof_a2')
 async def change_profile_a(call: CallbackQuery):

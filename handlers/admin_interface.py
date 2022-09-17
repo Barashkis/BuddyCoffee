@@ -82,3 +82,20 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
                              reply_markup=applicant_menu_kb)
         await state.finish()
         logger.warning(f"Admin {message.from_user.id} tried to add new admin to bot but cause an error: {e}")
+
+
+@dp.message_handler(Command("stats"))
+async def show_stats(message: Message):
+    logger.debug(f'{message.from_user.id} entered /stats command')
+
+    admin_ids_raw = db.get_admins()
+    if admin_ids_raw is not None:
+        admin_ids = []
+        for t in admin_ids_raw:
+            admin_ids.append(t[0])
+        if message.from_user.id in admin_ids:
+            stats = db.get_stats()
+            await message.answer(f'В базе {stats[0][1]} экспертов и {stats[1][1]} соискателей, нажавших на кнопку "Показать контакты"',
+                                 reply_markup=applicant_menu_kb)
+
+            logger.debug(f"Admin {message.from_user.id} entered show_stats handler")
