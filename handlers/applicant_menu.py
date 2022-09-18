@@ -52,19 +52,25 @@ async def search_experts(call: CallbackQuery):
             division = divisions_list.get(int(ed[7]))
         else:
             division = ed[8]
+
+        text = f"<b>Имя:</b> {ed[5]}\n" \
+               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Дивизион:</b> {division}\n" \
+               f"<b>Экспертный профиль:</b> {ed[10]}\n"
+
         if ed[15]:
-            await call.message.answer_photo(ed[15],
-                                            caption=f"<b>Имя:</b> {ed[5]}\n"
-                                            f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n"
-                                            f"<b>Дивизион:</b> {division}\n"
-                                            f"<b>Экспертный профиль:</b> {ed[10]}\n",
-                                            reply_markup=suitable_experts_kb2(suitable_experts),
-                                            disable_notification=True)
+            if len(text) <= 1024:
+                await call.message.answer_photo(ed[15],
+                                                caption=text,
+                                                reply_markup=suitable_experts_kb2(suitable_experts),
+                                                disable_notification=True)
+            else:
+                await call.message.answer_photo(ed[15])
+                await call.message.answer(text,
+                                          reply_markup=suitable_experts_kb2(suitable_experts),
+                                          disable_notification=True)
         else:
-            await call.message.answer(f"<b>Имя:</b> {ed[5]}\n"
-                                      f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n"
-                                      f"<b>Дивизион:</b> {division}\n"
-                                      f"<b>Экспертный профиль:</b> {ed[10]}\n",
+            await call.message.answer(text=text,
                                       reply_markup=suitable_experts_kb2(suitable_experts),
                                       disable_notification=True)
         await call.message.edit_reply_markup()

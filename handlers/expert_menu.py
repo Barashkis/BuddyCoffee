@@ -102,27 +102,29 @@ async def page_click_expert(call: CallbackQuery):
     empl_region = ad[11]
     hobby = ad[12]
     topics_details = ad[14]
+
+    text = f"<b>Имя:</b> {firstname} {lastname}\n" \
+           f"<b>Направление:</b> {direction}\n" \
+           f"<b>Опыт:</b> {profile}\n" \
+           f"<b>Учебное заведение:</b> {institution}\n" \
+           f"<b>Год окончания:</b> {grad_year}\n" \
+           f"<b>Регион трудоустройства:</b> {empl_region}\n" \
+           f"<b>Хобби:</b> {hobby}\n" \
+           f"<b>Вопросы ко встрече:</b> {topics_details}"
+
     if ad[16]:
-        await call.message.answer_photo(ad[16],
-                                        caption=f"<b>Имя:</b> {firstname} {lastname}\n"
-                                                f"<b>Направление:</b> {direction}\n"
-                                                f"<b>Опыт:</b> {profile}\n"
-                                                f"<b>Учебное заведение:</b> {institution}\n"
-                                                f"<b>Год окончания:</b> {grad_year}\n"
-                                                f"<b>Регион трудоустройства:</b> {empl_region}\n"
-                                                f"<b>Хобби:</b> {hobby}\n"
-                                                f"<b>Вопросы ко встрече:</b> {topics_details}",
-                                        reply_markup=suitable_applicants_kb2(suitable_applicants, page),
-                                        disable_notification=True)
+        if len(text) <= 1024:
+            await call.message.answer_photo(ad[16],
+                                            caption=text,
+                                            reply_markup=suitable_applicants_kb2(suitable_applicants, page),
+                                            disable_notification=True)
+        else:
+            await call.message.answer_photo(ad[16])
+            await call.message.answer(text=text,
+                                      reply_markup=suitable_applicants_kb2(suitable_applicants, page),
+                                      disable_notification=True)
     else:
-        await call.message.answer(text=f"<b>Имя:</b> {firstname} {lastname}\n"
-                                       f"<b>Направление:</b> {direction}\n"
-                                       f"<b>Опыт:</b> {profile}\n"
-                                       f"<b>Учебное заведение:</b> {institution}\n"
-                                       f"<b>Год окончания:</b> {grad_year}\n"
-                                       f"<b>Регион трудоустройства:</b> {empl_region}\n"
-                                       f"<b>Хобби:</b> {hobby}\n"
-                                       f"<b>Вопросы ко встрече:</b> {topics_details}",
+        await call.message.answer(text=text,
                                   reply_markup=suitable_applicants_kb2(suitable_applicants, page),
                                   disable_notification=True)
     await call.message.edit_reply_markup()
