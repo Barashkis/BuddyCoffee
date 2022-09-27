@@ -160,35 +160,36 @@ expert_profile_bk = InlineKeyboardMarkup(
     ]
 )
 
-def suitable_experts_kb(suitable_experts: list, page: int = 1):
-    experts_keyboard = InlineKeyboardMarkup()
-    epl = 9  # experts per list
-    l = len(suitable_experts)
-    n_pages = math.ceil(l / epl)  # number of pages
 
-    if n_pages > 1:
-        for i in range(epl * (page - 1), epl * page):
-            try:
-                experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
-                                                          callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
-            except IndexError:
-                pass
-        if page == 1:
-            prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sekbp_{page - 1}')
-        if page == n_pages:
-            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')  # suitable experts keyboard page
-        experts_keyboard.row(prev_b, next_b)
-        experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
-    else:
-        for i in range(0, l):
-            experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
-                                                      callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
-        experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
-    return experts_keyboard
+# def suitable_experts_kb(suitable_experts: list, page: int = 1):
+#     experts_keyboard = InlineKeyboardMarkup()
+#     epl = 9  # experts per list
+#     l = len(suitable_experts)
+#     n_pages = math.ceil(l / epl)  # number of pages
+#
+#     if n_pages > 1:
+#         for i in range(epl * (page - 1), epl * page):
+#             try:
+#                 experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
+#                                                           callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
+#             except IndexError:
+#                 pass
+#         if page == 1:
+#             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+#         else:
+#             prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sekbp_{page - 1}')
+#         if page == n_pages:
+#             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+#         else:
+#             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')  # suitable experts keyboard page
+#         experts_keyboard.row(prev_b, next_b)
+#         experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
+#     else:
+#         for i in range(0, l):
+#             experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
+#                                                       callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
+#         experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
+#     return experts_keyboard
 
 
 def suitable_experts_kb2(suitable_experts: list, page: int = 1):
@@ -216,36 +217,36 @@ def suitable_experts_kb2(suitable_experts: list, page: int = 1):
     return experts_keyboard
 
 
-def suitable_applicants_kb(suitable_applicants: list, page: int = 1):
-    applicants_keyboard = InlineKeyboardMarkup()
-    apl = 9  # applicants per list
-    l = len(suitable_applicants)
-    n_pages = math.ceil(l / apl)  # number of pages
-
-    if n_pages > 1:
-        for i in range(apl * (page - 1), apl * page):
-            try:
-                applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
-                                                             callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
-            except IndexError:
-                pass
-        if page == 1:
-            prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sakbp_{page - 1}')
-        if page == n_pages:
-            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            next_b = InlineKeyboardButton(text='⏭',
-                                          callback_data=f'sakbp_{page + 1}')  # suitable applicants keyboard page
-        applicants_keyboard.row(prev_b, next_b)
-        applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
-    else:
-        for i in range(0, l):
-            applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
-                                                         callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
-        applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
-    return applicants_keyboard
+# def suitable_applicants_kb(suitable_applicants: list, page: int = 1):
+#     applicants_keyboard = InlineKeyboardMarkup()
+#     apl = 9  # applicants per list
+#     l = len(suitable_applicants)
+#     n_pages = math.ceil(l / apl)  # number of pages
+#
+#     if n_pages > 1:
+#         for i in range(apl * (page - 1), apl * page):
+#             try:
+#                 applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
+#                                                              callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
+#             except IndexError:
+#                 pass
+#         if page == 1:
+#             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+#         else:
+#             prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sakbp_{page - 1}')
+#         if page == n_pages:
+#             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+#         else:
+#             next_b = InlineKeyboardButton(text='⏭',
+#                                           callback_data=f'sakbp_{page + 1}')  # suitable applicants keyboard page
+#         applicants_keyboard.row(prev_b, next_b)
+#         applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
+#     else:
+#         for i in range(0, l):
+#             applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
+#                                                          callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
+#         applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
+#     return applicants_keyboard
 
 
 def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):

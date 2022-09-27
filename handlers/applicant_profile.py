@@ -30,8 +30,8 @@ async def check_profile_a(call: CallbackQuery):
                               f"<b>Хобби:</b> {hobby}\n"
                               f"<b>Темы на обсуждение:</b> {topics}\n"
                               f"<b>Вопросы ко встрече:</b> {topics_details}",
-                         reply_markup=kb3b("Хочу изменить", "change_prof_a2", "Все ок", "applicant_menu", "Сменить роль", "warn_change_role_a"),
-                         disable_notification=True)
+                              reply_markup=kb3b("Хочу изменить", "change_prof_a2", "Все ок", "applicant_menu", "Сменить роль", "warn_change_role_a"),
+                              disable_notification=True)
     logger.debug(f'Applicant {call.from_user.id} entered check_profile_a handler')
 
 
@@ -57,6 +57,7 @@ async def change_profile_a(call: CallbackQuery):
     await call.message.edit_reply_markup()
     logger.debug(f'Applicant {call.from_user.id} entered change_profile_a handler')
 
+
 # Firstname
 @dp.callback_query_handler(text='cha_firstname')
 async def cha_firstname(call: CallbackQuery, state: FSMContext):
@@ -75,6 +76,7 @@ async def cha_firstname2(message: Message, state: FSMContext):
                               disable_notification=True)
     await state.finish()
     logger.debug(f'Applicant {message.from_user.id} entered cha_firstname2 handler')
+
 
 # Lastname
 @dp.callback_query_handler(text='cha_lastname')
@@ -188,7 +190,7 @@ async def cha_grad_year2(message: Message, state: FSMContext):
 @dp.callback_query_handler(text='cha_empl_region')
 async def cha_empl_region(call: CallbackQuery, state: FSMContext):
     await call.message.answer(text="Напиши город/регион, который тебе наиболее интересен для трудоустройства.\n\n"
-                                  "<i>Формат: Москва</i>",
+                              "<i>Формат: Москва</i>",
                               disable_notification=True)
     await state.set_state('cha_empl_region')
     await call.message.edit_reply_markup()
@@ -268,14 +270,13 @@ async def cha_topics2(call: CallbackQuery, state: FSMContext):
     logger.debug(f'Applicant {call.from_user.id} entered cha_topics2 handler with cd {call.data}')
 
 
-
 # Topics details
 @dp.callback_query_handler(text='cha_topics_details')
 async def cha_topics_details(call: CallbackQuery, state: FSMContext):
     await call.message.answer(text="О чем хочешь узнать и какие вопросы обсудить на онлайн-встрече?\n\n"
-                                           "<i>Пример: Хочу узнать подробнее о трудоустройстве в цифровые компании ГК "
-                                           "«Росатом» на позицию разработчика C#: стек технологий, должностные "
-                                           "обязанности, применяются ли технологии разработки Agile, Waterfall</i>",
+                                   "<i>Пример: Хочу узнать подробнее о трудоустройстве в цифровые компании ГК "
+                                   "«Росатом» на позицию разработчика C#: стек технологий, должностные "
+                                   "обязанности, применяются ли технологии разработки Agile, Waterfall</i>",
                               disable_notification=True)
     await state.set_state('cha_topics_details')
     await call.message.edit_reply_markup()

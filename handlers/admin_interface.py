@@ -48,7 +48,7 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
 
 
 @dp.message_handler(Command("add_admin"))
-async def add_admin(message: Message, state: FSMContext):
+async def add_admin(message: Message):
     logger.debug(f'{message.from_user.id} entered /add_admin command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
@@ -60,6 +60,7 @@ async def add_admin(message: Message, state: FSMContext):
                                  f'это сделать',
                                  reply_markup=kb2b("Добавить", "add_admin", "Назад", "applicant_menu"))
             logger.debug(f"Admin {message.from_user.id} entered add_admin handler")
+
 
 @dp.callback_query_handler(text='add_admin')
 async def adding_admin(call: CallbackQuery, state: FSMContext):

@@ -9,7 +9,7 @@ from aiogram.types import Message, CallbackQuery
 from config import directions_list
 from handlers.notifications import notif_cancel_to_applicant, notif_init_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2
-from keyboards import expert_menu_kb, kb1b, suitable_applicants_kb, suitable_applicants_kb2, kb2b, choosing_time_e_cd, meetings_e_kb, slots_e_kb
+from keyboards import expert_menu_kb, kb1b, suitable_applicants_kb2, kb2b, choosing_time_e_cd, meetings_e_kb, slots_e_kb
 from loader import dp, db, scheduler
 from my_logger import logger
 
@@ -21,7 +21,6 @@ async def expert_menu(call: CallbackQuery):
                               reply_markup=expert_menu_kb,
                               disable_notification=True)
     logger.debug(f"Expert {call.from_user.id} entered expert_menu handler")
-
 
 
 def search_applicant(expert_id):
@@ -134,9 +133,7 @@ async def page_click_expert(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^forma_'))
 async def choosing_applicant(call: CallbackQuery):
     applicant_id = int(call.data[6:])
-    print(call.data)
     ad = db.get_applicant(applicant_id)
-    print(ad)
     firstname = ad[5]
     lastname = ad[6]
     direction = directions_list.get(int(ad[7]))
@@ -210,6 +207,7 @@ async def choosing_time(call: CallbackQuery, callback_data: dict):
     logger.debug(f"Expert {call.from_user.id} entered choosing_time handler "
                  f"with applicant {applicant_id} and {slot} slot")
 
+
 @dp.callback_query_handler(text='expert_meetings')
 async def expert_meetings(call: CallbackQuery):
     await call.message.edit_reply_markup()
@@ -246,7 +244,6 @@ async def expert_chosen(call: CallbackQuery):
     em = db.get_expert_meetings(call.from_user.id)
     await call.message.edit_reply_markup(meetings_e_kb(em, page))
     logger.debug(f"Expert {call.from_user.id} entered expert_chosen handler with page {page}")
-
 
 
 @dp.callback_query_handler(Regexp(r'^meeting_e_'))
@@ -310,7 +307,6 @@ async def update_timetable2(call: CallbackQuery, state: FSMContext):
                               disable_notification=True)
     await state.set_state('expert_changing_tt')
     logger.debug(f"Expert {call.from_user.id} entered update_timetable2 handler")
-
 
 
 @dp.message_handler(state='expert_changing_tt')
@@ -383,6 +379,7 @@ async def expert_fb_agree(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup()
     logger.debug(f"Expert {call.from_user.id} entered expert_fb_agree with meeting {meeting_id}")
 
+
 @dp.message_handler(state="expert_writing_feedback")
 async def expert_writing_feedback(message: Message, state: FSMContext):
     fb = message.text
@@ -409,6 +406,7 @@ async def add_photo(call: CallbackQuery):
                                   reply_markup=kb2b("Добавить фото", "update_photo_e", "Назад", "expert_menu"),
                                   disable_notification=True)
 
+
 @dp.callback_query_handler(text='update_photo_e')
 async def update_photo(call: CallbackQuery, state: FSMContext):
     logger.debug(f"Expert {call.from_user.id} entered update_photo handler")
@@ -425,6 +423,7 @@ async def uploading_photo(message: Message, state: FSMContext):
     db.update_user('experts', 'photo', message.from_user.id, photo_id)
     await message.answer('Ваша фотография успешно обновлена', reply_markup=expert_menu_kb, disable_notification=True)
     await state.finish()
+
 
 @dp.message_handler(state='uploading_photo_e')
 async def uploading_photo_msg(message: Message, state: FSMContext):

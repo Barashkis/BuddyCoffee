@@ -8,7 +8,7 @@ from config import directions_list, divisions_list
 from handlers.notifications import notif_init_expert, notif_approved_3hours_to_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
     feedback_notif_applicant, feedback_notif_expert
-from keyboards import applicant_menu_kb, kb1b, suitable_experts_kb, kb2b, slots_a_kb, choosing_time_a_cd, meetings_a_kb, \
+from keyboards import applicant_menu_kb, kb1b, kb2b, slots_a_kb, choosing_time_a_cd, meetings_a_kb, \
     suitable_experts_kb2
 from loader import dp, db, scheduler
 import pytz
@@ -34,12 +34,13 @@ def search_expert(applicant_id):
     suitable_experts = []
     for expert in experts:
         if expert[12] is not None:
-            if any(topic in expert[12].split(', ')  for topic in applicant_topics):
-                if any(datetime.strptime(slot.lstrip().rstrip().replace('\n', ''), '%d.%m.%Y %H:%M') > datetime.today() for slot in expert[11].split(',')):
-                    suitable_experts.append({'user_id': expert[0], 'fullname': expert[5]})
+            if any(topic in expert[12].split(', ') for topic in applicant_topics):
+                # if any(datetime.strptime(slot.lstrip().rstrip().replace('\n', ''), '%d.%m.%Y %H:%M') > datetime.today() for slot in expert[11].split(',')):
+                suitable_experts.append({'user_id': expert[0], 'fullname': expert[5]})
     logger.debug(f"Search_expert function shows that expert {applicant_id} have "
                  f"{len(suitable_experts)} suitable experts")
     return suitable_experts
+
 
 @dp.callback_query_handler(text='search_experts')
 async def search_experts(call: CallbackQuery):
@@ -134,15 +135,15 @@ async def choosing_expert(call: CallbackQuery):
     logger.debug(f"Applicant {call.from_user.id} entered choosing_expert handler with applicant {expert_id}")
 
 
-
 @dp.callback_query_handler(Regexp(r'^choosee_'))
 async def expert_chosen(call: CallbackQuery):
     cd = call.data
     expert_id = int(cd[8:])
     ed = db.get_expert(expert_id)
-    slots_raw = ed[11].split(', ')
+    slots_raw = ed[11].split(',')
     slots = []
     for slot in slots_raw:
+        slot = slot.strip()
         if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
             slots.append(slot)
     await call.message.answer(text="Выбери подходящий слот. <b>В слотах указано московское время</b>",
@@ -187,6 +188,7 @@ async def choosing_time(call: CallbackQuery, callback_data: dict):
     await notif_init_expert(expert_id, slot, applicant_name, meeting_id)
     logger.debug(f"Applicant {call.from_user.id} entered choosing_time handler "
                  f"with expert {expert_id} and {slot} slot")
+
 
 @dp.callback_query_handler(text='applicant_meetings')
 async def applicant_meetings(call: CallbackQuery):
@@ -242,7 +244,6 @@ async def check_meeting(call: CallbackQuery):
     logger.debug(f"Applicant {call.from_user.id} entered check_meeting handler with meeting {meeting_id}")
 
 
-
 @dp.callback_query_handler(Regexp(r'^cancel_meeting_a_'))
 async def meeting_cancelation(call: CallbackQuery):
     meeting_id = int(call.data[17:])
@@ -264,7 +265,6 @@ async def meeting_cancelation(call: CallbackQuery):
             except Exception as e:
                 logging.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
     logger.debug(f"Applicant {call.from_user.id} entered meeting_cancelation handler with meeting {meeting_id}")
-
 
 
 @dp.callback_query_handler(Regexp(r'^denied_a_'))
@@ -346,7 +346,6 @@ async def canceled_3hours(call: CallbackQuery):
     logger.debug(f"Applicant {call.from_user.id} entered canceled_3hours handler with meeting {meeting_id}")
 
 
-
 @dp.callback_query_handler(Regexp(r'^applicant_fb_agree_'))
 async def applicant_fb_agree(call: CallbackQuery, state: FSMContext):
     cd = call.data
@@ -356,7 +355,6 @@ async def applicant_fb_agree(call: CallbackQuery, state: FSMContext):
     await state.set_state(f"applicant_writing_feedback")
     await call.message.edit_reply_markup()
     logger.debug(f"Applicant {call.from_user.id} entered applicant_fb_agree with meeting {meeting_id}")
-
 
 
 @dp.message_handler(state="applicant_writing_feedback")
@@ -403,6 +401,7 @@ async def uploading_photo(message: Message, state: FSMContext):
     await message.answer('Твоя фотография успешно обновлена', reply_markup=applicant_menu_kb, disable_notification=True)
     await state.finish()
 
+
 @dp.message_handler(state='uploading_photo_a')
 async def uploading_photo_msg(message: Message, state: FSMContext):
     logger.debug(f"Applicant {message.from_user.id} entered uploading_photo_msg handler")
@@ -411,6 +410,7 @@ async def uploading_photo_msg(message: Message, state: FSMContext):
                          disable_notification=True,
                          reply_markup=kb2b("Добавить фото", "update_photo_a", "Назад", "applicant_menu"))
     await state.finish()
+
 
 @dp.callback_query_handler(text='faq_a')
 async def add_photo(call: CallbackQuery):
@@ -463,5 +463,5 @@ async def add_photo(call: CallbackQuery):
                               "всё же связаться с собеседником другим способом, напишите нам на почту. Для такого"
                               " запроса сделайте скриншот профиля собеседника, который вам интересен. "
                               "Мы пришлём контакты ответным письмом.",
-                                        reply_markup=kb1b("Назад", "applicant_menu"),
-                                        disable_notification=True)
+                              reply_markup=kb1b("Назад", "applicant_menu"),
+                              disable_notification=True)

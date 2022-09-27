@@ -23,8 +23,8 @@ async def check_profile_e(call: CallbackQuery):
                               f"<b>Дивизион:</b> {division}\n"                                 
                               f"<b>Опыт:</b> {profile}\n"
                               f"<b>Темы на обсуждение:</b> {topics}",
-                         reply_markup=kb3b("Хочу изменить", "change_prof_e2", "Все ок", "expert_menu", "Сменить роль", "warn_change_role_e"),
-                         disable_notification=True)
+                              reply_markup=kb3b("Хочу изменить", "change_prof_e2", "Все ок", "expert_menu", "Сменить роль", "warn_change_role_e"),
+                              disable_notification=True)
     logger.debug(f'Expert {call.from_user.id} entered check_profile_e handler')
 
 
@@ -125,8 +125,8 @@ async def che_division2_1(message: Message, state: FSMContext):
     db.update_user('experts', 'wr_division', message.from_user.id, message.text)
     db.update_user('experts', 'division', message.from_user.id, None)
     await message.answer(text="Ваш дивизион был изменен",
-                                  reply_markup=expert_profile_bk,
-                                  disable_notification=True)
+                         reply_markup=expert_profile_bk,
+                         disable_notification=True)
     await state.finish()
     logger.debug(f'Expert {message.from_user.id} entered che_division2_1 handler')
 

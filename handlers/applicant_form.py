@@ -18,7 +18,7 @@ async def applicant_start(call: CallbackQuery, state: FSMContext):
     date = call.message.date.strftime('%d.%m.%Y %H:%M')
     try:
         db.add_applicant(call.from_user.id, date, call.from_user.username, call.from_user.first_name,
-                     call.from_user.last_name)
+                         call.from_user.last_name)
         await call.answer(cache_time=5)
         await call.message.answer(text="Давай знакомиться! Напиши свое имя.\n\n"
                                        "<i>Формат: Иван</i>",
@@ -29,8 +29,6 @@ async def applicant_start(call: CallbackQuery, state: FSMContext):
         logger.debug(f"Applicant {call.from_user.id} was not recorded as a new user: {e}")
 
 
-
-
 @dp.message_handler(state='applicant_1')
 async def applicant_1(message: Message, state: FSMContext):
     db.update_user('applicants', 'wr_firstname', message.from_user.id, message.text)
@@ -39,7 +37,6 @@ async def applicant_1(message: Message, state: FSMContext):
                               disable_notification=True)
     await state.set_state('applicant_2')
     logger.debug(f"Applicant {message.from_user.id} entered applicant_1 handler")
-
 
 
 @dp.message_handler(state='applicant_2')
@@ -97,7 +94,6 @@ async def applicant_6(message: Message, state: FSMContext):
     logger.debug(f"Applicant {message.from_user.id} entered applicant_6 handler")
 
 
-
 @dp.message_handler(state='applicant_7')
 async def applicant_7(message: Message, state: FSMContext):
     db.update_user('applicants', 'empl_region', message.from_user.id, message.text)
@@ -149,7 +145,6 @@ async def applicant_8_1(call: CallbackQuery, state: FSMContext):
             await call.message.edit_reply_markup()
             await state.set_state('applicant_9')
     logger.debug(f"Applicant {call.from_user.id} entered applicant_8_1 handler with cd {call.data} and sd {sdata}")
-
 
 
 @dp.message_handler(state='applicant_9')

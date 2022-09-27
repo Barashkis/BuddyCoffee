@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from keyboards import kb2b
 from loader import dp, db
 from my_logger import logger
@@ -85,8 +83,8 @@ async def notif_init_expert(expert_id, slot, applicant_name, meeting_id):
 async def feedback_notif_applicant(meeting_id):
     md = db.get_meeting(meeting_id)
     await dp.bot.send_message(md[3], text="✋🏻 Привет! Вчера у тебя была встреча с специалистом Росатома. "
-                                                 "Мы будем тебе признательны, если ты оставишь обратную связь. "
-                                                 "Это поможет нам проводить консультации на более высоком уровне!",
+                                          "Мы будем тебе признательны, если ты оставишь обратную связь. "
+                                          "Это поможет нам проводить консультации на более высоком уровне!",
                               reply_markup=kb2b("Оставить отзыв", f"applicant_fb_agree_{md[0]}",
                                                 "Не хочу писать отзыв", "applicant_menu"))
     logger.debug(f'Applicant {md[3]} got feedback_notif_applicant notification about meeting {meeting_id}')
@@ -95,8 +93,8 @@ async def feedback_notif_applicant(meeting_id):
 async def feedback_notif_expert(meeting_id):
     md = db.get_meeting(meeting_id)
     await dp.bot.send_message(md[2], text="✋🏻 Привет! Вчера у вас была встреча с соискателем. "
-                                                 "Мы будем признательны, если вы оставите обратную связь. "
-                                                 "Это поможет нам проводить консультации на более высоком уровне!",
+                                          "Мы будем признательны, если вы оставите обратную связь. "
+                                          "Это поможет нам проводить консультации на более высоком уровне!",
                               reply_markup=kb2b("Оставить отзыв", f"expert_fb_agree_{md[0]}",
                                                 "Не хочу писать отзыв", "expert_menu"))
     logger.debug(f'Expert {md[2]} got feedback_notif_applicant notification about meeting {meeting_id}')

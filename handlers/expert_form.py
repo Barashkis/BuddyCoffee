@@ -29,8 +29,6 @@ async def expert_start(call: CallbackQuery, state: FSMContext):
         logger.debug(f"Expert {call.from_user.id} was not recorded as a new user: {e}")
 
 
-
-
 @dp.message_handler(state='expert_1')
 async def expert_1(message: Message, state: FSMContext):
     db.update_user('experts', 'wr_fullname', message.from_user.id, message.text)
@@ -69,7 +67,7 @@ async def expert_2_1(call: CallbackQuery, state: FSMContext):
                                   "BootsTrap. Знаю принципы и технологии веб-сайтов, асинхронных веб-приложений, MVC, "
                                   "Razor, http-интерфейсы, умею работать с графическими редакторами, читаю код на "
                                   "C# и Java</i>",
-                             disable_notification=True)
+                                  disable_notification=True)
         await call.message.edit_reply_markup()
         await state.set_state('expert_5')
     logger.debug(f"Expert {call.from_user.id} entered expert_2_1 handler with cd {call.data}")
@@ -200,13 +198,14 @@ async def expert_6_1(call: CallbackQuery, state: FSMContext):
                 await state.finish()
     logger.debug(f"Expert {call.from_user.id} entered expert_6_1 handler with cd {call.data} and sd {sdata}")
 
+
 @dp.message_handler(state='expert_7')
 async def expert_6(message: Message, state: FSMContext):
     text = message.text
     if text[0] == '@':
         db.update_user('experts', 'wr_username', message.from_user.id, message.text[1:].rstrip())
         await message.answer(text="Поздравляем, вы заполнили анкету. "
-                                       "Можно приступать к поиску собеседника",
+                                  "Можно приступать к поиску собеседника",
                              reply_markup=expert_menu_kb,
                              disable_notification=True)
         await state.finish()
