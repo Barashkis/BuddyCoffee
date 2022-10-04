@@ -167,7 +167,7 @@ async def applicant_chosen(call: CallbackQuery):
     await call.message.answer(text="Выбери подходящий пункт",
                               reply_markup=kb3b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_expert",
                                                 "Показать контакты", f"show_contacts_a_{expert_id}",
-                                                "Назад", f"forme_{expert_id}"),
+                                                "Назад", f"forma_{applicant_id}"),
                               disable_notification=True)
 
     logger.debug(f"Expert {call.from_user.id} entered applicant_chosen handler "
