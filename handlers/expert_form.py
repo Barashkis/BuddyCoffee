@@ -1,5 +1,3 @@
-import re
-
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 from keyboards import directions_kb, division_kb, topics_kb, expert_menu_kb
@@ -106,49 +104,16 @@ async def expert_4(message: Message, state: FSMContext):
 @dp.message_handler(state='expert_5')
 async def expert_5(message: Message, state: FSMContext):
     db.update_user('experts', 'profile', message.from_user.id, message.text)
-    await message.answer(text="Какое время для встреч вам удобно? "
-                              "Пожалуйста, напишите не менее 5 слотов для записи. <b>Укажите московское время</b>\n\n"
-                              "<i>Формат:\n"
-                              "25.01.2022 17:00, 27.01.2022 12:30, "
-                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>",
-                              disable_notification=True)
+    await message.answer(text="С удовольствием поговорю на следующие темы:",
+                         reply_markup=topics_kb(),
+                         disable_notification=True)
+
     await state.set_state('expert_6')
     logger.debug(f"Expert {message.from_user.id} entered expert_5 handler")
 
 
-@dp.message_handler(state='expert_6')
-async def expert_6(message: Message, state: FSMContext):
-    text = message.text
-    flg = 0
-    try:
-        slots_list = text.split(',')
-        slots_list = [slot.rstrip().lstrip() for slot in slots_list]
-        for slot in slots_list:
-            if re.match("^\d{1,2}\.\d{1,2}\.\d{4} \d{1,2}:\d{1,2}$", slot) is None:
-                await message.answer(text=f'Бот не смог распознать следующий слот: <i>{slot}</i>\n\n'
-                                          f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                                     disable_notification=True)
-                await state.set_state('expert_6')
-                flg = 1
-                logger.debug(f"Expert {message.from_user.id} entered expert_6 handler but write incorrect slot: {slot}")
-                break
-        if flg == 0:
-            db.update_user('experts', 'slots', message.from_user.id, message.text)
-            await message.answer(text="С удовольствием поговорю на следующие темы:",
-                                 reply_markup=topics_kb(),
-                                 disable_notification=True)
-            await state.set_state('expert_6.1')
-            logger.debug(f"Expert {message.from_user.id} entered expert_6 handler")
-    except Exception as e:
-        logger.warning(f"Expert {message.from_user.id} entered expert_6 handler but got an error: {e}")
-        await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
-                                  f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                             disable_notification=True)
-        await state.set_state('expert_6')
-
-
-@dp.callback_query_handler(state='expert_6.1')
-async def expert_6_1(call: CallbackQuery, state: FSMContext):
+@dp.callback_query_handler(state='expert_6')
+async def expert_6(call: CallbackQuery, state: FSMContext):
     cdata = call.data
     if cdata != 'done':  # if user don't press "Done" button
         async with state.proxy() as data:
@@ -161,12 +126,12 @@ async def expert_6_1(call: CallbackQuery, state: FSMContext):
                 data['list'] = [int(cdata)]
         sdata = await state.get_data()
         await call.message.edit_reply_markup(topics_kb(sdata['list']))
-        await state.set_state('expert_6.1')
+        await state.set_state('expert_6')
     else:
         sdata = await state.get_data()
         if sdata.get('list') is None or not sdata['list']:  # if user did not choose any button
             await call.message.answer('Пожалуйста, выберите минимум одну тему.')
-            await state.set_state('expert_6.1')
+            await state.set_state('expert_6')
         else:
             db.update_user('experts', 'topics', call.from_user.id, str(sdata['list'])[1:-1])
             username = db.get_expert(call.from_user.id)[2]
@@ -196,7 +161,7 @@ async def expert_6_1(call: CallbackQuery, state: FSMContext):
                                           disable_notification=True)
                 await call.message.edit_reply_markup()
                 await state.finish()
-    logger.debug(f"Expert {call.from_user.id} entered expert_6_1 handler with cd {call.data} and sd {sdata}")
+    logger.debug(f"Expert {call.from_user.id} entered expert_6 handler with cd {call.data} and sd {sdata}")
 
 
 @dp.message_handler(state='expert_7')

@@ -29,12 +29,12 @@ def generate_token():
 # send a request with headers including a token and meeting details
 def create_meeting(start_time):
     # create json data for post requests
-    meetingdetails = {"topic": "Встреча со специалистом РосАтома",
+    meetingdetails = {"topic": "Встреча со специалистом Росатома",
                       "type": 2,
                       "start_time": start_time,
                       "duration": "40",
                       "timezone": "Europe/Moscow",
-                      "agenda": "Встреча со специалистом РосАтома",
+                      "agenda": "Встреча со специалистом Росатома",
                       "settings": {"host_video": True,
                                    "participant_video": True,
                                    "join_before_host": True,
@@ -48,8 +48,6 @@ def create_meeting(start_time):
     r = requests.post(
         f'https://api.zoom.us/v2/users/me/meetings',
         headers=headers, data=json.dumps(meetingdetails))
-    print(meetingdetails)
-    # print(r.text)
     # converting the output into json and extracting the details
     y = json.loads(r.text)
     join_url = y["join_url"]

@@ -7,10 +7,10 @@ from datetime import datetime, timedelta
 from config import directions_list, divisions_list
 from handlers.notifications import notif_init_expert, notif_approved_3hours_to_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
-    feedback_notif_applicant, feedback_notif_expert
-from keyboards import applicant_menu_kb, kb1b, kb2b, slots_a_kb, choosing_time_a_cd, meetings_a_kb, \
+    feedback_notif_applicant, feedback_notif_expert, notif_init_applicant
+from keyboards import applicant_menu_kb, kb1b, kb2b, kb3b, slots_kb, choosing_time_cd, meetings_a_kb, \
     suitable_experts_kb2
-from loader import dp, db, scheduler
+from loader import dp, db, scheduler, bot
 import pytz
 import re
 
@@ -139,53 +139,75 @@ async def choosing_expert(call: CallbackQuery):
 async def expert_chosen(call: CallbackQuery):
     cd = call.data
     expert_id = int(cd[8:])
-    ed = db.get_expert(expert_id)
-    slots_raw = ed[11].split(',')
-    slots = []
-    for slot in slots_raw:
-        slot = slot.strip()
-        if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
-            slots.append(slot)
-    await call.message.answer(text="Выбери подходящий слот. <b>В слотах указано московское время</b>",
-                              reply_markup=slots_a_kb(expert_id, slots),
-                              disable_notification=True)
+
     await call.message.edit_reply_markup()
+    await call.message.answer(text="Выбери подходящий пункт",
+                              reply_markup=kb3b("Отправить приглашение эксперту", f"send_invitation_{expert_id}",
+                                                "Показать контакты", f"show_contacts_a_{expert_id}",
+                                                "Назад", f"forme_{expert_id}"),
+                              disable_notification=True)
     logger.debug(f"Applicant {call.from_user.id} entered expert_chosen handler "
-                 f"with applicant {expert_id} and {len(slots)} free slots")
+                 f"with expert {expert_id}")
+
+
+@dp.callback_query_handler(Regexp(r'^send_invitation_'))
+async def sending_invitation(call: CallbackQuery):
+    expert_id = int(call.data.split('_')[2])
+
+    applicant_id = call.from_user.id
+    applicant_name = db.get_applicant(applicant_id)[5]
+
+    await bot.send_message(expert_id,
+                           text=f"Соискатель {applicant_name} хочет с вами встретиться",
+                           reply_markup=kb1b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_applicant"),
+                           disable_notification=True)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer("Приглашение провести конференцию было отправлено выбранному эксперту. "
+                              "Вскоре он предложит возможные даты ее проведения. Мы оповестим тебя, когда "
+                              "придет время выбора времени!",
+                              reply_markup=kb1b('Вернуться в главное меню', 'applicant_menu'),
+                              disable_notification=True)
+
+    logger.debug(f"Applicant {call.from_user.id} entered send_invitation handler to hire with expert {expert_id}")
 
 
 @dp.callback_query_handler(Regexp(r'^skbp_'))  # words both for applicant's menu and expert's menu
 async def expert_chosen(call: CallbackQuery):
     expert_id = int(re.split('_', call.data)[1])
+    init_by = re.split('_', call.data)[5]
     slots = db.get_expert(expert_id)[11].split(', ')
     page = int(re.split('_', call.data)[2])
-    await call.message.edit_reply_markup(slots_a_kb(expert_id, slots, page))
+    await call.message.edit_reply_markup(slots_kb(expert_id, init_by, slots, page))
     logger.debug(f"User {call.from_user.id} entered expert_chosen handler with page {page}")
 
 
-@dp.callback_query_handler(choosing_time_a_cd.filter())
+@dp.callback_query_handler(choosing_time_cd.filter())
 async def choosing_time(call: CallbackQuery, callback_data: dict):
     await call.message.edit_reply_markup()
+    init_by = callback_data.get('init_by')
     expert_id = callback_data.get('expert_id')
     applicant_id = call.from_user.id
-    applicant_name = db.get_applicant(applicant_id)[5]
-    n_slot = int(callback_data.get('slot'))  # slot number
-    experts_slots = db.get_expert(expert_id)[11]
-    slots_raw = experts_slots.split(', ')
-    esl = []
-    for slot in slots_raw:
-        if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
-            esl.append(slot)
-    slot = esl[n_slot]
+    slot = callback_data.get('slot').replace("%", ":")
     td = datetime.now(tz=pytz.timezone('Europe/Moscow')).strftime('%d.%m.%Y')
-    db.add_meeting(td, expert_id, applicant_id, slot, 'Инициирована соискателем')
+    meeting_status = 'Инициирована экспертом' if init_by == "expert" else 'Инициирована соискателем'
+
+    db.add_meeting(td, expert_id, applicant_id, slot, meeting_status)
     meeting_id = db.get_last_insert_meeting_id(expert_id, applicant_id)[0]
     await call.message.answer(text="Отличный выбор! Оставайся на связи, мы напомним тебе о встрече! "
                                    "Если хочешь перенести или отменить встречу, выбери пункт в меню 'Мои встречи'",
                               reply_markup=kb1b('Вернуться в главное меню', 'applicant_menu'),
                               disable_notification=True)
-    db.update_user('applicants', 'status', call.from_user.id, 'Инициировал встречу')
-    await notif_init_expert(expert_id, slot, applicant_name, meeting_id)
+
+    if init_by == "expert":
+        expert_fullname = db.get_expert(expert_id)[5]
+        await notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id)
+    else:
+        db.update_user('applicants', 'status', call.from_user.id, 'Инициировал встречу')
+
+        applicant_name = db.get_applicant(applicant_id)[5]
+        await notif_init_expert(expert_id, slot, applicant_name, meeting_id)
+
     logger.debug(f"Applicant {call.from_user.id} entered choosing_time handler "
                  f"with expert {expert_id} and {slot} slot")
 

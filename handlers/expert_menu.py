@@ -1,16 +1,16 @@
 import re
 from datetime import datetime, timedelta
 
-import pytz
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import Message, CallbackQuery
 
 from config import directions_list
-from handlers.notifications import notif_cancel_to_applicant, notif_init_applicant, notif_1day, \
+from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2
-from keyboards import expert_menu_kb, kb1b, suitable_applicants_kb2, kb2b, choosing_time_e_cd, meetings_e_kb, slots_e_kb
-from loader import dp, db, scheduler
+from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
+    slots_kb
+from loader import bot, dp, db, scheduler
 from my_logger import logger
 
 
@@ -160,52 +160,92 @@ async def choosing_applicant(call: CallbackQuery):
 
 @dp.callback_query_handler(Regexp(r'^choosea_'))
 async def applicant_chosen(call: CallbackQuery):
-    await call.message.edit_reply_markup()
     applicant_id = call.data[8:]
     expert_id = call.from_user.id
-    ed = db.get_expert(expert_id)
-    slots_raw = ed[11].split(', ')
-    slots = []
-    for slot in slots_raw:
-        if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
-            slots.append(slot)
-    if len(slots) > 0:
-        await call.message.answer(text="Выберите подходящий слот",
-                                  reply_markup=slots_e_kb(expert_id, applicant_id, slots),
-                                  disable_notification=True)
-    else:
-        await call.message.answer(text="Кажется, у вас не осталось подходящих временных слотов. "
-                                       "Обновите ваш список слотов.",
-                                  reply_markup=expert_menu_kb,
-                                  disable_notification=True)
-    logger.debug(f"Expert {call.from_user.id} entered applicant_chosen handler "
-                 f"with applicant {applicant_id} and {len(slots)} free slots")
 
-
-@dp.callback_query_handler(choosing_time_e_cd.filter())
-async def choosing_time(call: CallbackQuery, callback_data: dict):
     await call.message.edit_reply_markup()
-    expert_id = call.from_user.id
-    applicant_id = callback_data.get('applicant_id')
-    expert_fullname = db.get_expert(expert_id)[5]
-    n_slot = int(callback_data.get('slot'))  # slot number
-    experts_slots = db.get_expert(expert_id)[11]
-    slots_raw = experts_slots.split(', ')
-    esl = []
-    for slot in slots_raw:
-        if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
-            esl.append(slot)
-    slot = esl[n_slot]
-    td = datetime.now(tz=pytz.timezone('Europe/Moscow')).strftime('%d.%m.%Y')
-    db.add_meeting(td, expert_id, applicant_id, slot, 'Инициирована экспертом')
-    meeting_id = db.get_last_insert_meeting_id(expert_id, applicant_id)[0]  # ????
-    await call.message.answer(text="Отличный выбор! Оставайтесь на связи, мы напомним о встрече! "
-                                   "Если хотите перенести или отменить встречу, выбери пункт в меню 'Мои встречи'",
-                              reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
+    await call.message.answer(text="Выбери подходящий пункт",
+                              reply_markup=kb3b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_expert",
+                                                "Показать контакты", f"show_contacts_a_{expert_id}",
+                                                "Назад", f"forme_{expert_id}"),
                               disable_notification=True)
-    await notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id)
-    logger.debug(f"Expert {call.from_user.id} entered choosing_time handler "
-                 f"with applicant {applicant_id} and {slot} slot")
+
+    logger.debug(f"Expert {call.from_user.id} entered applicant_chosen handler "
+                 f"with applicant {applicant_id}")
+
+
+@dp.callback_query_handler(Regexp(r'^send_free_slots_'))
+async def send_free_slots(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+    await call.message.answer("Введите временные слоты, когда вам удобно провести встречу, "
+                              "желательно указать несколько. <b>Укажите московское время</b>\n\n"
+                              "<i>Формат:\n"
+                              "25.01.2022 17:00, 27.01.2022 12:30, "
+                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>")
+
+    await state.set_state('input_slots')
+    async with state.proxy() as data:
+        call_data_list = call.data.split("_")
+
+        data["applicant_id"] = int(call_data_list[3])
+        data["init_by"] = call_data_list[6]
+
+    logger.debug(f"Expert {call.from_user.id} entered send_free_slots handler")
+
+
+@dp.message_handler(state='input_slots')
+async def notify_applicant_about_slots(message: Message, state: FSMContext):
+    async with state.proxy() as data:
+        applicant_id = data["applicant_id"]
+        init_by = data["init_by"]
+
+    text = message.text
+    try:
+        slots_list = text.split(',')
+        slots_list = [slot.lstrip().rstrip() for slot in slots_list]
+        esl = []
+        for slot in slots_list:
+            if not re.match("^\d{1,2}\.\d{1,2}\.\d{4} \d{1,2}:\d{1,2}$", slot):
+                await message.answer(text=f'Бот не смог распознать следующий слот: <i>{slot}</i>\n\n'
+                                          'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
+                                     disable_notification=True)
+                await state.set_state('input_slots')
+                logger.debug(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
+
+                return
+
+            if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
+                esl.append(slot)
+
+        if esl:
+            expert_name = db.get_expert(message.from_user.id)[5]
+            await bot.send_message(applicant_id,
+                                   text=f"Эксперт {expert_name} отправил тебе временные слоты, "
+                                        "когда он может провести конференцию. Выбери один из них",
+                                   reply_markup=slots_kb(message.from_user.id, init_by, esl),
+                                   disable_notification=True)
+
+            await message.answer(text="Слоты были отправлены выбранному соискателю. "
+                                      "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
+                                      "информацию о встрече, если она будет подтверждена",
+                                 reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
+                                 disable_notification=True)
+            await state.finish()
+
+            logger.debug(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
+        else:
+            logger.warning(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but slots is overdue")
+            await message.answer(text='Ни один из введенных Вами слотов не является действующим. '
+                                      'Отправьте временные слоты еще раз',
+                                 disable_notification=True)
+            await state.set_state('input_slots')
+
+    except Exception as e:
+        logger.warning(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but got an error: {e}")
+        await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
+                                  f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
+                             disable_notification=True)
+        await state.set_state('input_slots')
 
 
 @dp.callback_query_handler(text='expert_meetings')
@@ -282,62 +322,6 @@ async def meeting_cancelation(call: CallbackQuery):
                 logger.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
     await notif_cancel_to_applicant(applicant_id, meeting_date, expert_name)
     logger.debug(f"Expert {call.from_user.id} entered meeting_cancelation handler with meeting {meeting_id}")
-
-
-@dp.callback_query_handler(text='update_timetable')
-async def update_timetable(call: CallbackQuery):
-    await call.message.edit_reply_markup()
-    ed = db.get_expert(call.from_user.id)
-    tt = ed[11]
-    await call.message.answer(text=f"Ваше текущее расписание. <b>Время по МСК</b>:\n\n"
-                                   f"{tt}",
-                              reply_markup=kb2b("Изменить", "update_tt2", "Назад", "expert_menu"),
-                              disable_notification=True)
-    logger.debug(f"Expert {call.from_user.id} entered update_timetable handler")
-
-
-@dp.callback_query_handler(text='update_tt2')
-async def update_timetable2(call: CallbackQuery, state: FSMContext):
-    await call.message.edit_reply_markup()
-    await call.message.answer(text="Какое время для встреч вам удобно? "
-                                   "Пожалуйста, напишите не менее 5 слотов для записи. <b>Укажите московское время</b>\n\n"
-                                   "<i>Формат:\n"
-                                   "25.01.2022 17:00, 27.01.2022 12:30, "
-                                   "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>",
-                              disable_notification=True)
-    await state.set_state('expert_changing_tt')
-    logger.debug(f"Expert {call.from_user.id} entered update_timetable2 handler")
-
-
-@dp.message_handler(state='expert_changing_tt')
-async def expert_changing_tt(message: Message, state: FSMContext):
-    text = message.text
-    flg = 0
-    try:
-        slots_list = text.split(',')
-        slots_list = [slot.rstrip().lstrip() for slot in slots_list]
-        for slot in slots_list:
-            if re.match("^\d{1,2}\.\d{1,2}\.\d{4} \d{1,2}:\d{1,2}$", slot) is None:
-                await message.answer(text=f'Бот не смог распознать следующий слот: <i>{slot}</i>\n\n'
-                                          f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                                     disable_notification=True)
-                await state.set_state('expert_changing_tt')
-                flg = 1
-                logger.debug(f"Expert {message.from_user.id} entered expert_changing_tt but write incorrect slot: {slot}")
-                break
-        if flg == 0:
-            db.update_user('experts', 'slots', message.from_user.id, message.text)
-            await message.answer(text="Ваше расписание изменено",
-                                 reply_markup=kb1b("Назад в главное меню", "expert_menu"),
-                                 disable_notification=True)
-            logger.debug(f"Expert {message.from_user.id} entered expert_changing_tt and changed timetable")
-            await state.finish()
-    except Exception as e:
-        await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
-                                  f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                             disable_notification=True)
-        await state.set_state('expert_changing_tt')
-        logger.warning(f"Expert {message.from_user.id} entered expert_changing_tt and got an error: {e}")
 
 
 @dp.callback_query_handler(Regexp(r'^denied_e'))

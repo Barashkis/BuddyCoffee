@@ -5,8 +5,7 @@ from aiogram.utils.callback_data import CallbackData
 
 from config import directions_list, divisions_list, topics_list
 
-choosing_time_a_cd = CallbackData('choosing_time_a', 'expert_id', 'slot')
-choosing_time_e_cd = CallbackData('choosing_time_e', 'applicant_id', 'slot')
+choosing_time_cd = CallbackData('choosing_time_a', 'expert_id', 'slot', 'init_by')
 
 
 def kb1b(txt, cd):
@@ -91,7 +90,6 @@ expert_menu_kb = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text='Посмотреть анкеты соискателей', callback_data='search_applicants')],
         [InlineKeyboardButton(text='Мои встречи', callback_data='expert_meetings')],
-        [InlineKeyboardButton(text='Обновить расписание', callback_data='update_timetable')],
         [InlineKeyboardButton(text='Добавить фото к анкете', callback_data='add_photo_e')],
         [InlineKeyboardButton(text='Изменить профиль', callback_data='change_prof_e')]
 
@@ -161,37 +159,6 @@ expert_profile_bk = InlineKeyboardMarkup(
 )
 
 
-# def suitable_experts_kb(suitable_experts: list, page: int = 1):
-#     experts_keyboard = InlineKeyboardMarkup()
-#     epl = 9  # experts per list
-#     l = len(suitable_experts)
-#     n_pages = math.ceil(l / epl)  # number of pages
-#
-#     if n_pages > 1:
-#         for i in range(epl * (page - 1), epl * page):
-#             try:
-#                 experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
-#                                                           callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
-#             except IndexError:
-#                 pass
-#         if page == 1:
-#             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-#         else:
-#             prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sekbp_{page - 1}')
-#         if page == n_pages:
-#             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-#         else:
-#             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')  # suitable experts keyboard page
-#         experts_keyboard.row(prev_b, next_b)
-#         experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
-#     else:
-#         for i in range(0, l):
-#             experts_keyboard.add(InlineKeyboardButton(text=suitable_experts[i].get('fullname'),
-#                                                       callback_data=f"forme_{suitable_experts[i].get('user_id')}"))
-#         experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
-#     return experts_keyboard
-
-
 def suitable_experts_kb2(suitable_experts: list, page: int = 1):
     experts_keyboard = InlineKeyboardMarkup()
     n_experts = len(suitable_experts)
@@ -215,38 +182,6 @@ def suitable_experts_kb2(suitable_experts: list, page: int = 1):
     experts_keyboard.row(prev_b, choose_b, next_b)
     experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='applicant_menu'))
     return experts_keyboard
-
-
-# def suitable_applicants_kb(suitable_applicants: list, page: int = 1):
-#     applicants_keyboard = InlineKeyboardMarkup()
-#     apl = 9  # applicants per list
-#     l = len(suitable_applicants)
-#     n_pages = math.ceil(l / apl)  # number of pages
-#
-#     if n_pages > 1:
-#         for i in range(apl * (page - 1), apl * page):
-#             try:
-#                 applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
-#                                                              callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
-#             except IndexError:
-#                 pass
-#         if page == 1:
-#             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-#         else:
-#             prev_b = InlineKeyboardButton(text='⏮', callback_data=f'sakbp_{page - 1}')
-#         if page == n_pages:
-#             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-#         else:
-#             next_b = InlineKeyboardButton(text='⏭',
-#                                           callback_data=f'sakbp_{page + 1}')  # suitable applicants keyboard page
-#         applicants_keyboard.row(prev_b, next_b)
-#         applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
-#     else:
-#         for i in range(0, l):
-#             applicants_keyboard.add(InlineKeyboardButton(text=suitable_applicants[i].get('wr_firstname'),
-#                                                          callback_data=f"forma_{suitable_applicants[i].get('user_id')}"))
-#         applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
-#     return applicants_keyboard
 
 
 def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
@@ -274,7 +209,7 @@ def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
     return applicants_keyboard
 
 
-def slots_a_kb(expert_id: int, slots: list, page: int = 1):
+def slots_kb(expert_id: int, init_by: str, slots: list, page: int = 1):
     slots_keyboard = InlineKeyboardMarkup()
     spl = 9  # slots per list
     l = len(slots)
@@ -282,64 +217,33 @@ def slots_a_kb(expert_id: int, slots: list, page: int = 1):
 
     if n_pages > 1:
         for i in range(spl * (page - 1), spl * page):
+            slot_for_cd = slots[i].replace(":", "%")
+
             try:
                 slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                        callback_data=choosing_time_a_cd.new(expert_id=expert_id,
-                                                                                             slot=i)))
+                                                        callback_data=choosing_time_cd.new(expert_id=expert_id,
+                                                                                           slot=slot_for_cd,
+                                                                                           init_by=init_by)))
             except IndexError:
                 pass
         if page == 1:
             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}')
+            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}_init_by_{init_by}')
         if page == n_pages:
             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         else:
-            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}')
+            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}')
         slots_keyboard.row(prev_b, next_b)
         slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_a_{expert_id}'))
         slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forme_{expert_id}'))
     else:
         for i in range(0, l):
+            slot_for_cd = slots[i].replace(":", "%")
             slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                    callback_data=choosing_time_a_cd.new(expert_id=expert_id, slot=i)))
-        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_a_{expert_id}'))
-        slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forme_{expert_id}'))
-    return slots_keyboard
-
-
-def slots_e_kb(expert_id: int, applicant_id: int, slots: list, page: int = 1):
-    slots_keyboard = InlineKeyboardMarkup()
-    spl = 9  # slots per list
-    l = len(slots)
-    n_pages = math.ceil(l / spl)  # number of pages
-
-    if n_pages > 1:
-        for i in range(spl * (page - 1), spl * page):
-            try:
-                slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                        callback_data=choosing_time_e_cd.new(applicant_id=applicant_id,
-                                                                                             slot=i)))
-            except IndexError:
-                pass
-        if page == 1:
-            prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}')
-        if page == n_pages:
-            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-        else:
-            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}')
-        slots_keyboard.row(prev_b, next_b)
-        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_e_{applicant_id}'))
-        slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forma_{expert_id}'))
-    else:
-        for i in range(0, l):
-            slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                    callback_data=choosing_time_e_cd.new(applicant_id=applicant_id,
-                                                                                         slot=i)))
-        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_e_{applicant_id}'))
-        slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'search_applicants'))
+                                                    callback_data=choosing_time_cd.new(expert_id=expert_id,
+                                                                                       slot=slot_for_cd,
+                                                                                       init_by=init_by)))
     return slots_keyboard
 
 

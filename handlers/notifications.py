@@ -44,7 +44,7 @@ async def notif_cancel_3hours_to_expert(expert_id):
 async def notif_1day(applicant_id):
     await dp.bot.send_message(applicant_id,
                               text="Напоминаем о запланированной встрече. Подробности о встрече ты можешь "
-                                   "узнать в меню 'мои встречи'. За 3 часа до встречи мы отправим "
+                                   "узнать в меню 'Мои встречи'. За 3 часа до встречи мы отправим "
                                    "уведомление, на которое нужно будет оперативно откликнуться и "
                                    "подтвердить или отклонить готовность присутствовать на встрече.")
     logger.debug(f'Applicant {applicant_id} got notif_1day notification')
@@ -73,7 +73,7 @@ async def notif_cancel_to_expert(expert_id, meeting_date, applicant_name):
 
 
 async def notif_init_expert(expert_id, slot, applicant_name, meeting_id):
-    await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} назначил вам встречу {slot}. <b>Указано московское время</b>  '
+    await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} назначил вам встречу {slot}. <b>Указано московское время</b>. '
                                               f'Вы подтверждаете ее?',
                               reply_markup=kb2b("Подтверждаю ✅", f'approved_e_{meeting_id}',
                                                 "Не подтверждаю ❌", f"denied_e_{meeting_id}"))
