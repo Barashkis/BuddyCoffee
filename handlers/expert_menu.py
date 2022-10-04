@@ -166,7 +166,7 @@ async def applicant_chosen(call: CallbackQuery):
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
                               reply_markup=kb3b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_expert",
-                                                "Показать контакты", f"show_contacts_a_{expert_id}",
+                                                "Показать контакты", f"show_contacts_a_{applicant_id}",
                                                 "Назад", f"forma_{applicant_id}"),
                               disable_notification=True)
 
@@ -264,8 +264,8 @@ async def expert_meetings(call: CallbackQuery):
         logger.debug(f"Expert {call.from_user.id} entered exert_meetings handler but he doesn't have meetings yet")
 
 
-@dp.callback_query_handler(Regexp(r'^show_contacts_e_'))
-async def show_contacts_e(call: CallbackQuery):
+@dp.callback_query_handler(Regexp(r'^show_contacts_a_'))
+async def show_contacts_a(call: CallbackQuery):
     db.update_stat("experts")
 
     applicant_id = int(call.data[16:])
