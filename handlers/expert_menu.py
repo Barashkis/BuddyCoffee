@@ -161,7 +161,6 @@ async def choosing_applicant(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^choosea_'))
 async def applicant_chosen(call: CallbackQuery):
     applicant_id = call.data[8:]
-    expert_id = call.from_user.id
 
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
