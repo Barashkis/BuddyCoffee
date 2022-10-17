@@ -41,16 +41,28 @@ from aiogram.utils.deep_linking import decode_payload
 
 @dp.message_handler(Command("menu"))
 async def start(message: Message):
-    if db.get_expert(message.from_user.id) is None:
+    user_expert = db.get_expert(message.from_user.id)
+    user_applicant = db.get_applicant(message.from_user.id)
+
+    if user_applicant:
         await message.answer(text="Ты в главном меню. Если захочешь вернуться сюда, воспользуйся командой /menu",
                              reply_markup=applicant_menu_kb,
                              disable_notification=True)
         logger.debug(f'Applicant {message.from_user.id} use /menu command')
+    elif user_expert:
+        if user_expert[14] != "На модерации":
+            await message.answer(text="Вы в главном меню. Если захотите сюда вернуться, используйте команду /menu",
+                                 reply_markup=expert_menu_kb,
+                                 disable_notification=True)
+            logger.debug(f'Expert {message.from_user.id} use /menu command')
+        else:
+            await message.answer("Вы не можете использовать функционал бота, пока Ваша анкета находится на модерации")
+
+            logger.debug(f'Expert on moderation {message.from_user.id} use /menu command')
     else:
-        await message.answer(text="Вы в главном меню. Если захотите сюда вернуться, используйте команду /menu",
-                             reply_markup=expert_menu_kb,
-                             disable_notification=True)
-        logger.debug(f'Expert {message.from_user.id} use /menu command')
+        await message.answer("Вы не зарегистрированы в боте. Чтобы зарегистрироваться, введите команду /start")
+
+        logger.debug(f'User {message.from_user.id} use /menu command')
 
 
 @dp.message_handler(Command("start"))

@@ -34,6 +34,11 @@ async def on_startup(dispatcher):
         logger.info('Table "stats" is created')
     except Exception as e:
         logger.info(e)
+    try:
+        db.cr_table_local_contacts()
+        logger.info('Table "local_contacts" is created')
+    except Exception as e:
+        logger.info(e)
     logger.info('Bot is running')
 
 

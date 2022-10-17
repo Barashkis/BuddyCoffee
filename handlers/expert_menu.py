@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 
 from config import directions_list
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
-    notif_3hours, notif_cancel_to_applicant2
+    notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
     slots_kb
 from loader import bot, dp, db, scheduler
@@ -274,6 +274,10 @@ async def show_contacts_a(call: CallbackQuery):
     await call.message.answer(f"Если по каким-то причинам Вы хотите связаться с соискателем лично, вот его контакты - @{ad[2]}. "
                               "Обратите внимание, если Вы видите @None вместо контакта, значит, с этим пользователем "
                               "можно связаться только в запланированной встрече")
+
+    notif_date = datetime.now() + timedelta(hours=3)
+    scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(call.from_user.id, applicant_id,))
+
     logger.debug(f"Expert {call.from_user.id} entered show_contacts handler")
 
 

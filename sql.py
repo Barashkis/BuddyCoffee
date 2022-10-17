@@ -108,6 +108,16 @@ class Database:
 """
         self.execute(sql, commit=True)
 
+    def cr_table_local_contacts(self):
+        sql = """
+        CREATE TABLE local_contacts (
+            init_by INTEGER,
+            second_user INTEGER,
+            status TEXT
+            );
+    """
+        self.execute(sql, commit=True)
+
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join([
@@ -127,7 +137,6 @@ class Database:
         """
         return self.execute(sql, parameters=(user_id, join_date, username, firstname, lastname), commit=True)
 
-
     def add_admin(self, admin_id):
         sql = f"""
         INSERT INTO admins(admin_id) VALUES({admin_id})
@@ -140,6 +149,12 @@ class Database:
         VALUES('experts'), ('applicants');
         """
         return self.execute(sql, commit=True)
+
+    def add_local_contact(self, init_by, second_user, status):
+        sql = f"""
+        INSERT INTO local_contacts(init_by, second_user, status) VALUES(?, ?, ?)
+        """
+        return self.execute(sql, parameters=(init_by, second_user, status), commit=True)
 
     def get_admins(self):
         sql = f"""
@@ -177,6 +192,12 @@ class Database:
         '''
         return self.execute(sql, fetchone=True)
 
+    def get_experts_to_confirm(self):
+        sql = f'''
+        SELECT * FROM experts WHERE status = 'На модерации'
+        '''
+        return self.execute(sql, fetchall=True)
+
     def get_experts(self):
         sql = f'''
         SELECT * FROM experts
@@ -194,7 +215,6 @@ class Database:
         SELECT user_id FROM applicants WHERE status is NULL
         '''
         return self.execute(sql, fetchall=True)
-
 
     def get_applicant_meetings(self, user_id):
         sql = f'''
@@ -251,6 +271,11 @@ class Database:
         '''
         return self.execute(sql, fetchone=True)
 
+    def delete_user(self, table, user_id):
+        sql = f'''
+        DELETE FROM {table} WHERE user_id={user_id};
+        '''
+        return self.execute(sql, commit=True)
 
     def get_meeting_fb_a(self):
         sql = f'''
@@ -264,8 +289,9 @@ class Database:
         '''
         return self.execute(sql, commit=True)
 
-    def transfer_data(self, user_id, join_date, username, firstname, lastname, wr_firstname, wr_lastname, direction, profile,
-        institution, grad_year, empl_region, hobby, topics, topics_details, status):
+    def transfer_data(self, user_id, join_date, username, firstname, lastname, wr_firstname, wr_lastname, direction,
+                      profile,
+                      institution, grad_year, empl_region, hobby, topics, topics_details, status):
         sql = f'''
         INSERT INTO applicants(user_id, join_date, username, firstname, lastname, wr_firstname, wr_lastname, direction, profile,
         institution, grad_year, empl_region, hobby, topics, topics_details, status)
@@ -273,5 +299,6 @@ class Database:
         NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),
         NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''),NULLIF(?, ''), NULLIF(?, ''))
         '''
-        return self.execute(sql, parameters=(user_id, join_date, username, firstname, lastname, wr_firstname, wr_lastname, direction, profile,
+        return self.execute(sql, parameters=(
+        user_id, join_date, username, firstname, lastname, wr_firstname, wr_lastname, direction, profile,
         institution, grad_year, empl_region, hobby, topics, topics_details, status), commit=True)

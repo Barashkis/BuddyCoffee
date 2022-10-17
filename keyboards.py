@@ -170,7 +170,6 @@ def suitable_experts_kb2(suitable_experts: list, page: int = 1):
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sekbp_{page + 1}')
         else:
             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-
     else:
         prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         choose_b = InlineKeyboardButton(text='Выбрать',
@@ -195,7 +194,6 @@ def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'sakbp_{page + 1}')
         else:
             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
-
     else:
         prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         choose_b = InlineKeyboardButton(text='Выбрать',
@@ -207,6 +205,30 @@ def suitable_applicants_kb2(suitable_applicants: list, page: int = 1):
     applicants_keyboard.row(prev_b, choose_b, next_b)
     applicants_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='expert_menu'))
     return applicants_keyboard
+
+
+def experts_to_confirm_kb2(experts_to_confirm: list, page: int = 1):
+    experts_keyboard = InlineKeyboardMarkup()
+    n_experts = len(experts_to_confirm)
+    if page > 1:
+        prev_b = InlineKeyboardButton(text='⏮', callback_data=f'admin_sekbp_{page - 1}')
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"admin_choosee_{experts_to_confirm[page - 1][0]}")
+        if n_experts > page:
+            next_b = InlineKeyboardButton(text='⏭', callback_data=f'admin_sekbp_{page + 1}')
+        else:
+            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+    else:
+        prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+        choose_b = InlineKeyboardButton(text='Выбрать',
+                                        callback_data=f"admin_choosee_{experts_to_confirm[page - 1][0]}")
+        if n_experts > page:
+            next_b = InlineKeyboardButton(text='⏭', callback_data=f'admin_sekbp_{page + 1}')
+        else:
+            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+    experts_keyboard.row(prev_b, choose_b, next_b)
+    experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='close_list'))
+    return experts_keyboard
 
 
 def slots_kb(expert_id: int, init_by: str, slots: list, page: int = 1):
@@ -235,8 +257,6 @@ def slots_kb(expert_id: int, init_by: str, slots: list, page: int = 1):
         else:
             next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}')
         slots_keyboard.row(prev_b, next_b)
-        slots_keyboard.add(InlineKeyboardButton(text='Показать контакты', callback_data=f'show_contacts_a_{expert_id}'))
-        slots_keyboard.add(InlineKeyboardButton(text='Назад', callback_data=f'forme_{expert_id}'))
     else:
         for i in range(0, l):
             slot_for_cd = slots[i].replace(":", "%")

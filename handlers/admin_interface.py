@@ -1,9 +1,10 @@
 import asyncio
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters import Command, Regexp
 from aiogram.types import Message, CallbackQuery
 
-from keyboards import kb2b, applicant_menu_kb
+from config import divisions_list, directions_list, topics_list
+from keyboards import kb2b, experts_to_confirm_kb2, kb3b, expert_menu_kb
 from loader import dp, db, bot
 from my_logger import logger
 
@@ -41,8 +42,7 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
             await asyncio.sleep(.05)
         except Exception as e:
             logger.debug(e)
-    await message.answer(f'Ваше сообщение было отправлено {len(inactive_users)} пользователям',
-                         reply_markup=applicant_menu_kb)
+    await message.answer(f'Ваше сообщение было отправлено {len(inactive_users)} пользователям')
     await state.finish()
     logger.debug(f"Admin {message.from_user.id} send notification to inactive users")
 
@@ -74,13 +74,11 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
     try:
         new_admin = message.forward_from.id
         db.add_admin(new_admin)
-        await message.answer("Пользователь был добавлен в список модераторов бота",
-                             reply_markup=applicant_menu_kb)
+        await message.answer("Пользователь был добавлен в список модераторов бота")
         await state.finish()
         logger.debug(f"Admin {message.from_user.id} added new admin to bot: {new_admin}")
     except Exception as e:
-        await message.answer("Что-то пошло не так, бот не смог добавить нового пользователя в список модераторов",
-                             reply_markup=applicant_menu_kb)
+        await message.answer("Что-то пошло не так, бот не смог добавить нового пользователя в список модераторов")
         await state.finish()
         logger.warning(f"Admin {message.from_user.id} tried to add new admin to bot but cause an error: {e}")
 
@@ -96,7 +94,172 @@ async def show_stats(message: Message):
             admin_ids.append(t[0])
         if message.from_user.id in admin_ids:
             stats = db.get_stats()
-            await message.answer(f'В базе {stats[0][1]} экспертов и {stats[1][1]} соискателей, нажавших на кнопку "Показать контакты"',
-                                 reply_markup=applicant_menu_kb)
+            await message.answer(
+                f'В базе {stats[0][1]} экспертов и {stats[1][1]} соискателей, нажавших на кнопку "Показать контакты"')
 
             logger.debug(f"Admin {message.from_user.id} entered show_stats handler")
+
+
+@dp.message_handler(Command("moderation"))
+async def moderation(message: Message):
+    experts_to_confirm = db.get_experts_to_confirm()
+    if experts_to_confirm:
+        ed = experts_to_confirm[0]
+
+        if ed[7]:
+            division = divisions_list.get(int(ed[7]))
+        else:
+            division = ed[8]
+
+        if ed[2]:
+            username = f"@{ed[2]}"
+        else:
+            username = f"@{ed[13]}"
+
+        topics = ", ".join([topics_list[int(topic_id)] for topic_id in ed[12].split(", ")])
+
+        text = f"<b>Имя:</b> {ed[5]}\n" \
+               f"<b>Имя в Telegram:</b> {username}\n" \
+               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Дивизион:</b> {division}\n" \
+               f"<b>Темы для разговора:</b> {topics}\n" \
+               f"<b>Экспертный профиль:</b> {ed[10]}\n"
+
+        if ed[15]:
+            if len(text) <= 1024:
+                await message.answer_photo(ed[15],
+                                           caption=text,
+                                           reply_markup=experts_to_confirm_kb2(experts_to_confirm),
+                                           disable_notification=True)
+            else:
+                await message.answer_photo(ed[15])
+                await message.answer(text,
+                                     reply_markup=experts_to_confirm_kb2(experts_to_confirm),
+                                     disable_notification=True)
+        else:
+            await message.answer(text=text,
+                                 reply_markup=experts_to_confirm_kb2(experts_to_confirm),
+                                 disable_notification=True)
+    else:
+        await message.answer("Пока нету экспертов, подавших заявку на модерацию")
+
+    logger.debug(f"Admin {message.from_user.id} entered moderation handler")
+
+
+@dp.callback_query_handler(text='close_list')
+async def close_experts_to_confirm_list(call: CallbackQuery):
+    await call.message.delete()
+
+    logger.debug(f"Admin {call.message.from_user.id} entered close_experts_to_confirm_list handler")
+
+
+@dp.callback_query_handler(Regexp(r'^admin_sekbp_'))
+async def page_click_expert_to_confirm(call: CallbackQuery):
+    await call.message.delete()
+
+    page = int(call.data[12:])
+    experts_to_confirm = db.get_experts_to_confirm()
+
+    if experts_to_confirm:
+        ed = experts_to_confirm[page - 1]
+
+        if ed[7]:
+            division = divisions_list.get(int(ed[7]))
+        else:
+            division = ed[8]
+
+        if ed[2]:
+            username = f"@{ed[2]}"
+        else:
+            username = f"@{ed[13]}"
+
+        topics = ", ".join([topics_list[int(topic_id)] for topic_id in ed[12].split(", ")])
+
+        text = f"<b>Имя:</b> {ed[5]}\n" \
+               f"<b>Имя в Telegram:</b> {username}\n" \
+               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Дивизион:</b> {division}\n" \
+               f"<b>Темы для разговора: {topics}</b>\n" \
+               f"<b>Экспертный профиль:</b> {ed[10]}\n"
+
+        if ed[15]:
+            if len(text) <= 1024:
+                await call.message.answer_photo(ed[15],
+                                                caption=text,
+                                                reply_markup=experts_to_confirm_kb2(experts_to_confirm, page),
+                                                disable_notification=True)
+            else:
+                await call.message.answer_photo(ed[15])
+                await call.message.answer(text,
+                                          reply_markup=experts_to_confirm_kb2(experts_to_confirm, page),
+                                          disable_notification=True)
+        else:
+            await call.message.answer(text=text,
+                                      reply_markup=experts_to_confirm_kb2(experts_to_confirm, page),
+                                      disable_notification=True)
+    else:
+        await call.message.answer("Пока нету экспертов, подавших заявку на модерацию")
+
+    logger.debug(f"Admin {call.from_user.id} entered page_click_expert_to_confirm handler with page {page}")
+
+
+@dp.callback_query_handler(Regexp(r'^admin_choosee_'))
+async def expert_to_confirm_chosen(call: CallbackQuery):
+    expert_id = int(call.data[14:])
+
+    await call.message.edit_reply_markup(reply_markup=kb3b("Утвердить", f"confirm_expert_{expert_id}",
+                                                           "Отклонить", f"deny_expert_{expert_id}",
+                                                           "Назад", "back_to_pagination"))
+
+    logger.debug(f"Admin {call.from_user.id} entered expert_to_confirm_chosen handler "
+                 f"with expert {expert_id}")
+
+
+@dp.callback_query_handler(text='back_to_pagination')
+async def back_to_pagination(call: CallbackQuery):
+    experts_to_confirm = db.get_experts_to_confirm()
+
+    await call.message.edit_reply_markup(experts_to_confirm_kb2(experts_to_confirm))
+
+    logger.debug(f"Admin {call.from_user.id} entered back_to_pagination handler")
+
+
+@dp.callback_query_handler(Regexp(r'^confirm_expert_'))
+async def confirm_expert(call: CallbackQuery):
+    await call.message.edit_reply_markup()
+
+    expert_id = int(call.data[15:])
+    expert = db.get_expert(expert_id)
+    if expert[14] == "На модерации":
+        await bot.send_message(chat_id=expert_id,
+                               text="Поздравляем! Ваша анкета прошла модерацию",
+                               disable_notification=True)
+        await bot.send_message(chat_id=expert_id,
+                               text="Выберите подходящий пункт",
+                               reply_markup=expert_menu_kb,
+                               disable_notification=True)
+        db.update_user('experts', 'status', expert_id, None)
+
+        await call.message.answer("Доступ к функционалу эксперта был успешно предоставлен данному пользователю")
+    else:
+        await call.message.answer("Кто-то из других админов уже обработал данную анкету")
+
+    logger.debug(f"Admin {call.from_user.id} entered confirm_expert handler "
+                 f"with expert {expert_id}")
+
+
+@dp.callback_query_handler(Regexp(r'^deny_expert_'))
+async def confirm_expert(call: CallbackQuery):
+    expert_id = int(call.data[12:])
+
+    await bot.send_message(chat_id=expert_id,
+                           text="К сожалению, Ваша анкета не прошла модерацию. "
+                                "Чтобы повторно пройти регистрацию, воспользуйтесь командой /start",
+                           disable_notification=True)
+    db.delete_user('experts', expert_id)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer("Функционал эксперта не был предоставлен данному пользователю")
+
+    logger.debug(f"Admin {call.from_user.id} entered deny_expert handler "
+                 f"with expert {expert_id}")

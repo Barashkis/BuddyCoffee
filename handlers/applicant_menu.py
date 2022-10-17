@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from config import directions_list, divisions_list
 from handlers.notifications import notif_init_expert, notif_approved_3hours_to_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
-    feedback_notif_applicant, feedback_notif_expert, notif_init_applicant
+    feedback_notif_applicant, feedback_notif_expert, notif_init_applicant, notif_after_show_contacts
 from keyboards import applicant_menu_kb, kb1b, kb2b, kb3b, slots_kb, choosing_time_cd, meetings_a_kb, \
     suitable_experts_kb2
 from loader import dp, db, scheduler, bot
@@ -31,10 +31,11 @@ def search_expert(applicant_id):
     applicant_data = db.get_applicant(applicant_id)
     applicant_topics = applicant_data[13].split(', ')
     experts = db.get_experts()
+
     suitable_experts = []
     for expert in experts:
         if expert[12] is not None:
-            if any(topic in expert[12].split(', ') for topic in applicant_topics):
+            if any(topic in expert[12].split(', ') for topic in applicant_topics) and expert[14] != "На модерации":
                 # if any(datetime.strptime(slot.lstrip().rstrip().replace('\n', ''), '%d.%m.%Y %H:%M') > datetime.today() for slot in expert[11].split(',')):
                 suitable_experts.append({'user_id': expert[0], 'fullname': expert[5]})
     logger.debug(f"Search_expert function shows that expert {applicant_id} have "
@@ -239,6 +240,10 @@ async def show_contacts_a(call: CallbackQuery):
     await call.message.answer(f"Если по каким-то причинам ты хочешь связаться с экспертом лично, вот его контакты - @{ed[2]}. "
                               "Обрати внимание, если ты видишь @None вместо контакта, значит, с этим пользователем "
                               "можно связаться, только запланировав встречу в нашем боте")
+
+    notif_date = datetime.now() + timedelta(hours=3)
+    scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(call.from_user.id, expert_id,))
+
     logger.debug(f"Applicant {call.from_user.id} entered show_contacts handler")
 
 

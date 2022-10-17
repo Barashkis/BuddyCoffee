@@ -1,6 +1,6 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
-from keyboards import directions_kb, division_kb, topics_kb, expert_menu_kb
+from keyboards import directions_kb, division_kb, topics_kb
 from loader import dp, db, bot
 from my_logger import logger
 
@@ -133,10 +133,11 @@ async def expert_6(call: CallbackQuery, state: FSMContext):
             await call.message.answer('Пожалуйста, выберите минимум одну тему.')
             await state.set_state('expert_6')
         else:
+            await call.message.edit_reply_markup()
+
             db.update_user('experts', 'topics', call.from_user.id, str(sdata['list'])[1:-1])
             username = db.get_expert(call.from_user.id)[2]
             if not username:
-                await call.message.edit_reply_markup()
                 await call.message.answer(text="Напишите ваше имя пользователя (username) в Telegram. "
                                                "Если вы его не знаете, перейдите в «Настройки», затем нажмите "
                                                "на «Изменить профиль» (инструкция на изображениях ниже).\n\n"
@@ -155,11 +156,10 @@ async def expert_6(call: CallbackQuery, state: FSMContext):
                                      disable_notification=True)
                 await state.set_state('expert_7')
             else:
-                await call.message.answer(text="Поздравляем, вы заполнили анкету. "
-                                               "Можно приступать к поиску собеседника",
-                                          reply_markup=expert_menu_kb,
-                                          disable_notification=True)
-                await call.message.edit_reply_markup()
+                await call.message.answer("Поздравляем, вы заполнили анкету. "
+                                          "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
+                                          "в ближайшее время предоставят Вам фукнционал бота, если их все устроит")
+                db.update_user('experts', 'status', call.from_user.id, "На модерации")
                 await state.finish()
     logger.debug(f"Expert {call.from_user.id} entered expert_6 handler with cd {call.data} and sd {sdata}")
 
@@ -169,10 +169,10 @@ async def expert_6(message: Message, state: FSMContext):
     text = message.text
     if text[0] == '@':
         db.update_user('experts', 'wr_username', message.from_user.id, message.text[1:].rstrip())
-        await message.answer(text="Поздравляем, вы заполнили анкету. "
-                                  "Можно приступать к поиску собеседника",
-                             reply_markup=expert_menu_kb,
-                             disable_notification=True)
+        await message.answer("Поздравляем, вы заполнили анкету. "
+                             "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
+                             "в ближайшее время предоставят Вам функционал бота, если их все устроит")
+        db.update_user('experts', 'status', message.from_user.id, "На модерации")
         await state.finish()
     else:
         await message.answer(text="Пожалуйста, напишите свой username корректно, начиная с '@'",

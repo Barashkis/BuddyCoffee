@@ -1,3 +1,6 @@
+from aiogram.dispatcher.filters import Regexp
+from aiogram.types import CallbackQuery
+
 from keyboards import kb2b
 from loader import dp, db
 from my_logger import logger
@@ -98,3 +101,30 @@ async def feedback_notif_expert(meeting_id):
                               reply_markup=kb2b("Оставить отзыв", f"expert_fb_agree_{md[0]}",
                                                 "Не хочу писать отзыв", "expert_menu"))
     logger.debug(f'Expert {md[2]} got feedback_notif_applicant notification about meeting {meeting_id}')
+
+
+async def notif_after_show_contacts(pressed_user_id, second_user_id):
+    await dp.bot.send_message(pressed_user_id,
+                              text="Удалось ли связаться с собеседником?",
+                              reply_markup=kb2b("Да", f"local_contact_yes_{second_user_id}",
+                                                "Нет", f"local_contact_no_{second_user_id}"))
+    logger.debug(f'User {pressed_user_id} got notif_after_show_contacts notification about'
+                 f' local contact with {second_user_id}')
+
+
+@dp.callback_query_handler(Regexp(r'^local_contact_'))
+async def local_contact_took_place_or_not(call: CallbackQuery):
+    second_user_id = call.data.split("_")[3]
+
+    choice = call.data.split("_")[2]
+    if choice == "yes":
+        status = "Связались"
+    else:
+        status = "Не связались"
+
+    db.add_local_contact(call.from_user.id, second_user_id, status)
+
+    await call.message.edit_reply_markup()
+    await call.message.edit_text("Спасибо за ответ!")
+
+    logger.debug(f'User {call.from_user.id} entered local_contact_took_place_or_not handler')

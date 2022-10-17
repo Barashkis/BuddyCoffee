@@ -10,8 +10,3 @@ dp = Dispatcher(bot, storage=storage)
 db = Database(path_to_db="main.db")
 tz = 'Europe/Moscow'
 scheduler = AsyncIOScheduler(timezone=tz)
-
-
-
-
-
