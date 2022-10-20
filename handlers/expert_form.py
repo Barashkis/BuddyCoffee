@@ -171,7 +171,7 @@ async def expert_6(message: Message, state: FSMContext):
         db.update_user('experts', 'wr_username', message.from_user.id, message.text[1:].rstrip())
         await message.answer("Поздравляем, вы заполнили анкету. "
                              "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
-                             "в ближайшее время предоставят Вам функционал бота, если их все устроит")
+                             "в ближайшее время предоставят Вам функционал бота или отправят анкету на доработку")
         db.update_user('experts', 'status', message.from_user.id, "На модерации")
         await state.finish()
     else:
