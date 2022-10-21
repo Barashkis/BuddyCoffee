@@ -51,7 +51,7 @@ async def applicant_2(message: Message, state: FSMContext):
 
 @dp.callback_query_handler(state='applicant_3')
 async def applicant_3(call: CallbackQuery, state: FSMContext):
-    db.update_user('applicants', 'direction', call.from_user.id, call.data)
+    db.update_user('applicants', 'direction', call.from_user.id, directions_list[int(call.data)])
     await call.answer(cache_time=5)
     await call.message.answer(text="Расскажи кратко о своем опыте и местах работы (при наличии).\n\n"
                                    "<i>Пример: Изучал программирование на C# и С++, обладаю знаниями в Python, имею "
@@ -153,7 +153,7 @@ async def applicant_9(message: Message, state: FSMContext):
     u_data = db.get_applicant(message.from_user.id)
     firstname = u_data[5]
     lastname = u_data[6]
-    direction = directions_list.get(int(u_data[7]))
+    direction = u_data[7]
     profile = u_data[8]
     institution = u_data[9]
     grad_year = u_data[10]

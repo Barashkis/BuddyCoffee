@@ -6,7 +6,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import Message, CallbackQuery
 
-from config import directions_list
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts, notif_1hour, notif_5min, \
     feedback_notif_applicant, feedback_notif_expert
@@ -70,7 +69,7 @@ async def search_applicants(call: CallbackQuery):
         ad = db.get_applicant(applicant_id)
         firstname = ad[5]
         lastname = ad[6]
-        direction = directions_list.get(int(ad[7]))
+        direction = ad[7]
         profile = ad[8]
         institution = ad[9]
         grad_year = ad[10]
@@ -117,7 +116,7 @@ async def page_click_expert(call: CallbackQuery):
     ad = db.get_applicant(applicant_id)
     firstname = ad[5]
     lastname = ad[6]
-    direction = directions_list.get(int(ad[7]))
+    direction = ad[7]
     profile = ad[8]
     institution = ad[9]
     grad_year = ad[10]
@@ -159,7 +158,7 @@ async def choosing_applicant(call: CallbackQuery):
     ad = db.get_applicant(applicant_id)
     firstname = ad[5]
     lastname = ad[6]
-    direction = directions_list.get(int(ad[7]))
+    direction = ad[7]
     profile = ad[8]
     institution = ad[9]
     grad_year = ad[10]
@@ -353,6 +352,8 @@ async def meeting_cancelation(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^denied_e'))
 @dp.callback_query_handler(Regexp(r'^approved_e'))
 async def notif_init_applicant_result(call: CallbackQuery):
+    await call.message.edit_reply_markup()
+
     cd = call.data
     if "approved" in cd:
         meeting_id = cd[11:]
@@ -398,8 +399,6 @@ async def notif_init_applicant_result(call: CallbackQuery):
 
             db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}')
 
-        await call.message.edit_reply_markup()
-
         logger.debug(f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
     if "denied" in cd:
         meeting_id = cd[9:]
@@ -408,7 +407,6 @@ async def notif_init_applicant_result(call: CallbackQuery):
         await call.message.answer(text="Встреча отменена.")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил последнюю встречу')
         await notif_cancel_to_applicant2(md[3])
-        await call.message.edit_reply_markup()
         logger.debug(f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
 
 

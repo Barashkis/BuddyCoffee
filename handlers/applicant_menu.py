@@ -4,7 +4,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import CallbackQuery, Message
 from datetime import datetime, timedelta
-from config import directions_list, divisions_list
 from handlers.notifications import notif_init_expert, notif_approved_3hours_to_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
     feedback_notif_applicant, feedback_notif_expert, notif_init_applicant, notif_after_show_contacts
@@ -69,12 +68,12 @@ async def search_experts(call: CallbackQuery):
         expert_id = suitable_experts[0].get("user_id")
         ed = db.get_expert(expert_id)
         if ed[7]:
-            division = divisions_list.get(int(ed[7]))
+            division = ed[7]
         else:
             division = ed[8]
 
         text = f"<b>Имя:</b> {ed[5]}\n" \
-               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Направление:</b> {ed[6]}\n" \
                f"<b>Дивизион:</b> {division}\n" \
                f"<b>Экспертный профиль:</b> {ed[10]}\n"
 
@@ -113,20 +112,20 @@ async def page_click_applicant(call: CallbackQuery):
     expert_id = suitable_experts[page-1].get("user_id")
     ed = db.get_expert(expert_id)
     if ed[7]:
-        division = divisions_list.get(int(ed[7]))
+        division = ed[7]
     else:
         division = ed[8]
     if ed[15]:
         await call.message.answer_photo(ed[15],
                                         caption=f"<b>Имя:</b> {ed[5]}\n"
-                                                f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n"
+                                                f"<b>Направление:</b> {ed[6]}\n"
                                                 f"<b>Дивизион:</b> {division}\n"
                                                 f"<b>Экспертный профиль:</b> {ed[10]}\n",
                                         reply_markup=suitable_experts_kb2(suitable_experts, page),
                                         disable_notification=True)
     else:
         await call.message.answer(f"<b>Имя:</b> {ed[5]}\n"
-                                  f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n"
+                                  f"<b>Направление:</b> {ed[6]}\n"
                                   f"<b>Дивизион:</b> {division}\n"
                                   f"<b>Экспертный профиль:</b> {ed[10]}\n",
                                   reply_markup=suitable_experts_kb2(suitable_experts, page),
@@ -140,11 +139,11 @@ async def choosing_expert(call: CallbackQuery):
     expert_id = int(call.data[6:])
     ed = db.get_expert(expert_id)
     if ed[7]:
-        division = divisions_list.get(int(ed[7]))
+        division = ed[7]
     else:
         division = ed[8]
     await call.message.answer(text=f"<b>Имя:</b> {ed[5]}\n"
-                                   f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n"
+                                   f"<b>Направление:</b> {ed[6]}\n"
                                    f"<b>Дивизион:</b> {division}\n"
                                    f"<b>Экспертный профиль:</b> {ed[10]}\n",
                               reply_markup=kb2b("Выбрать специалиста", f'choosee_{expert_id}',
@@ -314,6 +313,8 @@ async def meeting_cancelation(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^denied_a_'))
 @dp.callback_query_handler(Regexp(r'^approved_a_'))
 async def notif_init_expert_result(call: CallbackQuery):
+    await call.message.edit_reply_markup()
+
     cd = call.data
     if "approved" in cd:
         meeting_id = cd[11:]
@@ -359,8 +360,6 @@ async def notif_init_expert_result(call: CallbackQuery):
 
             db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}')
 
-        await call.message.edit_reply_markup()
-
         logger.debug(f"Applicant {call.from_user.id} entered notif_init_expert_result with meeting {meeting_id} and cd {cd}")
     if "denied" in cd:
         meeting_id = cd[9:]
@@ -368,7 +367,6 @@ async def notif_init_expert_result(call: CallbackQuery):
         db.update_meeting('status', meeting_id, "Отклонена соискателем")
         await call.message.answer(text="Встреча отменена.")
         await notif_cancel_to_expert2(md[2])
-        await call.message.edit_reply_markup()
         db.update_user('applicants', 'status', call.from_user.id, 'Отменил последнюю встречу')
         logger.debug(f"Applicant {call.from_user.id} entered notif_init_expert_result with meeting {meeting_id} and cd {cd}")
 

@@ -1,6 +1,6 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
-from config import directions_list, topics_list
+from config import topics_list, directions_list
 from keyboards import directions_kb, topics_kb, kb3b, kb2b, applicant_profile_bk
 from loader import dp, db
 from my_logger import logger
@@ -11,7 +11,7 @@ async def check_profile_a(call: CallbackQuery):
     u_data = db.get_applicant(call.from_user.id)
     firstname = u_data[5]
     lastname = u_data[6]
-    direction = directions_list.get(int(u_data[7]))
+    direction = u_data[7]
     profile = u_data[8]
     institution = u_data[9]
     grad_year = u_data[10]
@@ -111,7 +111,7 @@ async def cha_direction(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(state='cha_direction')
 async def cha_direction2(call: CallbackQuery, state: FSMContext):
-    db.update_user('applicants', 'direction', call.from_user.id, call.data)
+    db.update_user('applicants', 'direction', call.from_user.id, directions_list[int(call.data)])
     await call.message.answer(text=f"Твое направление было обновлено",
                               reply_markup=applicant_profile_bk,
                               disable_notification=True)

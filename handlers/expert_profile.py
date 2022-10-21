@@ -9,12 +9,12 @@ from my_logger import logger
 @dp.callback_query_handler(text='change_prof_e')
 async def check_profile_e(call: CallbackQuery):
     u_data = db.get_expert(call.from_user.id)
-    fullname= u_data[5]
-    direction = directions_list.get(int(u_data[6]))
+    fullname = u_data[5]
+    direction = u_data[6]
     if u_data[7] is None:
         division = u_data[8]
     else:
-        division = divisions_list.get(int(u_data[7]))
+        division = u_data[7]
     profile = u_data[10]
     topics = ', '.join([topics_list.get(int(i)) for i in u_data[12].split(', ')])
     await call.message.answer(text=f"Сейчас ваш профиль выглядит так\n\n"
@@ -83,7 +83,7 @@ async def che_direction(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(state='che_direction')
 async def che_direction2(call: CallbackQuery, state: FSMContext):
-    db.update_user('experts', 'direction', call.from_user.id, call.data)
+    db.update_user('experts', 'direction', call.from_user.id, directions_list[int(call.data)])
     await call.message.answer(text=f"Ваше направление было обновлено",
                               reply_markup=expert_profile_bk,
                               disable_notification=True)
@@ -110,7 +110,7 @@ async def che_division2(call: CallbackQuery, state: FSMContext):
         await call.message.edit_reply_markup()
         await state.set_state('che_division2_1')
     else:
-        db.update_user('experts', 'division', call.from_user.id, call.data)
+        db.update_user('experts', 'division', call.from_user.id, divisions_list[int(call.data)])
         db.update_user('experts', 'wr_division', call.from_user.id, None)
         await call.message.answer(text="Ваш дивизион был изменен",
                                   reply_markup=expert_profile_bk,

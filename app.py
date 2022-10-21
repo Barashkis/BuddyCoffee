@@ -3,11 +3,26 @@ from aiogram import executor
 from bot_commands import set_default_commands
 from loader import bot, dp, storage, db, scheduler
 from my_logger import logger
+from config import directions_list, divisions_list
 import handlers
 
 
 async def on_startup(dispatcher):
     await set_default_commands(dispatcher)
+
+    experts = db.get_experts()
+    for expert in experts:
+        if str(expert[6]).isdigit():
+            db.update_user('experts', 'direction', expert[0], directions_list[int(expert[6])])
+
+        if str(expert[7]).isdigit():
+            db.update_user('experts', 'division', expert[0], divisions_list[int(expert[7])])
+
+    applicants = db.get_applicants()
+    for applicant in applicants:
+        if str(applicant[7]).isdigit():
+            db.update_user('applicants', 'direction', applicant[0], directions_list[int(applicant[7])])
+
     try:
         db.cr_table_applicants()
         logger.info('Table "applicants" is created')

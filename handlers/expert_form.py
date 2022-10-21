@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from keyboards import directions_kb, division_kb, topics_kb
 from loader import dp, db, bot
 from my_logger import logger
+from config import directions_list, divisions_list
 
 
 @dp.callback_query_handler(text='expert_start')
@@ -39,7 +40,7 @@ async def expert_1(message: Message, state: FSMContext):
 
 @dp.callback_query_handler(state='expert_2')
 async def expert_2(call: CallbackQuery, state: FSMContext):
-    db.update_user('experts', 'direction', call.from_user.id, call.data)
+    db.update_user('experts', 'direction', call.from_user.id, directions_list[int(call.data)])
     await call.answer(cache_time=5)
     await call.message.answer(text="Выберите дивизион:",
                               reply_markup=division_kb,
@@ -56,7 +57,7 @@ async def expert_2_1(call: CallbackQuery, state: FSMContext):
         await call.message.edit_reply_markup()
         await state.set_state('expert_3.1')
     else:
-        db.update_user('experts', 'division', call.from_user.id, call.data)
+        db.update_user('experts', 'division', call.from_user.id, divisions_list[int(call.data)])
         await call.answer(cache_time=5)
         await call.message.answer(text="Расскажите о своей экспертизе\n\n"
                                   "<i>Пример: Разрабатываю frontend-часть enterprise веб-приложений и пользовательские "

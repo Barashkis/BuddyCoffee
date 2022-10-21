@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Regexp
 from aiogram.types import Message, CallbackQuery
 
-from config import divisions_list, directions_list, topics_list
+from config import topics_list
 from keyboards import kb2b, experts_to_confirm_kb2, kb3b, expert_menu_kb
 from loader import dp, db, bot
 from my_logger import logger
@@ -107,7 +107,7 @@ async def moderation(message: Message):
         ed = experts_to_confirm[0]
 
         if ed[7]:
-            division = divisions_list.get(int(ed[7]))
+            division = ed[7]
         else:
             division = ed[8]
 
@@ -120,7 +120,7 @@ async def moderation(message: Message):
 
         text = f"<b>Имя:</b> {ed[5]}\n" \
                f"<b>Имя в Telegram:</b> {username}\n" \
-               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Направление:</b> {ed[6]}\n" \
                f"<b>Дивизион:</b> {division}\n" \
                f"<b>Темы для разговора:</b> {topics}\n" \
                f"<b>Экспертный профиль:</b> {ed[10]}\n"
@@ -164,7 +164,7 @@ async def page_click_expert_to_confirm(call: CallbackQuery):
         ed = experts_to_confirm[page - 1]
 
         if ed[7]:
-            division = divisions_list.get(int(ed[7]))
+            division = ed[7]
         else:
             division = ed[8]
 
@@ -177,7 +177,7 @@ async def page_click_expert_to_confirm(call: CallbackQuery):
 
         text = f"<b>Имя:</b> {ed[5]}\n" \
                f"<b>Имя в Telegram:</b> {username}\n" \
-               f"<b>Направление:</b> {directions_list.get(int(ed[6]))}\n" \
+               f"<b>Направление:</b> {ed[6]}\n" \
                f"<b>Дивизион:</b> {division}\n" \
                f"<b>Темы для разговора: {topics}</b>\n" \
                f"<b>Экспертный профиль:</b> {ed[10]}\n"
