@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, timedelta
 
+import pytz
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import Message, CallbackQuery
@@ -361,7 +362,7 @@ async def notif_init_applicant_result(call: CallbackQuery):
         db.update_user('applicants', 'status', md[3], 'Встреча подтверждена')
 
         mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
-        now = datetime.now()
+        now = datetime.now(tz=pytz.timezone('Europe/Moscow'))
 
         hours_left_before_meeting = (mddtf - now).seconds / 3600
         if hours_left_before_meeting > 3:
