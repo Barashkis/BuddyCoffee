@@ -7,11 +7,13 @@ from aiogram.types import Message, CallbackQuery
 
 from config import directions_list
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
-    notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts
+    notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts, notif_1hour, notif_5min, \
+    feedback_notif_applicant, feedback_notif_expert
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
     slots_kb
 from loader import bot, dp, db, scheduler
 from my_logger import logger
+from zoom import create_meeting
 
 
 @dp.callback_query_handler(text='expert_menu')
@@ -25,15 +27,35 @@ async def expert_menu(call: CallbackQuery):
 
 def search_applicant(expert_id):
     ed = db.get_expert(expert_id)
-    expert_topics = ed[12].split(', ')
+    expert_direction = ed[6]
+
     applicants = db.get_applicants()
-    suitable_applicants = []
+
+    suitable_applicants_same_direction = []
+    suitable_applicants_others = []
     for applicant in applicants:
         if applicant[13]:
-            if any(topic in applicant[13].split(', ') for topic in expert_topics):
-                suitable_applicants.append({'user_id': applicant[0], 'wr_firstname': applicant[5]})
+            applicant_direction = applicant[7]
+            if expert_direction == applicant_direction:
+                suitable_applicants_same_direction.append(
+                    {
+                        'user_id': applicant[0],
+                        'wr_firstname': applicant[5]
+                    }
+                )
+            else:
+                suitable_applicants_others.append(
+                    {
+                        'user_id': applicant[0],
+                        'wr_firstname': applicant[5]
+                    }
+                )
+
+    suitable_applicants = suitable_applicants_same_direction + suitable_applicants_others
+
     logger.debug(f"Search_applicant function shows that expert {expert_id} have "
                  f"{len(suitable_applicants)} suitable applicants")
+
     return suitable_applicants
 
 
@@ -334,16 +356,47 @@ async def notif_init_applicant_result(call: CallbackQuery):
     if "approved" in cd:
         meeting_id = cd[11:]
         md = db.get_meeting(meeting_id)
-        mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
-        notif_1day_time = mddtf - timedelta(days=1)
-        notif_3hours_time = mddtf - timedelta(hours=3)
+
         db.update_meeting('status', meeting_id, "Подтверждена")
         db.update_user('applicants', 'status', md[3], 'Встреча подтверждена')
-        await call.message.answer(text="Встреча подтверждена.")
-        notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
-        notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
-        db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}')
+
+        mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
+        now = datetime.now()
+
+        hours_left_before_meeting = (mddtf - now).seconds / 3600
+        if hours_left_before_meeting > 3:
+            notif_1day_time = mddtf - timedelta(days=1)
+            notif_3hours_time = mddtf - timedelta(hours=3)
+
+            notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
+            notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
+
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}')
+            await call.message.answer(text="Встреча подтверждена")
+        else:
+            mdzf = datetime.strptime(md[4], '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')  # meeting date in zoom format
+            link = create_meeting(mdzf)
+
+            db.update_meeting("status", meeting_id, 'Состоялась')
+            db.update_user('applicants', 'status', md[3], 'Последняя встреча состоялась')
+
+            await call.message.answer(text="Уже менее чем через 3 часа у Вас запланирована встреча.\n\n"
+                                           f"Ссылка: {link}")
+            await bot.send_message(md[3], text=f"Хорошей встречи! Мы будем тебя ждать: {link}")
+
+            notif_1hour_time = mddtf - timedelta(hours=1)
+            notif_5min_time = mddtf - timedelta(minutes=5)
+            feedback_notif_time = mddtf + timedelta(days=1)
+
+            notif1 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
+            notif2 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
+            notif3 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
+            notif4 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}')
+
         await call.message.edit_reply_markup()
+
         logger.debug(f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
     if "denied" in cd:
         meeting_id = cd[9:]
