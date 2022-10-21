@@ -82,6 +82,7 @@ division_kb = InlineKeyboardMarkup(
         [InlineKeyboardButton(text=divisions_list.get(11), callback_data='11')],
         [InlineKeyboardButton(text=divisions_list.get(12), callback_data='12')],
         [InlineKeyboardButton(text=divisions_list.get(13), callback_data='13')],
+        [InlineKeyboardButton(text=divisions_list.get(14), callback_data='14')],
         [InlineKeyboardButton(text='Другой', callback_data='other')]
     ]
 )
