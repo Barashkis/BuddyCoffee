@@ -323,7 +323,9 @@ async def notif_init_expert_result(call: CallbackQuery):
         db.update_user('applicants', 'status', call.from_user.id, 'Встреча подтверждена')
 
         mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
-        now = datetime.now(tz=pytz.timezone('Europe/Moscow'))
+
+        local_now = datetime.now()
+        now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
 
         hours_left_before_meeting = (mddtf - now).seconds / 3600
         if hours_left_before_meeting > 3:
