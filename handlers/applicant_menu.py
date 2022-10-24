@@ -258,7 +258,10 @@ async def show_contacts_a(call: CallbackQuery):
                               "Обрати внимание, если ты видишь @None вместо контакта, значит, с этим пользователем "
                               "можно связаться, только запланировав встречу в нашем боте")
 
-    notif_date = datetime.now() + timedelta(hours=3)
+    local_now = datetime.now()
+    now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
+
+    notif_date = now + timedelta(hours=3)
     scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(call.from_user.id, expert_id,))
 
     logger.debug(f"Applicant {call.from_user.id} entered show_contacts handler")
