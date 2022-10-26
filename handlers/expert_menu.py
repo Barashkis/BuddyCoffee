@@ -188,7 +188,8 @@ async def applicant_chosen(call: CallbackQuery):
 
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
-                              reply_markup=kb3b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_expert",
+                              reply_markup=kb3b("Отправить приглашение соискателю",
+                                                f"send_free_slots_{applicant_id}_init_by_expert",
                                                 "Показать контакты", f"show_contacts_a_{applicant_id}",
                                                 "Назад", f"forma_{applicant_id}"),
                               disable_notification=True)
@@ -233,7 +234,8 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                                           'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
                                      disable_notification=True)
                 await state.set_state('input_slots')
-                logger.debug(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
+                logger.debug(
+                    f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
 
                 return
 
@@ -241,12 +243,38 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                 esl.append(slot)
 
         if esl:
-            expert_name = db.get_expert(message.from_user.id)[5]
-            await bot.send_message(applicant_id,
-                                   text=f"Эксперт {expert_name} отправил тебе временные слоты, "
-                                        "когда он может провести конференцию. Выбери один из них",
-                                   reply_markup=slots_kb(message.from_user.id, init_by, esl),
-                                   disable_notification=True)
+            ed = db.get_expert(message.from_user.id)
+
+            if ed[7]:
+                division = ed[7]
+            else:
+                division = ed[8]
+
+            text = f"Эксперт {ed[5]} отправил тебе временные слоты, " \
+                   "когда он может провести конференцию. Выбери один из них\n\n" \
+                   "Профиль эксперта:\n\n" \
+                   f"<b>Имя:</b> {ed[5]}\n" \
+                   f"<b>Направление:</b> {ed[6]}\n" \
+                   f"<b>Дивизион:</b> {division}\n" \
+                   f"<b>Экспертный профиль:</b> {ed[10]}\n"
+
+            if ed[15]:
+                if len(text) <= 1024:
+                    await bot.send_photo(applicant_id,
+                                         photo=ed[15],
+                                         caption=text,
+                                         reply_markup=slots_kb(message.from_user.id, init_by, esl))
+                else:
+                    await bot.send_photo(applicant_id, photo=ed[15])
+                    await bot.send_message(applicant_id,
+                                           text=text,
+                                           reply_markup=slots_kb(message.from_user.id, init_by, esl),
+                                           disable_notification=True)
+            else:
+                await bot.send_message(applicant_id,
+                                       text=text,
+                                       reply_markup=slots_kb(message.from_user.id, init_by, esl),
+                                       disable_notification=True)
 
             await message.answer(text="Слоты были отправлены выбранному соискателю. "
                                       "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
@@ -255,16 +283,19 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                                  disable_notification=True)
             await state.finish()
 
-            logger.debug(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
+            logger.debug(
+                f"Expert {message.from_user.id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
         else:
-            logger.warning(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but slots is overdue")
+            logger.warning(
+                f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but slots is overdue")
             await message.answer(text='Ни один из введенных Вами слотов не является действующим. '
                                       'Отправьте временные слоты еще раз',
                                  disable_notification=True)
             await state.set_state('input_slots')
 
     except Exception as e:
-        logger.warning(f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but got an error: {e}")
+        logger.warning(
+            f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but got an error: {e}")
         await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
                                   f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
                              disable_notification=True)
@@ -295,9 +326,10 @@ async def show_contacts_a(call: CallbackQuery):
     ad = db.get_applicant(applicant_id)
 
     await call.answer()
-    await call.message.answer(f"Если по каким-то причинам Вы хотите связаться с соискателем лично, вот его контакты - @{ad[2]}. "
-                              "Обратите внимание, если Вы видите @None вместо контакта, значит, с этим пользователем "
-                              "можно связаться только в запланированной встрече")
+    await call.message.answer(
+        f"Если по каким-то причинам Вы хотите связаться с соискателем лично, вот его контакты - @{ad[2]}. "
+        "Обратите внимание, если Вы видите @None вместо контакта, значит, с этим пользователем "
+        "можно связаться только в запланированной встрече")
 
     local_now = datetime.now()
     now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
@@ -361,13 +393,15 @@ async def notif_init_applicant_result(call: CallbackQuery):
 
     cd = call.data
     if "approved" in cd:
-        meeting_id = cd[11:]
+        meeting_id = int(cd[11:])
         md = db.get_meeting(meeting_id)
 
         db.update_meeting('status', meeting_id, "Подтверждена")
         db.update_user('applicants', 'status', md[3], 'Встреча подтверждена')
 
         mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
+
+        scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, call.from_user.id,))
 
         local_now = datetime.now()
         now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
@@ -383,10 +417,10 @@ async def notif_init_applicant_result(call: CallbackQuery):
             db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}')
             await call.message.answer(text="Встреча подтверждена")
         else:
-            mdzf = datetime.strptime(md[4], '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')  # meeting date in zoom format
+            mdzf = datetime.strptime(md[4], '%d.%m.%Y %H:%M').strftime(
+                '%Y-%m-%dT%H:%M:%S')  # meeting date in zoom format
             link = create_meeting(mdzf)
 
-            db.update_meeting("status", meeting_id, 'Состоялась')
             db.update_user('applicants', 'status', md[3], 'Последняя встреча состоялась')
 
             await call.message.answer(text="Уже менее чем через 3 часа у Вас запланирована встреча.\n\n"
@@ -404,7 +438,8 @@ async def notif_init_applicant_result(call: CallbackQuery):
 
             db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}')
 
-        logger.debug(f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+        logger.debug(
+            f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
     if "denied" in cd:
         meeting_id = cd[9:]
         md = db.get_meeting(meeting_id)
@@ -412,7 +447,15 @@ async def notif_init_applicant_result(call: CallbackQuery):
         await call.message.answer(text="Встреча отменена.")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил последнюю встречу')
         await notif_cancel_to_applicant2(md[3])
-        logger.debug(f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+        logger.debug(
+            f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+
+
+def meeting_took_place(meeting_id, user_id):
+    meeting_ids = [meeting[0] for meeting in db.get_expert_meetings(user_id)]
+
+    if meeting_id in meeting_ids:
+        db.update_meeting("status", meeting_id, 'Состоялась')
 
 
 @dp.callback_query_handler(Regexp(r'^expert_fb_agree_'))

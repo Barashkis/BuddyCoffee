@@ -9,7 +9,22 @@ from loader import dp, db, bot
 from my_logger import logger
 
 
-@dp.message_handler(Command("notify"))
+@dp.message_handler(Command("notify_all"))
+async def notify_all(message: Message):
+    logger.debug(f'{message.from_user.id} entered /notify_all command')
+    admin_ids_raw = db.get_admins()
+    if admin_ids_raw is not None:
+        admin_ids = []
+        for t in admin_ids_raw:
+            admin_ids.append(t[0])
+        if message.from_user.id in admin_ids:
+            applicants = db.get_applicants()
+            await message.answer(f'В базе всего {len(applicants)} пользователей.',
+                                 reply_markup=kb2b("Написать сообщение", "admin_send_msg_all", "Назад", "close_keyboard"))
+            logger.debug(f"Admin {message.from_user.id} entered notify handler")
+
+
+@dp.message_handler(Command("notify_inactive"))
 async def notify(message: Message):
     logger.debug(f'{message.from_user.id} entered /notify command')
     admin_ids_raw = db.get_admins()
@@ -21,18 +36,36 @@ async def notify(message: Message):
             inactive_users = db.get_inactive_applicants()
             await message.answer(f'В базе {len(inactive_users)} пользователей, которые ни разу '
                                  f'не инициировали встречу.',
-                                 reply_markup=kb2b("Написать сообщение", "admin_send_msg", "Назад", "applicant_menu"))
+                                 reply_markup=kb2b("Написать сообщение", "admin_send_msg_inactive", "Назад", "close_keyboard"))
             logger.debug(f"Admin {message.from_user.id} entered notify handler")
 
 
-@dp.callback_query_handler(text='admin_send_msg')
-async def send_msg_to_inactive_users(call: CallbackQuery, state: FSMContext):
-    await call.message.answer(f"Напишите сообщение, которое будет отправлено пользьзователям.")
-    await state.set_state('admin_write_msg')
-    logger.debug(f"Admin {call.from_user.id} entered send_msg_to_inactive_users handler")
+@dp.callback_query_handler(Regexp(r'^admin_send_msg_'))
+async def send_msg_to_users(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+    await call.message.answer(f"Напишите сообщение, которое будет отправлено пользователям.")
+    cd = call.data
+    notify_type = cd[15:]
+    await state.set_state(f'admin_write_msg_{notify_type}')
+    logger.debug(f"Admin {call.from_user.id} entered send_msg_to_{notify_type}_users handler")
 
 
-@dp.message_handler(state='admin_write_msg')
+@dp.message_handler(state='admin_write_msg_all')
+async def send_msg_to_inactive_users(message: Message, state: FSMContext):
+    msg = message.text
+    applicants = db.get_applicants()
+    for applicant in applicants:
+        try:
+            await bot.send_message(applicant[0], text=f"{msg}")
+            await asyncio.sleep(.05)
+        except Exception as e:
+            logger.debug(e)
+    await message.answer(f'Ваше сообщение было отправлено {len(applicants)} пользователям')
+    await state.finish()
+    logger.debug(f"Admin {message.from_user.id} send notification to all users")
+
+
+@dp.message_handler(state='admin_write_msg_inactive')
 async def send_msg_to_inactive_users(message: Message, state: FSMContext):
     msg = message.text
     inactive_users = db.get_inactive_applicants()
@@ -58,7 +91,7 @@ async def add_admin(message: Message):
         if message.from_user.id in admin_ids:
             await message.answer(f'Вы собираетесь добавить нового модератора. Нажмите кнопку "Добавить", если хотите '
                                  f'это сделать',
-                                 reply_markup=kb2b("Добавить", "add_admin", "Назад", "applicant_menu"))
+                                 reply_markup=kb2b("Добавить", "add_admin", "Назад", "close_keyboard"))
             logger.debug(f"Admin {message.from_user.id} entered add_admin handler")
 
 
@@ -146,11 +179,11 @@ async def moderation(message: Message):
     logger.debug(f"Admin {message.from_user.id} entered moderation handler")
 
 
-@dp.callback_query_handler(text='close_list')
-async def close_experts_to_confirm_list(call: CallbackQuery):
+@dp.callback_query_handler(text='close_keyboard')
+async def close_keyboard(call: CallbackQuery):
     await call.message.delete()
 
-    logger.debug(f"Admin {call.message.from_user.id} entered close_experts_to_confirm_list handler")
+    logger.debug(f"Admin {call.message.from_user.id} entered close_keyboard handler")
 
 
 @dp.callback_query_handler(Regexp(r'^admin_sekbp_'))

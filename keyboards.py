@@ -228,7 +228,7 @@ def experts_to_confirm_kb2(experts_to_confirm: list, page: int = 1):
         else:
             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
     experts_keyboard.row(prev_b, choose_b, next_b)
-    experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='close_list'))
+    experts_keyboard.add(InlineKeyboardButton(text='Назад', callback_data='close_keyboard'))
     return experts_keyboard
 
 
