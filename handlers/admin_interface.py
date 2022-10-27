@@ -26,7 +26,7 @@ async def notify_all(message: Message):
 
 @dp.message_handler(Command("notify_inactive"))
 async def notify(message: Message):
-    logger.debug(f'{message.from_user.id} entered /notify command')
+    logger.debug(f'{message.from_user.id} entered /notify_inactive command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
@@ -37,6 +37,21 @@ async def notify(message: Message):
             await message.answer(f'В базе {len(inactive_users)} пользователей, которые ни разу '
                                  f'не инициировали встречу.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_inactive", "Назад", "close_keyboard"))
+            logger.debug(f"Admin {message.from_user.id} entered notify handler")
+
+
+@dp.message_handler(Command("notify_applicants"))
+async def notify(message: Message):
+    logger.debug(f'{message.from_user.id} entered /notify_applicants command')
+    admin_ids_raw = db.get_admins()
+    if admin_ids_raw is not None:
+        admin_ids = []
+        for t in admin_ids_raw:
+            admin_ids.append(t[0])
+        if message.from_user.id in admin_ids:
+            applicants = db.get_applicants()
+            await message.answer(f'В базе всего {len(applicants)} соискателей',
+                                 reply_markup=kb2b("Написать сообщение", "admin_send_msg_applicants", "Назад", "close_keyboard"))
             logger.debug(f"Admin {message.from_user.id} entered notify handler")
 
 
@@ -78,6 +93,21 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
     await message.answer(f'Ваше сообщение было отправлено {len(inactive_users)} пользователям')
     await state.finish()
     logger.debug(f"Admin {message.from_user.id} send notification to inactive users")
+
+
+@dp.message_handler(state='admin_write_msg_applicants')
+async def send_msg_to_inactive_users(message: Message, state: FSMContext):
+    msg = message.text
+    applicants = db.get_applicants()
+    for applicant in applicants:
+        try:
+            await bot.send_message(applicant[0], text=f"{msg}")
+            await asyncio.sleep(.05)
+        except Exception as e:
+            logger.debug(e)
+    await message.answer(f'Ваше сообщение было отправлено {len(applicants)} соискателям')
+    await state.finish()
+    logger.debug(f"Admin {message.from_user.id} send notification to applicants")
 
 
 @dp.message_handler(Command("add_admin"))
