@@ -18,8 +18,8 @@ async def notify_all(message: Message):
         for t in admin_ids_raw:
             admin_ids.append(t[0])
         if message.from_user.id in admin_ids:
-            applicants = db.get_applicants()
-            await message.answer(f'В базе всего {len(applicants)} пользователей.',
+            users = db.get_applicants() + db.get_experts()
+            await message.answer(f'В базе всего {len(users)} пользователей.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_all", "Назад", "close_keyboard"))
             logger.debug(f"Admin {message.from_user.id} entered notify handler")
 
@@ -68,14 +68,14 @@ async def send_msg_to_users(call: CallbackQuery, state: FSMContext):
 @dp.message_handler(state='admin_write_msg_all')
 async def send_msg_to_inactive_users(message: Message, state: FSMContext):
     msg = message.text
-    applicants = db.get_applicants()
-    for applicant in applicants:
+    users = db.get_applicants() + db.get_experts()
+    for user in users:
         try:
-            await bot.send_message(applicant[0], text=f"{msg}")
+            await bot.send_message(user[0], text=f"{msg}")
             await asyncio.sleep(.05)
         except Exception as e:
             logger.debug(e)
-    await message.answer(f'Ваше сообщение было отправлено {len(applicants)} пользователям')
+    await message.answer(f'Ваше сообщение было отправлено {len(users)} пользователям')
     await state.finish()
     logger.debug(f"Admin {message.from_user.id} send notification to all users")
 
