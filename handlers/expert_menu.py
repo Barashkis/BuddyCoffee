@@ -8,12 +8,12 @@ from aiogram.types import Message, CallbackQuery
 
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts, notif_1hour, notif_5min, \
-    feedback_notif_applicant, feedback_notif_expert
+    feedback_notif_applicant, feedback_notif_expert, notif_cancel_to_applicant3
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
     slots_kb
 from loader import bot, dp, db, scheduler
 from my_logger import logger
-from zoom import create_meeting
+from zoom import create_meeting, update_meeting_date
 
 
 @dp.callback_query_handler(text='expert_menu')
@@ -189,7 +189,7 @@ async def applicant_chosen(call: CallbackQuery):
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
                               reply_markup=kb3b("Отправить приглашение соискателю",
-                                                f"send_free_slots_{applicant_id}_init_by_expert",
+                                                f"send_free_slots_{applicant_id}_init_by_e_c_",
                                                 "Показать контакты", f"show_contacts_a_{applicant_id}",
                                                 "Назад", f"forma_{applicant_id}"),
                               disable_notification=True)
@@ -201,18 +201,39 @@ async def applicant_chosen(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^send_free_slots_'))
 async def send_free_slots(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup()
-    await call.message.answer("Введите временные слоты, когда вам удобно провести встречу, "
-                              "желательно указать несколько. <b>Укажите московское время</b>\n\n"
-                              "<i>Формат:\n"
-                              "25.01.2022 17:00, 27.01.2022 12:30, "
-                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>")
 
     await state.set_state('input_slots')
     async with state.proxy() as data:
         call_data_list = call.data.split("_")
 
+        action = call_data_list[7]
+
+        try:
+            meeting_id = int(call_data_list[8])
+        except ValueError:
+            pass
+        else:
+            data["meeting_id"] = meeting_id
+
+            md = db.get_meeting(meeting_id)
+            api_id = md[10]
+            if not api_id:
+                await call.message.answer("К сожалению, эту встречу невозможно перенести...",
+                                          reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
+                                          disable_notification=True)
+
+                return
+
+        data["action"] = action
         data["applicant_id"] = int(call_data_list[3])
         data["init_by"] = call_data_list[6]
+
+    await call.message.answer(f"Введите временные слоты, "
+                              f"{'когда вам удобно провести' if action == 'c' else 'на которые вы хотите перенести'}"
+                              f"встречу, желательно указать несколько. <b>Укажите московское время</b>\n\n"
+                              "<i>Формат:\n"
+                              "25.01.2022 17:00, 27.01.2022 12:30, "
+                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>")
 
     logger.debug(f"Expert {call.from_user.id} entered send_free_slots handler")
 
@@ -220,6 +241,11 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
 @dp.message_handler(state='input_slots')
 async def notify_applicant_about_slots(message: Message, state: FSMContext):
     async with state.proxy() as data:
+        meeting_id = data.get("meeting_id")
+        if not meeting_id:
+            meeting_id = -1
+
+        action = data["action"]
         applicant_id = data["applicant_id"]
         init_by = data["init_by"]
 
@@ -251,7 +277,8 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                 division = ed[8]
 
             text = f"Эксперт {ed[5]} отправил тебе временные слоты, " \
-                   "когда он может провести конференцию. Выбери один из них\n\n" \
+                   f"{'когда он может провести' if action == 'c' else 'на которые он может перенести'} " \
+                   "конференцию. Выбери один из них\n\n" \
                    "Профиль эксперта:\n\n" \
                    f"<b>Имя:</b> {ed[5]}\n" \
                    f"<b>Направление:</b> {ed[6]}\n" \
@@ -263,18 +290,20 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                     await bot.send_photo(applicant_id,
                                          photo=ed[15],
                                          caption=text,
-                                         reply_markup=slots_kb(message.from_user.id, init_by, esl))
+                                         reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id))
                 else:
                     await bot.send_photo(applicant_id, photo=ed[15])
                     await bot.send_message(applicant_id,
                                            text=text,
-                                           reply_markup=slots_kb(message.from_user.id, init_by, esl),
+                                           reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id),
                                            disable_notification=True)
             else:
                 await bot.send_message(applicant_id,
                                        text=text,
-                                       reply_markup=slots_kb(message.from_user.id, init_by, esl),
+                                       reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id),
                                        disable_notification=True)
+
+            db.update_user("experts", "slots", message.from_user.id, message.text)
 
             await message.answer(text="Слоты были отправлены выбранному соискателю. "
                                       "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
@@ -353,10 +382,21 @@ async def check_meeting(call: CallbackQuery):
     meeting_id = int(call.data[10:])
     md = db.get_meeting(meeting_id)  # meeting's data
     ad = db.get_applicant(md[3])  # applicant's data
-    await call.message.answer(text=f"Информация о встрече\n\n"
-                                   f"<b>Соискатель:</b> {ad[5]} \n"
-                                   f"<b>Дата и время по МСК:</b> {md[4]}\n",
-                              reply_markup=kb2b("Отменить встречу", f'cancel_meeting_e_{md[0]}',
+    await call.message.answer(text="Информация о встрече\n\n"
+                                   f"<b>Дата и время по МСК:</b> {md[4]}\n"
+                                   f"<b>Ссылка:</b> {md[6] if md[6] else 'информация отсутствует'}\n\n"
+                                   "Соискатель\n\n"
+                                   f"<b>Имя:</b> {ad[5]} {ad[6]}\n"
+                                   f"<b>Направление:</b> {ad[7]}\n"
+                                   f"<b>Опыт:</b> {ad[8]}\n"
+                                   f"<b>Учебное заведение:</b> {ad[9]}\n"
+                                   f"<b>Год окончания:</b> {ad[10]}\n"
+                                   f"<b>Регион трудоустройства:</b> {ad[11]}\n"
+                                   f"<b>Хобби:</b> {ad[12]}\n"
+                                   f"<b>Вопросы ко встрече:</b> {ad[14]}\n\n"
+                              ,
+                              reply_markup=kb3b("Отменить встречу", f'cancel_meeting_e_{md[0]}',
+                                                "Перенести встречу", f'send_free_slots_{ad[0]}_init_by_e_r_{meeting_id}',
                                                 "Назад", f'expert_meetings'),
                               disable_notification=True)
     await call.message.edit_reply_markup()
@@ -386,27 +426,32 @@ async def meeting_cancelation(call: CallbackQuery):
     logger.debug(f"Expert {call.from_user.id} entered meeting_cancelation handler with meeting {meeting_id}")
 
 
-@dp.callback_query_handler(Regexp(r'^denied_e'))
-@dp.callback_query_handler(Regexp(r'^approved_e'))
+@dp.callback_query_handler(Regexp(r'^denied_e_c_'))
+@dp.callback_query_handler(Regexp(r'^approved_e_c_'))
 async def notif_init_applicant_result(call: CallbackQuery):
     await call.message.edit_reply_markup()
 
-    cd = call.data
-    if "approved" in cd:
-        meeting_id = int(cd[11:])
-        md = db.get_meeting(meeting_id)
+    cd = call.data.split("_")
+    meeting_id = int(cd[3])
+    md = db.get_meeting(meeting_id)
 
+    if "approved" in cd:
         db.update_meeting('status', meeting_id, "Подтверждена")
         db.update_user('applicants', 'status', md[3], 'Встреча подтверждена')
 
         mddtf = datetime.strptime(md[4], '%d.%m.%Y %H:%M')  # meeting date in datetime format
 
-        scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, call.from_user.id,))
+        mdzf = mddtf.strftime('%Y-%m-%dT%H:%M:%S')  # meeting date in zoom format
+        link, api_id = create_meeting(mdzf)
+        db.update_meeting('api_id', meeting_id, api_id)
+        db.update_meeting('link', meeting_id, link)
+
+        meeting_took_place_job = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
 
         local_now = datetime.now()
         now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
 
-        hours_left_before_meeting = (mddtf - now).seconds / 3600
+        hours_left_before_meeting = (mddtf.timestamp() - now.timestamp()) / 3600
         if hours_left_before_meeting > 3:
             notif_1day_time = mddtf - timedelta(days=1)
             notif_3hours_time = mddtf - timedelta(hours=3)
@@ -414,15 +459,9 @@ async def notif_init_applicant_result(call: CallbackQuery):
             notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
             notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
 
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}')
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {meeting_took_place_job.id}')
             await call.message.answer(text="Встреча подтверждена")
         else:
-            mdzf = datetime.strptime(md[4], '%d.%m.%Y %H:%M').strftime(
-                '%Y-%m-%dT%H:%M:%S')  # meeting date in zoom format
-            link = create_meeting(mdzf)
-
-            db.update_user('applicants', 'status', md[3], 'Последняя встреча состоялась')
-
             await call.message.answer(text="Уже менее чем через 3 часа у Вас запланирована встреча.\n\n"
                                            f"Ссылка: {link}")
             await bot.send_message(md[3], text=f"Хорошей встречи! Мы будем тебя ждать: {link}")
@@ -436,26 +475,96 @@ async def notif_init_applicant_result(call: CallbackQuery):
             notif3 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
             notif4 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
 
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}')
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {meeting_took_place_job.id}')
 
         logger.debug(
             f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
     if "denied" in cd:
-        meeting_id = cd[9:]
-        md = db.get_meeting(meeting_id)
         db.update_meeting('status', meeting_id, "Отклонена экспертом")
-        await call.message.answer(text="Встреча отменена.")
+        await call.message.answer(text="Встреча отменена")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил последнюю встречу')
         await notif_cancel_to_applicant2(md[3])
         logger.debug(
             f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
 
 
-def meeting_took_place(meeting_id, user_id):
-    meeting_ids = [meeting[0] for meeting in db.get_expert_meetings(user_id)]
+def meeting_took_place(meeting_id, expert_id, applicant_id):
+    meeting_ids = [meeting[0] for meeting in db.get_expert_meetings(expert_id)]
 
     if meeting_id in meeting_ids:
         db.update_meeting("status", meeting_id, 'Состоялась')
+
+    db.update_user('applicants', 'status', applicant_id, 'Последняя встреча состоялась')
+
+
+@dp.callback_query_handler(Regexp(r'^denied_e_r_'))
+@dp.callback_query_handler(Regexp(r'^approved_e_r_'))
+async def notif_reschedule_applicant_result(call: CallbackQuery):
+    await call.message.edit_reply_markup()
+
+    cd = call.data.split("_")
+    meeting_id = int(cd[3])
+    md = db.get_meeting(meeting_id)
+
+    if "approved" in cd:
+        new_start_time = cd[4].replace("%", ":")
+        mdzf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')
+
+        api_id = md[10]
+
+        update_meeting_date(api_id, mdzf)
+
+        db.update_meeting('status', meeting_id, "Перенесена")
+        db.update_meeting('meeting_date', meeting_id, new_start_time)
+
+        db.update_user('applicants', 'status', md[3], 'Встреча перенесена')
+
+        if md[9] is not None:
+            mjl = md[9].split(', ')  # meeting jobs list
+            for job in mjl:
+                try:
+                    db.remove_job(job)
+                    logger.debug(f"Job {job} was removed from job storage")
+                except Exception as e:
+                    logger.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
+
+        mddtf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M')  # meeting date in datetime format
+
+        meeting_took_place_job = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+
+        local_now = datetime.now()
+        now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
+
+        hours_left_before_meeting = (mddtf.timestamp() - now.timestamp()) / 3600
+        if hours_left_before_meeting > 3:
+            notif_1day_time = mddtf - timedelta(days=1)
+            notif_3hours_time = mddtf - timedelta(hours=3)
+
+            notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
+            notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
+
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {meeting_took_place_job.id}')
+        else:
+            notif_1hour_time = mddtf - timedelta(hours=1)
+            notif_5min_time = mddtf - timedelta(minutes=5)
+            feedback_notif_time = mddtf + timedelta(days=1)
+
+            notif1 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
+            notif2 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
+            notif3 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
+            notif4 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+
+            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {meeting_took_place_job.id}')
+
+        await call.message.answer(text="Встреча перенесена")
+    if "denied" in cd:
+        db.update_meeting('status', meeting_id, "Отклонена экспертом (перенос)")
+        await call.message.answer(text="Перенос встречи отменен")
+        db.update_user('applicants', 'status', md[3], 'Эксперт отменил перенос последней встречи')
+        await notif_cancel_to_applicant3(md[3])
+
+    logger.debug(
+        f"Expert {call.from_user.id} entered notif_reschedule_applicant_result with meeting {meeting_id} and cd {cd}")
 
 
 @dp.callback_query_handler(Regexp(r'^expert_fb_agree_'))

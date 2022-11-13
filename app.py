@@ -54,6 +54,13 @@ async def on_startup(dispatcher):
         logger.info('Table "local_contacts" is created')
     except Exception as e:
         logger.info(e)
+
+    try:
+        db.add_new_column("meetings", "api_id", "BIGINT")
+        logger.info('Column "api_id" is added to the "meetings" table')
+    except Exception as e:
+        logger.info(e)
+
     logger.info('Bot is running')
 
 

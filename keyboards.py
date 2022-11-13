@@ -5,7 +5,7 @@ from aiogram.utils.callback_data import CallbackData
 
 from config import directions_list, divisions_list, topics_list
 
-choosing_time_cd = CallbackData('choosing_time_a', 'expert_id', 'slot', 'init_by')
+choosing_time_cd = CallbackData('choosing_time_a', 'expert_id', 'slot', 'init_by', 'action', 'meeting_id')
 
 
 def kb1b(txt, cd):
@@ -232,31 +232,35 @@ def experts_to_confirm_kb2(experts_to_confirm: list, page: int = 1):
     return experts_keyboard
 
 
-def slots_kb(expert_id: int, init_by: str, slots: list, page: int = 1):
+def slots_kb(expert_id: int, init_by: str, slots: list, action: str, meeting_id: int, page: int = 1):
     slots_keyboard = InlineKeyboardMarkup()
     spl = 9  # slots per list
     l = len(slots)
     n_pages = math.ceil(l / spl)  # number of pages
 
     if n_pages > 1:
-        for i in range(spl * (page - 1), spl * page):
+        end_index = spl * page if page < n_pages else l
+
+        for i in range(spl * (page - 1), end_index):
             slot_for_cd = slots[i].replace(":", "%")
 
             try:
                 slots_keyboard.add(InlineKeyboardButton(text=slots[i],
                                                         callback_data=choosing_time_cd.new(expert_id=expert_id,
                                                                                            slot=slot_for_cd,
-                                                                                           init_by=init_by)))
+                                                                                           init_by=init_by,
+                                                                                           action=action,
+                                                                                           meeting_id=meeting_id)))
             except IndexError:
                 pass
         if page == 1:
             prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}_init_by_{init_by}')
+            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}_init_by_{init_by}_{action}_{meeting_id}')
         if page == n_pages:
             next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
         else:
-            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}')
+            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}_{action}_{meeting_id}')
         slots_keyboard.row(prev_b, next_b)
     else:
         for i in range(0, l):
@@ -264,7 +268,9 @@ def slots_kb(expert_id: int, init_by: str, slots: list, page: int = 1):
             slots_keyboard.add(InlineKeyboardButton(text=slots[i],
                                                     callback_data=choosing_time_cd.new(expert_id=expert_id,
                                                                                        slot=slot_for_cd,
-                                                                                       init_by=init_by)))
+                                                                                       init_by=init_by,
+                                                                                       action=action,
+                                                                                       meeting_id=meeting_id)))
     return slots_keyboard
 
 

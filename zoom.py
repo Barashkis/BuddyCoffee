@@ -1,9 +1,10 @@
+from datetime import datetime
+
 import jwt
 import requests
 import json
 from time import time
 from config import ZOOM_API_KEY, ZOOM_API_SEC
-
 
 # create a function to generate a token
 # using the pyjwt library
@@ -51,6 +52,23 @@ def create_meeting(start_time):
     # converting the output into json and extracting the details
     y = json.loads(r.text)
     join_url = y["join_url"]
+    api_id = y["id"]
     # meetingPassword = y["password"]
     logger.debug(f"Script generated new zoom meeting link arranged at {start_time}")
-    return join_url
+    return join_url, api_id
+
+
+def update_meeting_date(api_id, new_start_time):
+    body = {
+        "start_time": new_start_time
+    }
+
+    headers = {'authorization': 'Bearer ' + generate_token(),
+               'content-type': 'application/json'}
+
+    requests.patch(
+        f'https://api.zoom.us/v2/meetings/{api_id}',
+        headers=headers, data=json.dumps(body)
+    )
+
+    logger.debug(f"Script updated meeting with api_id {api_id} to date {new_start_time}")

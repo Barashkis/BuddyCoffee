@@ -12,6 +12,11 @@ async def notif_cancel_to_expert2(expert_id):
     logger.debug(f'Expert {expert_id} got notif_cancel_to_expert2 notification')
 
 
+async def notif_cancel_to_expert3(expert_id):
+    await dp.bot.send_message(expert_id, text=f'К сожалению, соискатель отказался переносить встречу')
+    logger.debug(f'Expert {expert_id} got notif_cancel_to_expert3 notification')
+
+
 async def notif_cancel_to_applicant(applicant_id, meeting_date, expert_name):
     await dp.bot.send_message(applicant_id, text=f'{expert_name} отменил встречу, назначенную {meeting_date}')
     logger.debug(f'Applicant {applicant_id} got notif_cancel_to_applicant notification of {meeting_date} meeting')
@@ -23,6 +28,12 @@ async def notif_cancel_to_applicant2(applicant_id):
     logger.debug(f'Applicant {applicant_id} got notif_cancel_to_applicant2 notification')
 
 
+async def notif_cancel_to_applicant3(applicant_id):
+    await dp.bot.send_message(applicant_id, text='К сожалению, текущий график выбранного '
+                                                 'эксперта не позволяет перенести эту встречу')
+    logger.debug(f'Applicant {applicant_id} got notif_cancel_to_applicant3 notification')
+
+
 async def notif_approved_3hours_to_expert(expert_id, link):
     await dp.bot.send_message(expert_id, text=f'Напоминаем о том, что через 3 часа у вас запланирована встреча.\n\n'
                                               f'Ссылка: {link}')
@@ -30,12 +41,19 @@ async def notif_approved_3hours_to_expert(expert_id, link):
 
 
 async def notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id):
-    await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} назначил вам встречу {slot}. <b>Указано московское время</b> '
+    await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} назначил вам встречу на {slot}. <b>Указано московское время</b> '
                                                  f'Вы подтверждаете ее?',
-                              reply_markup=kb2b("Подтверждаю ✅", f'approved_a_{meeting_id}',
-                                                "Не подтверждаю ❌", f"denied_a_{meeting_id}"))
+                              reply_markup=kb2b("Подтверждаю ✅", f'approved_a_c_{meeting_id}',
+                                                "Не подтверждаю ❌", f"denied_a_c_{meeting_id}"))
     logger.debug(f'Applicant {applicant_id} got notif_init_applicant notification')
 
+
+async def notif_reschedule_applicant(applicant_id, slot, expert_fullname, meeting_id):
+    await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} предлагает перенести встречу на {slot}. <b>Указано московское время</b> '
+                                                 f'Вы подтверждаете перенос?',
+                              reply_markup=kb2b("Подтверждаю ✅", f'approved_a_r_{meeting_id}_{slot.replace(":", "%")}',
+                                                "Не подтверждаю ❌", f"denied_a_r_{meeting_id}"))
+    logger.debug(f'Applicant {applicant_id} got notif_reschedule_applicant notification')
 
 
 async def notif_cancel_3hours_to_expert(expert_id):
@@ -76,11 +94,19 @@ async def notif_cancel_to_expert(expert_id, meeting_date, applicant_name):
 
 
 async def notif_init_expert(expert_id, slot, applicant_name, meeting_id):
-    await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} назначил вам встречу {slot}. <b>Указано московское время</b>. '
+    await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} назначил вам встречу на {slot}. <b>Указано московское время</b>. '
                                               f'Вы подтверждаете ее?',
-                              reply_markup=kb2b("Подтверждаю ✅", f'approved_e_{meeting_id}',
-                                                "Не подтверждаю ❌", f"denied_e_{meeting_id}"))
+                              reply_markup=kb2b("Подтверждаю ✅", f'approved_e_c_{meeting_id}',
+                                                "Не подтверждаю ❌", f"denied_e_c_{meeting_id}"))
     logger.debug(f'Expert {expert_id} got notif_init_expert notification about meeting {meeting_id}')
+
+
+async def notif_reschedule_expert(expert_id, slot, applicant_name, meeting_id):
+    await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} предлагает перенести встречу на {slot}. <b>Указано московское время</b>. '
+                                              f'Вы подтверждаете ее?',
+                              reply_markup=kb2b("Подтверждаю ✅", f'approved_e_r_{meeting_id}_{slot.replace(":", "%")}',
+                                                "Не подтверждаю ❌", f'denied_e_r_{meeting_id}'))
+    logger.debug(f'Expert {expert_id} got notif_reschedule_expert notification about meeting {meeting_id}')
 
 
 async def feedback_notif_applicant(meeting_id):

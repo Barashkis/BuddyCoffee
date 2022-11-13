@@ -125,6 +125,13 @@ class Database:
         ])
         return sql, tuple(parameters.values())
 
+    def add_new_column(self, table, column, data_type):
+        sql = f"""
+        ALTER TABLE {table}
+        ADD {column} {data_type};
+        """
+        return self.execute(sql, commit=True)
+
     def add_expert(self, user_id, join_date, username, firstname, lastname):
         sql = f"""
         INSERT INTO experts(user_id, join_date, username, firstname, lastname) VALUES(?, ?, ?, ?, ?)
