@@ -222,6 +222,8 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
                                           reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
                                           disable_notification=True)
 
+                await state.finish()
+
                 return
 
         data["action"] = action
