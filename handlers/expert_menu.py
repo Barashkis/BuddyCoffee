@@ -448,46 +448,32 @@ async def notif_init_applicant_result(call: CallbackQuery):
         db.update_meeting('api_id', meeting_id, api_id)
         db.update_meeting('link', meeting_id, link)
 
-        meeting_took_place_job = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+        await call.message.answer(f"Встреча была успешно подтверждена. Ссылка: {link}")
+        await bot.send_message(md[3], f"Хорошей встречи! Мы будем тебя ждать: {link}")
 
-        local_now = datetime.now()
-        now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
+        notif_1day_time = mddtf - timedelta(days=1)
+        notif_3hours_time = mddtf - timedelta(hours=3)
+        notif_1hour_time = mddtf - timedelta(hours=1)
+        notif_5min_time = mddtf - timedelta(minutes=5)
+        feedback_notif_time = mddtf + timedelta(days=1)
 
-        hours_left_before_meeting = (mddtf.timestamp() - now.timestamp()) / 3600
-        if hours_left_before_meeting > 3:
-            notif_1day_time = mddtf - timedelta(days=1)
-            notif_3hours_time = mddtf - timedelta(hours=3)
+        notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
+        notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
+        notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
+        notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
+        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
 
-            notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
-            notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
-
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {meeting_took_place_job.id}')
-            await call.message.answer(text="Встреча подтверждена")
-        else:
-            await call.message.answer(text="Уже менее чем через 3 часа у Вас запланирована встреча.\n\n"
-                                           f"Ссылка: {link}")
-            await bot.send_message(md[3], text=f"Хорошей встречи! Мы будем тебя ждать: {link}")
-
-            notif_1hour_time = mddtf - timedelta(hours=1)
-            notif_5min_time = mddtf - timedelta(minutes=5)
-            feedback_notif_time = mddtf + timedelta(days=1)
-
-            notif1 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
-            notif2 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
-            notif3 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-            notif4 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
-
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {meeting_took_place_job.id}')
-
-        logger.debug(
-            f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+        db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7}')
     if "denied" in cd:
         db.update_meeting('status', meeting_id, "Отклонена экспертом")
         await call.message.answer(text="Встреча отменена")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил последнюю встречу')
         await notif_cancel_to_applicant2(md[3])
-        logger.debug(
-            f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+
+    logger.debug(
+        f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
 
 
 def meeting_took_place(meeting_id, expert_id, applicant_id):
@@ -532,33 +518,25 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
 
         mddtf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M')  # meeting date in datetime format
 
-        meeting_took_place_job = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+        await call.message.answer("Встреча была успешно перенесена")
+        await bot.send_message(md[3], "Твоя встреча была успешно перенесена! Информацию о перенесенной встрече можно "
+                                      "посмотреть в разделе 'Мои встречи'")
 
-        local_now = datetime.now()
-        now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
+        notif_1day_time = mddtf - timedelta(days=1)
+        notif_3hours_time = mddtf - timedelta(hours=3)
+        notif_1hour_time = mddtf - timedelta(hours=1)
+        notif_5min_time = mddtf - timedelta(minutes=5)
+        feedback_notif_time = mddtf + timedelta(days=1)
 
-        hours_left_before_meeting = (mddtf.timestamp() - now.timestamp()) / 3600
-        if hours_left_before_meeting > 3:
-            notif_1day_time = mddtf - timedelta(days=1)
-            notif_3hours_time = mddtf - timedelta(hours=3)
+        notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
+        notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
+        notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
+        notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
+        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
 
-            notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
-            notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
-
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {meeting_took_place_job.id}')
-        else:
-            notif_1hour_time = mddtf - timedelta(hours=1)
-            notif_5min_time = mddtf - timedelta(minutes=5)
-            feedback_notif_time = mddtf + timedelta(days=1)
-
-            notif1 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
-            notif2 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
-            notif3 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-            notif4 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
-
-            db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {meeting_took_place_job.id}')
-
-        await call.message.answer(text="Встреча перенесена")
+        db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7.id}')
     if "denied" in cd:
         db.update_meeting('status', meeting_id, "Отклонена экспертом (перенос)")
         await call.message.answer(text="Перенос встречи отменен")

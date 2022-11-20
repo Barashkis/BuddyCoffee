@@ -34,12 +34,6 @@ async def notif_cancel_to_applicant3(applicant_id):
     logger.debug(f'Applicant {applicant_id} got notif_cancel_to_applicant3 notification')
 
 
-async def notif_approved_3hours_to_expert(expert_id, link):
-    await dp.bot.send_message(expert_id, text=f'Напоминаем о том, что через 3 часа у вас запланирована встреча.\n\n'
-                                              f'Ссылка: {link}')
-    logger.debug(f'Expert {expert_id} got notif_approved_3hours_to_expert notification')
-
-
 async def notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id):
     await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} назначил вам встречу на {slot}. <b>Указано московское время</b> '
                                                  f'Вы подтверждаете ее?',
@@ -65,16 +59,12 @@ async def notif_cancel_3hours_to_expert(expert_id):
 async def notif_1day(applicant_id):
     await dp.bot.send_message(applicant_id,
                               text="Напоминаем о запланированной встрече. Подробности о встрече ты можешь "
-                                   "узнать в меню 'Мои встречи'. За 3 часа до встречи мы отправим "
-                                   "уведомление, на которое нужно будет оперативно откликнуться и "
-                                   "подтвердить или отклонить готовность присутствовать на встрече.")
+                                   "узнать в меню 'Мои встречи'")
     logger.debug(f'Applicant {applicant_id} got notif_1day notification')
 
 
 async def notif_3hours(applicant_id, meeting_id):
-    await dp.bot.send_message(applicant_id, text="Пожалуйста, подтверди возможность присутствовать на встрече!",
-                              reply_markup=kb2b("Подтверждаю", f"approved_3hours_{meeting_id}",
-                                                "Отменить встречу", f"cancel_3hours_{meeting_id}"))
+    await dp.bot.send_message(applicant_id, text="Твоя консультация состоится через 3 часа!")
     logger.debug(f'Applicant {applicant_id} got notif_3hours notification about {meeting_id} meeting')
 
 
