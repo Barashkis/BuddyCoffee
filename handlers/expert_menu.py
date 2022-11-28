@@ -267,7 +267,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
 
                 return
 
-            if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today():
+            if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today().astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None):
                 esl.append(slot)
 
         if esl:

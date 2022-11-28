@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import jwt
 import requests
 import json
@@ -39,7 +37,7 @@ def create_meeting(start_time):
                       "settings": {"host_video": True,
                                    "participant_video": True,
                                    "join_before_host": True,
-                                   "jbh_time": 5,  # Doesn't work. Seems like there is problem on Zoom APi side...
+                                   "jbh_time": 5,
                                    "waiting_room": False
                                    }
                       }
