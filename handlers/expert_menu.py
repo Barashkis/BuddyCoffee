@@ -198,6 +198,17 @@ async def applicant_chosen(call: CallbackQuery):
                  f"with applicant {applicant_id}")
 
 
+@dp.callback_query_handler(Regexp('precancel_meeting_'))
+async def precancel_meeting(call: CallbackQuery):
+    applicant_id = int(call.data.split("_")[2])
+    await bot.send_message(applicant_id,
+                           "К сожалению, эксперт не сможет встретиться. Давай попробуем назначить встречу "
+                           "другому эксперту? Чтобы вернуться в меню, нажми /menu")
+
+    await call.message.edit_reply_markup(expert_menu_kb)
+    await call.message.edit_text("Встреча была отменена")
+
+
 @dp.callback_query_handler(Regexp(r'^send_free_slots_'))
 async def send_free_slots(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup()
