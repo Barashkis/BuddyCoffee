@@ -10,19 +10,6 @@ import handlers
 async def on_startup(dispatcher):
     await set_default_commands(dispatcher)
 
-    experts = db.get_experts()
-    for expert in experts:
-        if str(expert[6]).isdigit():
-            db.update_user('experts', 'direction', expert[0], directions_list[int(expert[6])])
-
-        if str(expert[7]).isdigit():
-            db.update_user('experts', 'division', expert[0], divisions_list[int(expert[7])])
-
-    applicants = db.get_applicants()
-    for applicant in applicants:
-        if str(applicant[7]).isdigit():
-            db.update_user('applicants', 'direction', applicant[0], directions_list[int(applicant[7])])
-
     try:
         db.cr_table_applicants()
         logger.info('Table "applicants" is created')
@@ -54,6 +41,19 @@ async def on_startup(dispatcher):
         logger.info('Table "local_contacts" is created')
     except Exception as e:
         logger.info(e)
+
+    experts = db.get_experts()
+    for expert in experts:
+        if str(expert[6]).isdigit():
+            db.update_user('experts', 'direction', expert[0], directions_list[int(expert[6])])
+
+        if str(expert[7]).isdigit():
+            db.update_user('experts', 'division', expert[0], divisions_list[int(expert[7])])
+
+    applicants = db.get_applicants()
+    for applicant in applicants:
+        if str(applicant[7]).isdigit():
+            db.update_user('applicants', 'direction', applicant[0], directions_list[int(applicant[7])])
 
     try:
         db.add_new_column("meetings", "api_id", "BIGINT")
