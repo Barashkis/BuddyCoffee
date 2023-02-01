@@ -184,6 +184,7 @@ async def sending_invitation(call: CallbackQuery):
 
     expert_id = int(call_data_list[2])
     action = call_data_list[3]
+    precancel_button_text = "Отказать в переносе" if action == "r" else "Отказать во встрече"
 
     try:
         meeting_id = int(call_data_list[4])
@@ -229,17 +230,17 @@ async def sending_invitation(call: CallbackQuery):
             await bot.send_photo(expert_id,
                                  photo=ad[16],
                                  caption=text,
-                                 reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", "Отказать во встрече", f"precancel_meeting_{applicant_id}"))
+                                 reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", precancel_button_text, f"precancel_meeting_{action}_{applicant_id}"))
         else:
             await bot.send_photo(expert_id, photo=ad[16])
             await bot.send_message(expert_id,
                                    text=text,
-                                   reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", "Отказать во встрече", f"precancel_meeting_{applicant_id}"),
+                                   reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", precancel_button_text, f"precancel_meeting_{action}_{applicant_id}"),
                                    disable_notification=True)
     else:
         await bot.send_message(expert_id,
                                text=text,
-                               reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", "Отказать во встрече", f"precancel_meeting_{applicant_id}"),
+                               reply_markup=kb2b("Отправить слоты", f"send_free_slots_{applicant_id}_init_by_a_{action}_{meeting_id}", precancel_button_text, f"precancel_meeting_{action}_{applicant_id}"),
                                disable_notification=True)
 
     await call.message.answer(f"{'Приглашение провести' if action == 'c' else 'Предложение перенести'} "

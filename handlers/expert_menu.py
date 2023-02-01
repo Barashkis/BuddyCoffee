@@ -200,13 +200,16 @@ async def applicant_chosen(call: CallbackQuery):
 
 @dp.callback_query_handler(Regexp('precancel_meeting_'))
 async def precancel_meeting(call: CallbackQuery):
-    applicant_id = int(call.data.split("_")[2])
+    applicant_id = int(call.data.split("_")[3])
+    action = call.data.split("_")[2]
+    action_text = "Перенос встречи был отменен" if action == "r" else "Встреча была отменена"
+
     await bot.send_message(applicant_id,
                            "К сожалению, эксперт не сможет встретиться. Давай попробуем назначить встречу "
                            "другому эксперту? Чтобы вернуться в меню, нажми /menu")
 
-    await call.message.edit_reply_markup(expert_menu_kb)
-    await call.message.edit_text("Встреча была отменена")
+    await call.message.edit_reply_markup()
+    await call.message.answer(action_text, reply_markup=expert_menu_kb)
 
 
 @dp.callback_query_handler(Regexp(r'^send_free_slots_'))
@@ -218,6 +221,7 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
         call_data_list = call.data.split("_")
 
         action = call_data_list[7]
+        init_by = call_data_list[6]
 
         try:
             meeting_id = int(call_data_list[8])
@@ -239,16 +243,37 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
 
         data["action"] = action
         data["applicant_id"] = int(call_data_list[3])
-        data["init_by"] = call_data_list[6]
+        data["init_by"] = init_by
+
+    kwargs = {}
+    if init_by == "e":
+        kwargs["reply_markup"] = kb1b("Назад (отменить отправку временных слотов)", "cancel_sending_slots")
 
     await call.message.answer(f"Введите временные слоты, "
                               f"{'когда вам удобно провести' if action == 'c' else 'на которые вы хотите перенести'}"
                               f"встречу, желательно указать несколько. <b>Укажите московское время</b>\n\n"
                               "<i>Формат:\n"
                               "25.01.2022 17:00, 27.01.2022 12:30, "
-                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>")
+                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>",
+                              **kwargs)
 
     logger.debug(f"Expert {call.from_user.id} entered send_free_slots handler")
+
+
+@dp.callback_query_handler(text='cancel_sending_slots', state='input_slots')
+async def cancel_sending_slots(call: CallbackQuery, state: FSMContext):
+    await state.finish()
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(text="Вы в главном меню. Если захотите сюда вернуться, используйте команду /menu",
+                              reply_markup=expert_menu_kb,
+                              disable_notification=True)
+
+
+@dp.callback_query_handler(text='cancel_sending_slots')
+async def failed_cancel_sending_slots(call: CallbackQuery):
+    await call.message.edit_reply_markup()
+    await call.message.answer(text="Вы уже отправили слоты соискателю и не можете отменить отправку")
 
 
 @dp.message_handler(state='input_slots')
@@ -268,7 +293,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
         slots_list = [slot.lstrip().rstrip() for slot in slots_list]
         esl = []
         for slot in slots_list:
-            if not re.match("^\d{1,2}\.\d{1,2}\.\d{4} \d{1,2}:\d{1,2}$", slot):
+            if not re.match("^\d{2}\.\d{2}\.\d{4} \d{1,2}:\d{2}$", slot):
                 await message.answer(text=f'Бот не смог распознать следующий слот: <i>{slot}</i>\n\n'
                                           'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
                                      disable_notification=True)
@@ -406,8 +431,7 @@ async def check_meeting(call: CallbackQuery):
                                    f"<b>Год окончания:</b> {ad[10]}\n"
                                    f"<b>Регион трудоустройства:</b> {ad[11]}\n"
                                    f"<b>Хобби:</b> {ad[12]}\n"
-                                   f"<b>Вопросы ко встрече:</b> {ad[14]}\n\n"
-                              ,
+                                   f"<b>Вопросы ко встрече:</b> {ad[14]}\n\n",
                               reply_markup=kb3b("Отменить встречу", f'cancel_meeting_e_{md[0]}',
                                                 "Перенести встречу", f'send_free_slots_{ad[0]}_init_by_e_r_{meeting_id}',
                                                 "Назад", f'expert_meetings'),
