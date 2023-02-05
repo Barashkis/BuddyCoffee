@@ -68,7 +68,6 @@ async def start(message: Message):
 @dp.message_handler(Command("start"))
 async def start(message: Message):
     args = message.get_args()
-    date = message.date.strftime('%d.%m.%Y %H:%M')
     if args:
         try:
             payload = decode_payload(args)
@@ -81,7 +80,7 @@ async def start(message: Message):
             await message.answer(text="Кажется, вы уже регистрировались в боте. "
                                       "Если хотите изменить свой профиль, воспользуйтесь командой /menu")
             logger.warning(f'User {message.from_user.id} entered bot with unknown start args: {args}, '
-                         f'and got exception: {e}')
+                           f'and got exception: {e}')
     else:
         if db.get_expert(message.from_user.id) is None and db.get_applicant(message.from_user.id) is None:
             await message.answer(text="Добрый день! Пожалуйста, скажите, кто вы:",
