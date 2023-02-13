@@ -61,6 +61,18 @@ async def on_startup(dispatcher):
     except Exception as e:
         logger.info(e)
 
+    try:
+        db.add_new_column("applicants", "last_activity", "TEXT")
+        logger.info('Column "last_activity" is added to the "applicants" table')
+    except Exception as e:
+        logger.info(e)
+
+    try:
+        db.add_new_column("experts", "last_activity", "TEXT")
+        logger.info('Column "last_activity" is added to the "experts" table')
+    except Exception as e:
+        logger.info(e)
+
     logger.info('Bot is running')
 
 

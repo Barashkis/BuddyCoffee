@@ -11,48 +11,54 @@ from my_logger import logger
 
 @dp.message_handler(Command("notify_all"))
 async def notify_all(message: Message):
-    logger.debug(f'{message.from_user.id} entered /notify_all command')
+    user_id = message.from_user.id
+
+    logger.debug(f'{user_id} entered /notify_all command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
         for t in admin_ids_raw:
             admin_ids.append(t[0])
-        if message.from_user.id in admin_ids:
+        if user_id in admin_ids:
             users = db.get_applicants() + db.get_experts()
             await message.answer(f'В базе всего {len(users)} пользователей.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_all", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {message.from_user.id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify handler")
 
 
 @dp.message_handler(Command("notify_inactive"))
 async def notify(message: Message):
-    logger.debug(f'{message.from_user.id} entered /notify_inactive command')
+    user_id = message.from_user.id
+
+    logger.debug(f'{user_id} entered /notify_inactive command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
         for t in admin_ids_raw:
             admin_ids.append(t[0])
-        if message.from_user.id in admin_ids:
+        if user_id in admin_ids:
             inactive_users = db.get_inactive_applicants()
             await message.answer(f'В базе {len(inactive_users)} пользователей, которые ни разу '
                                  f'не инициировали встречу.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_inactive", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {message.from_user.id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify handler")
 
 
 @dp.message_handler(Command("notify_applicants"))
 async def notify(message: Message):
-    logger.debug(f'{message.from_user.id} entered /notify_applicants command')
+    user_id = message.from_user.id
+
+    logger.debug(f'{user_id} entered /notify_applicants command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
         for t in admin_ids_raw:
             admin_ids.append(t[0])
-        if message.from_user.id in admin_ids:
+        if user_id in admin_ids:
             applicants = db.get_applicants()
             await message.answer(f'В базе всего {len(applicants)} соискателей',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_applicants", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {message.from_user.id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify handler")
 
 
 @dp.callback_query_handler(Regexp(r'^admin_send_msg_'))
@@ -112,17 +118,19 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
 
 @dp.message_handler(Command("add_admin"))
 async def add_admin(message: Message):
-    logger.debug(f'{message.from_user.id} entered /add_admin command')
+    user_id = message.from_user.id
+
+    logger.debug(f'{user_id} entered /add_admin command')
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
         for t in admin_ids_raw:
             admin_ids.append(t[0])
-        if message.from_user.id in admin_ids:
+        if user_id in admin_ids:
             await message.answer(f'Вы собираетесь добавить нового модератора. Нажмите кнопку "Добавить", если хотите '
                                  f'это сделать',
                                  reply_markup=kb2b("Добавить", "add_admin", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {message.from_user.id} entered add_admin handler")
+            logger.debug(f"Admin {user_id} entered add_admin handler")
 
 
 @dp.callback_query_handler(text='add_admin')
@@ -148,19 +156,21 @@ async def send_msg_to_inactive_users(message: Message, state: FSMContext):
 
 @dp.message_handler(Command("stats"))
 async def show_stats(message: Message):
-    logger.debug(f'{message.from_user.id} entered /stats command')
+    user_id = message.from_user.id
+
+    logger.debug(f'{user_id} entered /stats command')
 
     admin_ids_raw = db.get_admins()
     if admin_ids_raw is not None:
         admin_ids = []
         for t in admin_ids_raw:
             admin_ids.append(t[0])
-        if message.from_user.id in admin_ids:
+        if user_id in admin_ids:
             stats = db.get_stats()
             await message.answer(
                 f'В базе {stats[0][1]} экспертов и {stats[1][1]} соискателей, нажавших на кнопку "Показать контакты"')
 
-            logger.debug(f"Admin {message.from_user.id} entered show_stats handler")
+            logger.debug(f"Admin {user_id} entered show_stats handler")
 
 
 @dp.message_handler(Command("moderation"))
@@ -269,7 +279,6 @@ async def page_click_expert_to_confirm(call: CallbackQuery):
 @dp.callback_query_handler(Regexp(r'^admin_choosee_'))
 async def expert_to_confirm_chosen(call: CallbackQuery):
     expert_id = int(call.data[14:])
-
     await call.message.edit_reply_markup(reply_markup=kb3b("Утвердить", f"confirm_expert_{expert_id}",
                                                            "Отклонить", f"deny_expert_{expert_id}",
                                                            "Назад", "back_to_pagination"))
@@ -281,7 +290,6 @@ async def expert_to_confirm_chosen(call: CallbackQuery):
 @dp.callback_query_handler(text='back_to_pagination')
 async def back_to_pagination(call: CallbackQuery):
     experts_to_confirm = db.get_experts_to_confirm()
-
     await call.message.edit_reply_markup(experts_to_confirm_kb2(experts_to_confirm))
 
     logger.debug(f"Admin {call.from_user.id} entered back_to_pagination handler")
@@ -313,16 +321,15 @@ async def confirm_expert(call: CallbackQuery):
 
 @dp.callback_query_handler(Regexp(r'^deny_expert_'))
 async def confirm_expert(call: CallbackQuery):
-    expert_id = int(call.data[12:])
+    await call.message.edit_reply_markup()
+    await call.message.answer("Функционал эксперта не был предоставлен данному пользователю")
 
+    expert_id = int(call.data[12:])
     await bot.send_message(chat_id=expert_id,
                            text="К сожалению, Ваша анкета не прошла модерацию. "
                                 "Чтобы повторно пройти регистрацию, воспользуйтесь командой /start",
                            disable_notification=True)
     db.delete_user('experts', expert_id)
-
-    await call.message.edit_reply_markup()
-    await call.message.answer("Функционал эксперта не был предоставлен данному пользователю")
 
     logger.debug(f"Admin {call.from_user.id} entered deny_expert handler "
                  f"with expert {expert_id}")

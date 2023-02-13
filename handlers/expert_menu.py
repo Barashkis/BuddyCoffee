@@ -9,6 +9,7 @@ from aiogram.types import Message, CallbackQuery
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts, notif_1hour, notif_5min, \
     feedback_notif_applicant, feedback_notif_expert, notif_cancel_to_applicant3
+from handlers.utils import track_user_activity
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
     slots_kb
 from loader import bot, dp, db, scheduler
@@ -18,11 +19,15 @@ from zoom import create_meeting, update_meeting_date
 
 @dp.callback_query_handler(text='expert_menu')
 async def expert_menu(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "главного меню")
+
     await call.message.edit_reply_markup()
     await call.message.answer(text="Вы в главном меню. Если захотите сюда вернуться, используйте команду /menu",
                               reply_markup=expert_menu_kb,
                               disable_notification=True)
-    logger.debug(f"Expert {call.from_user.id} entered expert_menu handler")
+    logger.debug(f"Expert {user_id} entered expert_menu handler")
 
 
 def search_applicant(expert_id):
@@ -61,9 +66,13 @@ def search_applicant(expert_id):
 
 @dp.callback_query_handler(text='search_applicants')
 async def search_applicants(call: CallbackQuery):
-    logger.debug(f"Expert {call.from_user.id} entered search_applicants handler")
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Посмотреть анкеты соискателей")
+
+    logger.debug(f"Expert {user_id} entered search_applicants handler")
     await call.message.edit_reply_markup()
-    suitable_applicants = search_applicant(call.from_user.id)
+    suitable_applicants = search_applicant(user_id)
     if suitable_applicants:
         applicant_id = suitable_applicants[0].get('user_id')
         ad = db.get_applicant(applicant_id)
@@ -106,13 +115,17 @@ async def search_applicants(call: CallbackQuery):
         await call.message.answer(text="К сожалению, сейчас все соискатели заняты. Пожалуйста, попробуйте позднее.",
                                   reply_markup=kb1b('Назад', "expert_menu"),
                                   disable_notification=True)
-        logger.debug(f"Expert {call.from_user.id} entered search_applicants handler but don't "
+        logger.debug(f"Expert {user_id} entered search_applicants handler but don't "
                      f"have any suitable applicants")
 
 
 @dp.callback_query_handler(Regexp(r'^sakbp_'))
 async def page_click_expert(call: CallbackQuery):
-    suitable_applicants = search_applicant(call.from_user.id)
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "⏮/⏭ (соискатели)")
+
+    suitable_applicants = search_applicant(user_id)
     page = int(call.data[6:])
     applicant_id = suitable_applicants[page - 1].get("user_id")
     ad = db.get_applicant(applicant_id)
@@ -151,11 +164,15 @@ async def page_click_expert(call: CallbackQuery):
                                   reply_markup=suitable_applicants_kb2(suitable_applicants, page),
                                   disable_notification=True)
     await call.message.edit_reply_markup()
-    logger.debug(f"Expert {call.from_user.id} entered page_click_expert handler with page {page}")
+    logger.debug(f"Expert {user_id} entered page_click_expert handler with page {page}")
 
 
 @dp.callback_query_handler(Regexp(r'^forma_'))
 async def choosing_applicant(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Назад (к соискателю)")
+
     applicant_id = int(call.data[6:])
     ad = db.get_applicant(applicant_id)
     firstname = ad[5]
@@ -179,11 +196,15 @@ async def choosing_applicant(call: CallbackQuery):
                                                 "Назад", f'search_applicants'),
                               disable_notification=True)
     await call.message.edit_reply_markup()
-    logger.debug(f"Expert {call.from_user.id} entered choosing_applicant handler with applicant {applicant_id}")
+    logger.debug(f"Expert {user_id} entered choosing_applicant handler with applicant {applicant_id}")
 
 
 @dp.callback_query_handler(Regexp(r'^choosea_'))
 async def applicant_chosen(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Выбрать соискателя")
+
     applicant_id = call.data[8:]
 
     await call.message.edit_reply_markup()
@@ -194,14 +215,20 @@ async def applicant_chosen(call: CallbackQuery):
                                                 "Назад", f"forma_{applicant_id}"),
                               disable_notification=True)
 
-    logger.debug(f"Expert {call.from_user.id} entered applicant_chosen handler "
+    logger.debug(f"Expert {user_id} entered applicant_chosen handler "
                  f"with applicant {applicant_id}")
 
 
-@dp.callback_query_handler(Regexp('precancel_meeting_'))
+@dp.callback_query_handler(Regexp('^precancel_meeting_'))
 async def precancel_meeting(call: CallbackQuery):
-    applicant_id = int(call.data.split("_")[3])
+    user_id = call.from_user.id
+
     action = call.data.split("_")[2]
+    button_text = "Отказать в переносе" if action == "r" else "Отказать во встрече"
+    track_user_activity(user_id, "experts", button_text)
+
+
+    applicant_id = int(call.data.split("_")[3])
     action_text = "Перенос встречи был отменен" if action == "r" else "Встреча была отменена"
 
     await bot.send_message(applicant_id,
@@ -211,9 +238,15 @@ async def precancel_meeting(call: CallbackQuery):
     await call.message.edit_reply_markup()
     await call.message.answer(action_text, reply_markup=expert_menu_kb)
 
+    logger.debug(f"Expert {user_id} entered precancel_meeting handler")
+
 
 @dp.callback_query_handler(Regexp(r'^send_free_slots_'))
 async def send_free_slots(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Отправить слоты")
+
     await call.message.edit_reply_markup()
 
     await state.set_state('input_slots')
@@ -257,11 +290,15 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
                               "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>",
                               **kwargs)
 
-    logger.debug(f"Expert {call.from_user.id} entered send_free_slots handler")
+    logger.debug(f"Expert {user_id} entered send_free_slots handler")
 
 
 @dp.callback_query_handler(text='cancel_sending_slots', state='input_slots')
 async def cancel_sending_slots(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Назад (отменить отправку временных слотов)")
+
     await state.finish()
 
     await call.message.edit_reply_markup()
@@ -272,12 +309,18 @@ async def cancel_sending_slots(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(text='cancel_sending_slots')
 async def failed_cancel_sending_slots(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Назад (отменить отправку временных слотов)")
+
     await call.message.edit_reply_markup()
     await call.message.answer(text="Вы уже отправили слоты соискателю и не можете отменить отправку")
 
 
 @dp.message_handler(state='input_slots')
 async def notify_applicant_about_slots(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+
     async with state.proxy() as data:
         meeting_id = data.get("meeting_id")
         if not meeting_id:
@@ -287,9 +330,9 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
         applicant_id = data["applicant_id"]
         init_by = data["init_by"]
 
-    text = message.text
+    message_text = message.text
     try:
-        slots_list = text.split(',')
+        slots_list = message_text.split(',')
         slots_list = [slot.lstrip().rstrip() for slot in slots_list]
         esl = []
         for slot in slots_list:
@@ -299,7 +342,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                                      disable_notification=True)
                 await state.set_state('input_slots')
                 logger.debug(
-                    f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
+                    f"Expert {user_id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
 
                 return
 
@@ -307,7 +350,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                 esl.append(slot)
 
         if esl:
-            ed = db.get_expert(message.from_user.id)
+            ed = db.get_expert(user_id)
 
             if ed[7]:
                 division = ed[7]
@@ -328,20 +371,20 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
                     await bot.send_photo(applicant_id,
                                          photo=ed[15],
                                          caption=text,
-                                         reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id))
+                                         reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id))
                 else:
                     await bot.send_photo(applicant_id, photo=ed[15])
                     await bot.send_message(applicant_id,
                                            text=text,
-                                           reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id),
+                                           reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
                                            disable_notification=True)
             else:
                 await bot.send_message(applicant_id,
                                        text=text,
-                                       reply_markup=slots_kb(message.from_user.id, init_by, esl, action, meeting_id),
+                                       reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
                                        disable_notification=True)
 
-            db.update_user("experts", "slots", message.from_user.id, message.text)
+            db.update_user("experts", "slots", user_id, message_text)
 
             await message.answer(text="Слоты были отправлены выбранному соискателю. "
                                       "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
@@ -351,10 +394,10 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
             await state.finish()
 
             logger.debug(
-                f"Expert {message.from_user.id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
+                f"Expert {user_id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
         else:
             logger.warning(
-                f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but slots is overdue")
+                f"Expert {user_id} entered notify_applicant_about_slots handler but slots is overdue")
             await message.answer(text='Ни один из введенных Вами слотов не является действующим. '
                                       'Отправьте временные слоты еще раз',
                                  disable_notification=True)
@@ -362,7 +405,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
 
     except Exception as e:
         logger.warning(
-            f"Expert {message.from_user.id} entered notify_applicant_about_slots handler but got an error: {e}")
+            f"Expert {user_id} entered notify_applicant_about_slots handler but got an error: {e}")
         await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
                                   f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
                              disable_notification=True)
@@ -371,22 +414,30 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
 
 @dp.callback_query_handler(text='expert_meetings')
 async def expert_meetings(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "отображения действующих встреч")
+
     await call.message.edit_reply_markup()
-    em = db.get_expert_meetings(call.from_user.id)
+    em = db.get_expert_meetings(user_id)
     if em:
         await call.message.answer(text="Ваш список встреч (время по МСК)",
                                   reply_markup=meetings_e_kb(em),
                                   disable_notification=True)
-        logger.debug(f"Expert {call.from_user.id} entered exert_meetings handler and got {len(em)} his meetings")
+        logger.debug(f"Expert {user_id} entered exert_meetings handler and got {len(em)} his meetings")
     else:
         await call.message.answer(text="У вас пока нет запланированных встреч",
                                   reply_markup=kb1b("Назад", "expert_menu"),
                                   disable_notification=True)
-        logger.debug(f"Expert {call.from_user.id} entered exert_meetings handler but he doesn't have meetings yet")
+        logger.debug(f"Expert {user_id} entered exert_meetings handler but he doesn't have meetings yet")
 
 
 @dp.callback_query_handler(Regexp(r'^show_contacts_a_'))
 async def show_contacts_a(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Показать контакты")
+
     db.update_stat("experts")
 
     applicant_id = int(call.data[16:])
@@ -402,21 +453,29 @@ async def show_contacts_a(call: CallbackQuery):
     now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
 
     notif_date = now + timedelta(hours=3)
-    scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(call.from_user.id, applicant_id,))
+    scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(user_id, applicant_id,))
 
-    logger.debug(f"Expert {call.from_user.id} entered show_contacts handler")
+    logger.debug(f"Expert {user_id} entered show_contacts handler")
 
 
 @dp.callback_query_handler(Regexp(r'^mkbp_e_'))
 async def expert_chosen(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "⏮/⏭ (встречи)")
+
     page = int(call.data[7:])
-    em = db.get_expert_meetings(call.from_user.id)
+    em = db.get_expert_meetings(user_id)
     await call.message.edit_reply_markup(meetings_e_kb(em, page))
-    logger.debug(f"Expert {call.from_user.id} entered expert_chosen handler with page {page}")
+    logger.debug(f"Expert {user_id} entered expert_chosen handler with page {page}")
 
 
 @dp.callback_query_handler(Regexp(r'^meeting_e_'))
 async def check_meeting(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "выбора встречи")
+
     meeting_id = int(call.data[10:])
     md = db.get_meeting(meeting_id)  # meeting's data
     ad = db.get_applicant(md[3])  # applicant's data
@@ -437,17 +496,21 @@ async def check_meeting(call: CallbackQuery):
                                                 "Назад", f'expert_meetings'),
                               disable_notification=True)
     await call.message.edit_reply_markup()
-    logger.debug(f"Expert {call.from_user.id} entered check_meeting handler with meeting {meeting_id}")
+    logger.debug(f"Expert {user_id} entered check_meeting handler with meeting {meeting_id}")
 
 
 @dp.callback_query_handler(Regexp(r'^cancel_meeting_e_'))
 async def meeting_cancelation(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Отменить встречу")
+
     await call.message.edit_reply_markup()
     meeting_id = int(call.data[17:])
     md = db.get_meeting(meeting_id)
     applicant_id = md[3]
     meeting_date = md[4]
-    expert_name = db.get_expert(call.from_user.id)[5]
+    expert_name = db.get_expert(user_id)[5]
     await call.message.answer(text="Встреча отменена.",
                               reply_markup=kb1b("Назад", "expert_menu"))
     db.update_meeting('status', meeting_id, 'Отменена экспертом')
@@ -460,12 +523,14 @@ async def meeting_cancelation(call: CallbackQuery):
             except Exception as e:
                 logger.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
     await notif_cancel_to_applicant(applicant_id, meeting_date, expert_name)
-    logger.debug(f"Expert {call.from_user.id} entered meeting_cancelation handler with meeting {meeting_id}")
+    logger.debug(f"Expert {user_id} entered meeting_cancelation handler with meeting {meeting_id}")
 
 
 @dp.callback_query_handler(Regexp(r'^denied_e_c_'))
 @dp.callback_query_handler(Regexp(r'^approved_e_c_'))
 async def notif_init_applicant_result(call: CallbackQuery):
+    user_id = call.from_user.id
+
     await call.message.edit_reply_markup()
 
     cd = call.data.split("_")
@@ -473,6 +538,8 @@ async def notif_init_applicant_result(call: CallbackQuery):
     md = db.get_meeting(meeting_id)
 
     if "approved" in cd:
+        track_user_activity(user_id, "experts", "Подтверждаю ✅ (создание встречи)")
+
         db.update_meeting('status', meeting_id, "Подтверждена")
         db.update_user('applicants', 'status', md[3], 'Встреча подтверждена')
 
@@ -502,13 +569,15 @@ async def notif_init_applicant_result(call: CallbackQuery):
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7}')
     if "denied" in cd:
+        track_user_activity(user_id, "experts", "Не подтверждаю ❌ (создание встречи)")
+
         db.update_meeting('status', meeting_id, "Отклонена экспертом")
         await call.message.answer(text="Встреча отменена")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил последнюю встречу')
         await notif_cancel_to_applicant2(md[3])
 
     logger.debug(
-        f"Expert {call.from_user.id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
+        f"Expert {user_id} entered notif_init_applicant_result with meeting {meeting_id} and cd {cd}")
 
 
 def meeting_took_place(meeting_id, expert_id, applicant_id):
@@ -523,6 +592,8 @@ def meeting_took_place(meeting_id, expert_id, applicant_id):
 @dp.callback_query_handler(Regexp(r'^denied_e_r_'))
 @dp.callback_query_handler(Regexp(r'^approved_e_r_'))
 async def notif_reschedule_applicant_result(call: CallbackQuery):
+    user_id = call.from_user.id
+
     await call.message.edit_reply_markup()
 
     cd = call.data.split("_")
@@ -530,6 +601,8 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
     md = db.get_meeting(meeting_id)
 
     if "approved" in cd:
+        track_user_activity(user_id, "experts", "Подтверждаю ✅ (перенос встречи)")
+
         new_start_time = cd[4].replace("%", ":")
         mdzf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')
 
@@ -573,24 +646,30 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7.id}')
     if "denied" in cd:
+        track_user_activity(user_id, "experts", "Не подтверждаю ❌ (перенос встречи)")
+
         db.update_meeting('status', meeting_id, "Отклонена экспертом (перенос)")
         await call.message.answer(text="Перенос встречи отменен")
         db.update_user('applicants', 'status', md[3], 'Эксперт отменил перенос последней встречи')
         await notif_cancel_to_applicant3(md[3])
 
     logger.debug(
-        f"Expert {call.from_user.id} entered notif_reschedule_applicant_result with meeting {meeting_id} and cd {cd}")
+        f"Expert {user_id} entered notif_reschedule_applicant_result with meeting {meeting_id} and cd {cd}")
 
 
 @dp.callback_query_handler(Regexp(r'^expert_fb_agree_'))
 async def expert_fb_agree(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Оставить отзыв")
+
     cd = call.data
     meeting_id = cd[16:]
     db.update_meeting('expert_fb', meeting_id, 'Ожидает отзыва')
     await call.message.answer("Напишите ваш отзыв в ответом письме:")
     await state.set_state(f"expert_writing_feedback")
     await call.message.edit_reply_markup()
-    logger.debug(f"Expert {call.from_user.id} entered expert_fb_agree with meeting {meeting_id}")
+    logger.debug(f"Expert {user_id} entered expert_fb_agree with meeting {meeting_id}")
 
 
 @dp.message_handler(state="expert_writing_feedback")
@@ -606,9 +685,13 @@ async def expert_writing_feedback(message: Message, state: FSMContext):
 
 @dp.callback_query_handler(text='add_photo_e')
 async def add_photo(call: CallbackQuery):
-    logger.debug(f"Expert {call.from_user.id} entered add_photo handler")
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Добавить фото к анкете")
+
+    logger.debug(f"Expert {user_id} entered add_photo handler")
     await call.message.edit_reply_markup()
-    ed = db.get_expert(call.from_user.id)
+    ed = db.get_expert(user_id)
     photo = ed[15]
     if photo:
         await call.message.answer_photo(photo, "Ваша текущая фотография. Желаете изменить?",
@@ -622,7 +705,11 @@ async def add_photo(call: CallbackQuery):
 
 @dp.callback_query_handler(text='update_photo_e')
 async def update_photo(call: CallbackQuery, state: FSMContext):
-    logger.debug(f"Expert {call.from_user.id} entered update_photo handler")
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Добавить фото")
+
+    logger.debug(f"Expert {user_id} entered update_photo handler")
     await call.message.edit_reply_markup()
     await call.message.answer("Пожалуйста, пришлите фотографию в чат (не файлом)",
                               disable_notification=True)
@@ -631,9 +718,11 @@ async def update_photo(call: CallbackQuery, state: FSMContext):
 
 @dp.message_handler(state='uploading_photo_e', content_types=['photo'])
 async def uploading_photo(message: Message, state: FSMContext):
-    logger.debug(f"Expert {message.from_user.id} entered uploading_photo handler")
+    user_id = message.from_user.id
+
+    logger.debug(f"Expert {user_id} entered uploading_photo handler")
     photo_id = message.photo[-1].file_id
-    db.update_user('experts', 'photo', message.from_user.id, photo_id)
+    db.update_user('experts', 'photo', user_id, photo_id)
     await message.answer('Ваша фотография успешно обновлена', reply_markup=expert_menu_kb, disable_notification=True)
     await state.finish()
 
