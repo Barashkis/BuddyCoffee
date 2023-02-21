@@ -485,7 +485,7 @@ async def notif_init_expert_result(call: CallbackQuery):
         notif_3hours_time = mddtf - timedelta(hours=3)
         notif_1hour_time = mddtf - timedelta(hours=1)
         notif_5min_time = mddtf - timedelta(minutes=5)
-        feedback_notif_time = mddtf + timedelta(days=1)
+        feedback_notif_time = mddtf + timedelta(hours=1)
 
         notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
         notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
@@ -562,7 +562,7 @@ async def notif_reschedule_expert_result(call: CallbackQuery):
         notif_3hours_time = mddtf - timedelta(hours=3)
         notif_1hour_time = mddtf - timedelta(hours=1)
         notif_5min_time = mddtf - timedelta(minutes=5)
-        feedback_notif_time = mddtf + timedelta(days=1)
+        feedback_notif_time = mddtf + timedelta(hours=1)
 
         notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
         notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], md[0]))
