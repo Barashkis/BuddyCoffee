@@ -23,11 +23,11 @@ async def notify_all(message: Message):
             users = db.get_applicants() + db.get_experts()
             await message.answer(f'В базе всего {len(users)} пользователей.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_all", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {user_id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify_all handler")
 
 
 @dp.message_handler(Command("notify_inactive"))
-async def notify(message: Message):
+async def notify_inactive(message: Message):
     user_id = message.from_user.id
 
     logger.debug(f'{user_id} entered /notify_inactive command')
@@ -41,11 +41,11 @@ async def notify(message: Message):
             await message.answer(f'В базе {len(inactive_users)} пользователей, которые ни разу '
                                  f'не инициировали встречу.',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_inactive", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {user_id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify_inactive handler")
 
 
 @dp.message_handler(Command("notify_applicants"))
-async def notify(message: Message):
+async def notify_applicants(message: Message):
     user_id = message.from_user.id
 
     logger.debug(f'{user_id} entered /notify_applicants command')
@@ -58,7 +58,7 @@ async def notify(message: Message):
             applicants = db.get_applicants()
             await message.answer(f'В базе всего {len(applicants)} соискателей',
                                  reply_markup=kb2b("Написать сообщение", "admin_send_msg_applicants", "Назад", "close_keyboard"))
-            logger.debug(f"Admin {user_id} entered notify handler")
+            logger.debug(f"Admin {user_id} entered notify_applicants handler")
 
 
 @dp.callback_query_handler(Regexp(r'^admin_send_msg_'))
@@ -67,53 +67,87 @@ async def send_msg_to_users(call: CallbackQuery, state: FSMContext):
     await call.message.answer(f"Напишите сообщение, которое будет отправлено пользователям.")
     cd = call.data
     notify_type = cd[15:]
-    await state.set_state(f'admin_write_msg_{notify_type}')
+    await state.set_state('admin_confirm_msg')
+    async with state.proxy() as data:
+        data["notify_type"] = notify_type
     logger.debug(f"Admin {call.from_user.id} entered send_msg_to_{notify_type}_users handler")
 
 
-@dp.message_handler(state='admin_write_msg_all')
-async def send_msg_to_inactive_users(message: Message, state: FSMContext):
-    msg = message.text
+@dp.message_handler(state='admin_confirm_msg')
+async def confirm_message_sending(message: Message, state: FSMContext):
+    data = await state.get_data()
+    notify_type = data["notify_type"]
+    await state.finish()
+
+    text = message.text
+    async with state.proxy() as data:
+        data["message_text"] = text
+
+    await message.answer("Сообщение, которое Вы хотите разослать, будет выглядеть вот так:\n\n"
+                         f"{text}\n\n"
+                         "Вы подтверждаете отправку этого сообщения?",
+                         reply_markup=kb2b("Подтверждаю", f"admin_write_msg_{notify_type}", "Отменить отправку", "close_keyboard"))
+    logger.debug(f"Admin {message.from_user.id} entered confirm_message_sending handler")
+
+
+@dp.callback_query_handler(text='admin_write_msg_all')
+async def send_msg_to_all_users(call: CallbackQuery, state: FSMContext):
+    await call.message.delete()
+
+    status_message = (await bot.send_message(call.from_user.id, "Производится рассылка сообщения..."))
+
+    data = await state.get_data()
+    message_text = data["message_text"]
+
     users = db.get_applicants() + db.get_experts()
     for user in users:
         try:
-            await bot.send_message(user[0], text=f"{msg}")
+            await bot.send_message(user[0], text=message_text)
             await asyncio.sleep(.05)
         except Exception as e:
             logger.debug(e)
-    await message.answer(f'Ваше сообщение было отправлено {len(users)} пользователям')
-    await state.finish()
-    logger.debug(f"Admin {message.from_user.id} send notification to all users")
+    await status_message.edit_text(f'Ваше сообщение было отправлено {len(users)} пользователям')
+    logger.debug(f"Admin {call.from_user.id} send notification to all users")
 
 
-@dp.message_handler(state='admin_write_msg_inactive')
-async def send_msg_to_inactive_users(message: Message, state: FSMContext):
-    msg = message.text
+@dp.callback_query_handler(text='admin_write_msg_inactive')
+async def send_msg_to_inactive_users(call: CallbackQuery, state: FSMContext):
+    await call.message.delete()
+
+    status_message = (await bot.send_message(call.from_user.id, "Производится рассылка сообщения..."))
+
+    data = await state.get_data()
+    message_text = data["message_text"]
+
     inactive_users = db.get_inactive_applicants()
     for applicant in inactive_users:
         try:
-            await bot.send_message(applicant[0], text=f"{msg}")
+            await bot.send_message(applicant[0], text=message_text)
             await asyncio.sleep(.05)
         except Exception as e:
             logger.debug(e)
-    await message.answer(f'Ваше сообщение было отправлено {len(inactive_users)} пользователям')
-    await state.finish()
-    logger.debug(f"Admin {message.from_user.id} send notification to inactive users")
+    await status_message.edit_text(f'Ваше сообщение было отправлено {len(inactive_users)} пользователям')
+    logger.debug(f"Admin {call.from_user.id} send notification to inactive users")
 
 
-@dp.message_handler(state='admin_write_msg_applicants')
-async def send_msg_to_inactive_users(message: Message, state: FSMContext):
-    msg = message.text
+@dp.callback_query_handler(text='admin_write_msg_applicants')
+async def send_msg_to_applicants(call: CallbackQuery, state: FSMContext):
+    await call.message.delete()
+
+    status_message = (await bot.send_message(call.from_user.id, "Производится рассылка сообщения..."))
+
+    data = await state.get_data()
+    message_text = data["message_text"]
+
     applicants = db.get_applicants()
     for applicant in applicants:
         try:
-            await bot.send_message(applicant[0], text=f"{msg}")
+            await bot.send_message(applicant[0], text=message_text)
             await asyncio.sleep(.05)
         except Exception as e:
             logger.debug(e)
-    await message.answer(f'Ваше сообщение было отправлено {len(applicants)} соискателям')
-    await state.finish()
-    logger.debug(f"Admin {message.from_user.id} send notification to applicants")
+    await status_message.edit_text(f'Ваше сообщение было отправлено {len(applicants)} соискателям')
+    logger.debug(f"Admin {call.from_user.id} send notification to applicants")
 
 
 @dp.message_handler(Command("add_admin"))
@@ -141,7 +175,7 @@ async def adding_admin(call: CallbackQuery, state: FSMContext):
 
 
 @dp.message_handler(state='adding_admin')
-async def send_msg_to_inactive_users(message: Message, state: FSMContext):
+async def proceed_adding_admin(message: Message, state: FSMContext):
     try:
         new_admin = message.forward_from.id
         db.add_admin(new_admin)

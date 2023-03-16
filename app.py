@@ -15,27 +15,32 @@ async def on_startup(dispatcher):
         logger.info('Table "applicants" is created')
     except Exception as e:
         logger.info(e)
+
     try:
         db.cr_table_experts()
         logger.info('Table "experts" is created')
     except Exception as e:
         logger.info(e)
+
     try:
         db.cr_table_meetings()
         logger.info('Table "meetings" is created')
     except Exception as e:
         logger.info(e)
+
     try:
         db.cr_table_admins()
         logger.info('Table "admins" is created')
     except Exception as e:
         logger.info(e)
+
     try:
         db.cr_table_stats()
         db.add_initial_stats()
         logger.info('Table "stats" is created')
     except Exception as e:
         logger.info(e)
+
     try:
         db.cr_table_local_contacts()
         logger.info('Table "local_contacts" is created')
