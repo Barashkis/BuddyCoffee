@@ -596,6 +596,9 @@ async def applicant_fb_agree(call: CallbackQuery, state: FSMContext):
     db.update_meeting('applicant_fb', meeting_id, 'Ожидает отзыва')
     await call.message.answer("Напиши свой отзыв в ответом письме:")
     await state.set_state(f"applicant_writing_feedback")
+    async with state.proxy() as data:
+        data["fb_meeting_id"] = meeting_id
+
     await call.message.edit_reply_markup()
     logger.debug(f"Applicant {user_id} entered applicant_fb_agree with meeting {meeting_id}")
 
@@ -603,7 +606,10 @@ async def applicant_fb_agree(call: CallbackQuery, state: FSMContext):
 @dp.message_handler(state="applicant_writing_feedback")
 async def applicant_writing_feedback(message: Message, state: FSMContext):
     fb = message.text
-    meeting_id = db.get_meeting_fb_a()[0]  # really weak implementation, can cause errors
+
+    data = await state.get_data()
+    meeting_id = data["fb_meeting_id"]
+
     await message.answer("Спасибо за твой отзыв! Ты делаешь работу сервиса лучше.",
                          reply_markup=applicant_menu_kb)
     db.update_meeting("applicant_fb", meeting_id, fb)

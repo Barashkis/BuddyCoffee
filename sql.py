@@ -272,23 +272,11 @@ class Database:
         '''
         return self.execute(sql, commit=True)
 
-    def get_meeting_fb_e(self):
-        sql = f'''
-        SELECT * FROM meetings WHERE expert_fb="Ожидает отзыва" ORDER BY 1 DESC LIMIT 1
-        '''
-        return self.execute(sql, fetchone=True)
-
     def delete_user(self, table, user_id):
         sql = f'''
         DELETE FROM {table} WHERE user_id={user_id};
         '''
         return self.execute(sql, commit=True)
-
-    def get_meeting_fb_a(self):
-        sql = f'''
-        SELECT * FROM meetings WHERE applicant_fb="Ожидает отзыва" ORDER BY 1 DESC LIMIT 1
-        '''
-        return self.execute(sql, fetchone=True)
 
     def remove_job(self, job_id):
         sql = f'''
