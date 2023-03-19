@@ -64,7 +64,7 @@ async def notify_applicants(message: Message):
 @dp.callback_query_handler(Regexp(r'^admin_send_msg_'))
 async def send_msg_to_users(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup()
-    await call.message.answer(f"Напишите сообщение, которое будет отправлено пользователям.")
+    await call.message.answer(f"Напишите сообщение, которое будет отправлено пользователям")
     cd = call.data
     notify_type = cd[15:]
     await state.set_state('admin_confirm_msg')
