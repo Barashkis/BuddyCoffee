@@ -254,6 +254,12 @@ class Database:
         '''
         return self.execute(sql, fetchone=True)
 
+    def get_all_expert_meetings_with_rating(self, expert_id):
+        sql = f'''
+        SELECT * FROM meetings WHERE expert={expert_id} AND rating IS NOT NULL
+        '''
+        return self.execute(sql, fetchall=True)
+
     def get_last_insert_meeting_id(self, expert_id, applicant_id):
         sql = f'''
         SELECT MAX(meeting_id) FROM meetings WHERE expert={expert_id} AND applicant={applicant_id};

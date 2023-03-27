@@ -564,8 +564,8 @@ async def notif_init_applicant_result(call: CallbackQuery):
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
         notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
-        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7}')
     if "denied" in cd:
@@ -641,8 +641,8 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
         notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
-        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7.id}')
     if "denied" in cd:

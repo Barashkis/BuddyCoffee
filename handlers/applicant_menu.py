@@ -492,8 +492,8 @@ async def notif_init_expert_result(call: CallbackQuery):
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
         notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[3],))
-        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7.id}')
     if "denied" in cd:
@@ -569,8 +569,8 @@ async def notif_reschedule_expert_result(call: CallbackQuery):
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
         notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[3]))
-        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],))
-        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],))
+        notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
+        notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(md[0],), misfire_grace_time=59)
 
         db.update_meeting('notifications_ids', meeting_id, f'{notif1.id}, {notif2.id}, {notif3.id}, {notif4.id}, {notif5.id}, {notif6.id}, {notif7.id}')
     if "denied" in cd:
@@ -594,26 +594,55 @@ async def applicant_fb_agree(call: CallbackQuery, state: FSMContext):
     cd = call.data
     meeting_id = cd[19:]
     db.update_meeting('applicant_fb', meeting_id, 'Ожидает отзыва')
-    await call.message.answer("Напиши свой отзыв в ответом письме:")
-    await state.set_state(f"applicant_writing_feedback")
+    await call.message.answer("Напиши свою оценку эксперту (целое число от 1 до 5)")
+    await call.message.edit_reply_markup()
+
+    await state.set_state(f"applicant_writing_rating")
     async with state.proxy() as data:
         data["fb_meeting_id"] = meeting_id
 
-    await call.message.edit_reply_markup()
     logger.debug(f"Applicant {user_id} entered applicant_fb_agree with meeting {meeting_id}")
+
+
+@dp.message_handler(state="applicant_writing_rating")
+async def applicant_writing_rating(message: Message, state: FSMContext):
+    data = await state.get_data()
+    meeting_id = data["fb_meeting_id"]
+
+    try:
+        rating = int(message.text)
+        if not 1 <= rating <= 5:
+            raise ValueError
+    except ValueError:
+        await message.answer("Необходимо ввести число от 1 до 5 включительно. Пожалуйста, повтори попытку")
+    else:
+        db.update_meeting("rating", meeting_id, rating)
+
+        expert_id = db.get_meeting(meeting_id)[2]
+        expert_meetings = db.get_all_expert_meetings_with_rating(expert_id)
+        expert_rating = sum([meeting[11] for meeting in expert_meetings]) / len(expert_meetings)
+        db.update_user("experts", "rating", expert_id, expert_rating)
+
+        await message.answer("Отлично! Теперь напиши свой отзыв")
+
+        await state.set_state("applicant_writing_feedback")
+        async with state.proxy() as data:
+            data["fb_meeting_id"] = meeting_id
+
+    logger.debug(f"Applicant {message.from_user.id} entered applicant_writing_rating with meeting {meeting_id}")
 
 
 @dp.message_handler(state="applicant_writing_feedback")
 async def applicant_writing_feedback(message: Message, state: FSMContext):
-    fb = message.text
-
     data = await state.get_data()
     meeting_id = data["fb_meeting_id"]
 
     await message.answer("Спасибо за твой отзыв! Ты делаешь работу сервиса лучше.",
                          reply_markup=applicant_menu_kb)
-    db.update_meeting("applicant_fb", meeting_id, fb)
+    db.update_meeting("applicant_fb", meeting_id, message.text)
+
     await state.finish()
+
     logger.debug(f"Applicant {message.from_user.id} entered applicant_writing_feedback with meeting {meeting_id}")
 
 

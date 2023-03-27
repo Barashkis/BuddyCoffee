@@ -78,6 +78,18 @@ async def on_startup(dispatcher):
     except Exception as e:
         logger.info(e)
 
+    try:
+        db.add_new_column("meetings", "rating", "INTEGER")
+        logger.info('Column "rating" is added to the "meetings" table')
+    except Exception as e:
+        logger.info(e)
+
+    try:
+        db.add_new_column("experts", "rating", "REAL")
+        logger.info('Column "rating" is added to the "experts" table')
+    except Exception as e:
+        logger.info(e)
+
     logger.info('Bot is running')
 
 

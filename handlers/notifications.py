@@ -18,7 +18,7 @@ async def notif_cancel_to_expert3(expert_id):
 
 
 async def notif_cancel_to_applicant(applicant_id, meeting_date, expert_name):
-    await dp.bot.send_message(applicant_id, text=f'{expert_name} отменил встречу, назначенную {meeting_date}')
+    await dp.bot.send_message(applicant_id, text=f'{expert_name} отменил встречу, назначенную на {meeting_date}')
     logger.debug(f'Applicant {applicant_id} got notif_cancel_to_applicant notification of {meeting_date} meeting')
 
 
@@ -79,7 +79,7 @@ async def notif_5min(applicant_id):
 
 
 async def notif_cancel_to_expert(expert_id, meeting_date, applicant_name):
-    await dp.bot.send_message(expert_id, text=f'{applicant_name} отменил встречу, назначенную {meeting_date}')
+    await dp.bot.send_message(expert_id, text=f'{applicant_name} отменил встречу, назначенную на {meeting_date}')
     logger.debug(f'Expert {expert_id} got notif_cancel_to_expert notification about {meeting_date} meeting')
 
 
@@ -102,8 +102,13 @@ async def notif_reschedule_expert(expert_id, slot, applicant_name, meeting_id):
 async def feedback_notif_applicant(meeting_id):
     md = db.get_meeting(meeting_id)
     await dp.bot.send_message(md[3], text="✋🏻 Привет! Вчера у тебя была встреча с специалистом Росатома. "
-                                          "Мы будем тебе признательны, если ты оставишь обратную связь. "
-                                          "Это поможет нам проводить консультации на более высоком уровне!",
+                                          "Мы будем тебе признательны, если ты оценишь эксперта, с которым ты общался, "
+                                          "по шкале от 1 до 5, где 1 — встреча не принесла желаемых результатов, "
+                                          "эксперт не смог ответить на интересующие вопросы, "
+                                          "5 — всё прошло замечательно, эксперт ответил на все вопросы, "
+                                          "помог разобраться. В следующем сообщении мы попросим оставить тебя обратную "
+                                          "связь. Напиши там, как прошла встреча и почему ты поставил такую оценку"
+                                          "эксперту. Это поможет нам стать ещё лучше!",
                               reply_markup=kb2b("Оставить отзыв", f"applicant_fb_agree_{md[0]}",
                                                 "Не хочу писать отзыв", "applicant_menu"))
     logger.debug(f'Applicant {md[3]} got feedback_notif_applicant notification about meeting {meeting_id}')
