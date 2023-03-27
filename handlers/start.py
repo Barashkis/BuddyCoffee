@@ -1,5 +1,5 @@
 from aiogram.dispatcher.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from keyboards import kb1b, applicant_menu_kb, expert_menu_kb, kb2b
 from loader import dp, db
 from my_logger import logger
@@ -57,9 +57,29 @@ async def start(message: Message):
         is_applicant = db.get_applicant(user_id) is not None
         if not is_applicant and not is_expert:
             await message.answer(text="Добрый день! Пожалуйста, скажите, кто вы:",
-                                 reply_markup=kb2b("Я соискатель", "applicant_start", "Я эксперт", "expert_start"))
+                                 reply_markup=kb2b("Я соискатель (школьник или студент)", "applicant_start",
+                                                   "Я эксперт", "warn_expert_registration"))
             logger.debug(f'User {user_id} start bot')
         else:
             await message.answer(text="Кажется, вы уже регистрировались в боте. "
                                       "Если хотите изменить свой профиль, воспользуйтесь командой /menu")
             logger.debug(f'User {user_id} tried to use /start command again')
+
+
+@dp.callback_query_handler(text='warn_expert_registration')
+async def back_to_the_choice(call: CallbackQuery):
+    await call.answer(cache_time=5)
+    await call.message.answer(text="Убедитесь, что вы не ошиблись с выбором роли. Эксперт — сотрудник Росатома, "
+                                   "который проводит консультации. Соискатель ещё не работает в Росатоме. "
+                                   "Если вы ошиблись ролью, вы можете вернуться назад, нажав на соответствующую кнопку",
+                              reply_markup=kb2b("Вернуться к выбору роли", "back_to_the_choice",
+                                                "Продолжить", "expert_start"),
+                              disable_notification=True)
+    await call.message.edit_reply_markup()
+
+
+@dp.callback_query_handler(text='back_to_the_choice')
+async def back_to_the_choice(call: CallbackQuery):
+    await call.message.edit_text(text="Добрый день! Пожалуйста, скажите, кто вы:",
+                                 reply_markup=kb2b("Я соискатель (школьник или студент)", "applicant_start",
+                                                   "Я эксперт", "warn_expert_registration"))
