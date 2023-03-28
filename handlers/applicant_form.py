@@ -155,7 +155,8 @@ async def applicant_8_1(call: CallbackQuery, state: FSMContext):
     else:
         sdata = await state.get_data()
         if sdata.get('list') is None or not sdata['list']:  # if user did not choose any button
-            await call.message.answer('Пожалуйста, выбери минимум одну тему.')
+            await call.answer()
+            await call.message.answer('Пожалуйста, выбери минимум одну тему')
             await state.set_state('applicant_8.1')
         else:
             db.update_user('applicants', 'topics', user_id, str(sdata['list'])[1:-1])

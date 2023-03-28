@@ -132,11 +132,11 @@ class Database:
         """
         return self.execute(sql, commit=True)
 
-    def add_expert(self, user_id, join_date, username, firstname, lastname):
+    def add_expert(self, user_id, join_date, username, firstname, lastname, status):
         sql = f"""
-        INSERT INTO experts(user_id, join_date, username, firstname, lastname) VALUES(?, ?, ?, ?, ?)
+        INSERT INTO experts(user_id, join_date, username, firstname, lastname, status) VALUES(?, ?, ?, ?, ?, ?)
         """
-        return self.execute(sql, parameters=(user_id, join_date, username, firstname, lastname), commit=True)
+        return self.execute(sql, parameters=(user_id, join_date, username, firstname, lastname, status), commit=True)
 
     def add_applicant(self, user_id, join_date, username, firstname, lastname):
         sql = f"""

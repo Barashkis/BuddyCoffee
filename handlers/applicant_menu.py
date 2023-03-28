@@ -42,7 +42,7 @@ def search_expert(applicant_id):
     suitable_experts_same_direction = []
     suitable_experts_others = []
     for expert in experts:
-        if expert[14] != "На модерации":
+        if expert[14] not in ["На модерации", "Заполняет анкету"] and expert[12] is not None:
             expert_direction = expert[6]
             if applicant_direction == expert_direction:
                 suitable_experts_same_direction.append(
@@ -112,7 +112,7 @@ async def search_experts(call: CallbackQuery):
                                   reply_markup=kb1b('Назад', "applicant_menu"),
                                   disable_notification=True)
         logger.debug(f"Applicant {user_id} entered search_experts handler but don't "
-                     f"have any suitable applicants")
+                     f"have any suitable experts")
         await call.message.edit_reply_markup()
 
 

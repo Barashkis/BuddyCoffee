@@ -23,7 +23,7 @@ async def expert_start(call: CallbackQuery, state: FSMContext):
     date = call.message.date.strftime('%d.%m.%Y %H:%M')
     try:
         db.add_expert(user.id, date, user.username, user.first_name,
-                      user.last_name)
+                      user.last_name, "Заполняет анкету")
         await call.answer(cache_time=5)
         await call.message.answer(text="Как вас зовут?\n\n"
                                        "<i>Формат: Алексей</i>",
@@ -74,7 +74,7 @@ async def expert_2_1(call: CallbackQuery, state: FSMContext):
         await call.message.answer(text="Расскажите о своей экспертизе\n\n"
                                   "<i>Пример: Разрабатываю frontend-часть enterprise веб-приложений и пользовательские "
                                   "элементы управления. Свободно владею HTML5, CSS3 (LESS/SASS), DOM, "
-                                  "JavaScript/TypeScript. Имею опыт работы с Angular/React /Vue.js, работаю с Git, "
+                                  "JavaScript/TypeScript. Имею опыт работы с Angular/React/Vue.js, работаю с Git, "
                                   "BootsTrap. Знаю принципы и технологии веб-сайтов, асинхронных веб-приложений, MVC, "
                                   "Razor, http-интерфейсы, умею работать с графическими редакторами, читаю код на "
                                   "C# и Java</i>",
@@ -151,6 +151,7 @@ async def expert_6(call: CallbackQuery, state: FSMContext):
     else:
         sdata = await state.get_data()
         if sdata.get('list') is None or not sdata['list']:  # if user did not choose any button
+            await call.answer()
             await call.message.answer('Пожалуйста, выберите минимум одну тему.')
             await state.set_state('expert_6')
         else:
