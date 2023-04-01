@@ -2,7 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from handlers.utils import track_user_activity
-from keyboards import directions_kb, division_kb, topics_kb
+from keyboards import directions_kb, division_kb, topics_kb, kb2b
 from loader import dp, db, bot
 from my_logger import logger
 from config import directions_list, divisions_list
@@ -178,28 +178,52 @@ async def expert_6(call: CallbackQuery, state: FSMContext):
                                      disable_notification=True)
                 await state.set_state('expert_7')
             else:
-                await call.message.answer("Поздравляем, вы заполнили анкету. "
-                                          "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
-                                          "в ближайшее время предоставят Вам фукнционал бота, если их все устроит")
-                db.update_user('experts', 'status', user_id, "На модерации")
-                await state.finish()
+                await call.message.answer("Нажмите \"Да\", чтобы мы могли показывать ваши контактные данные в телеграм "
+                                          f"(@{call.from_user.username}) соискателям. Так они смогут связаться с вами, "
+                                          "если проблема с конференцией. Если вы не хотите, "
+                                          "чтобы вам писали соискатели, нажмите \"Нет\"",
+                                          reply_markup=kb2b("Да", "set_agreement_to_show_contacts_yes",
+                                                            "Нет", "set_agreement_to_show_contacts_no"))
+                await state.set_state('expert_8')
     logger.debug(f"Expert {user_id} entered expert_6 handler with cd {call.data} and sd {sdata}")
 
 
 @dp.message_handler(state='expert_7')
-async def expert_6(message: Message, state: FSMContext):
+async def expert_7(message: Message, state: FSMContext):
     user_id = message.from_user.id
 
     text = message.text
     if text[0] == '@':
         db.update_user('experts', 'wr_username', user_id, message.text[1:].rstrip())
-        await message.answer("Поздравляем, вы заполнили анкету. "
-                             "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
-                             "в ближайшее время предоставят Вам функционал бота или отправят анкету на доработку")
-        db.update_user('experts', 'status', user_id, "На модерации")
-        await state.finish()
+
+        await message.answer("Нажмите \"Да\", чтобы мы могли показывать ваши контактные данные в телеграм "
+                             f"(@{message.from_user.username}) соискателям. Так они смогут связаться с вами, если "
+                             "проблема с конференцией. Если вы не хотите, "
+                             "чтобы вам писали соискатели, нажмите \"Нет\"",
+                             reply_markup=kb2b("Да", "yes", "Нет", "no"))
+        await state.set_state('expert_8')
     else:
         await message.answer(text="Пожалуйста, напишите свой username корректно, начиная с '@'",
                              disable_notification=True)
         await state.set_state('expert_7')
-    logger.debug(f"Expert {user_id} entered expert_6 handler with message: {text}")
+    logger.debug(f"Expert {user_id} entered expert_7 handler with message: {text}")
+
+
+@dp.callback_query_handler(state='expert_8')
+async def expert_8(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
+
+    if "yes" == call.data:
+        agree_to_show_contacts = True
+    else:
+        agree_to_show_contacts = False
+    db.update_user('experts', 'agree_to_show_contacts', user_id, agree_to_show_contacts)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer("Поздравляем, вы заполнили анкету. "
+                              "Теперь дело за модераторами. Они рассмотрят Вашу анкету и "
+                              "в ближайшее время предоставят Вам функционал бота или отправят анкету на доработку")
+    db.update_user('experts', 'status', user_id, "На модерации")
+    await state.finish()
+
+    logger.debug(f"Expert {user_id} entered expert_8 handler with cd {call.data}")

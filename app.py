@@ -90,6 +90,12 @@ async def on_startup(dispatcher):
     except Exception as e:
         logger.info(e)
 
+    try:
+        db.add_new_column("experts", "agree_to_show_contacts", "INTEGER")
+        logger.info('Column "agree_to_show_contacts" is added to the "experts" table')
+    except Exception as e:
+        logger.info(e)
+
     logger.info('Bot is running')
 
 

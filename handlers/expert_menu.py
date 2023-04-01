@@ -741,3 +741,39 @@ async def uploading_photo_msg(message: Message, state: FSMContext):
                          disable_notification=True,
                          reply_markup=kb2b("Добавить фото", "update_photo_e", "Назад", "expert_menu"))
     await state.finish()
+
+
+@dp.callback_query_handler(text='change_agreement_to_show_contacts')
+async def change_agreement_to_show_contacts(call: CallbackQuery):
+    expert_id = call.from_user.id
+    expert_agree_to_show_contacts = db.get_expert(expert_id)[18]
+    if expert_agree_to_show_contacts:
+        text = f"Нажмите \"Нет\", если вы не хотите, чтобы вам писали соискатели в телеграм (@{call.from_user.username})"
+        kb = kb2b("Нет", "change_agreement", "Назад", "expert_menu")
+    else:
+        text = "Нажмите \"Да\", чтобы мы могли показывать ваши контактные данные в телеграм " \
+               f"(@{call.from_user.username}) соискателям. Так они смогут связаться с вами, если " \
+               "проблема с конференцией"
+        kb = kb2b("Да", "change_agreement", "Назад", "expert_menu")
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(text, reply_markup=kb)
+
+    logger.debug(f"Expert {expert_id} entered change_agreement_to_show_contacts")
+
+
+@dp.callback_query_handler(text='change_agreement')
+async def proceed_changing_agreement_to_show_contacts(call: CallbackQuery):
+    expert_id = call.from_user.id
+    expert_agree_to_show_contacts = db.get_expert(expert_id)[18]
+    if expert_agree_to_show_contacts:
+        new_agreement_status = False
+    else:
+        new_agreement_status = True
+
+    db.update_user('experts', 'agree_to_show_contacts', expert_id, new_agreement_status)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer("Статус согласия был успешно изменен", reply_markup=expert_menu_kb)
+
+    logger.debug(f"Expert {expert_id} entered proceed_changing_agreement_to_show_contacts")

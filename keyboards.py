@@ -92,8 +92,8 @@ expert_menu_kb = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='Посмотреть анкеты соискателей', callback_data='search_applicants')],
         [InlineKeyboardButton(text='Мои встречи', callback_data='expert_meetings')],
         [InlineKeyboardButton(text='Добавить фото к анкете', callback_data='add_photo_e')],
-        [InlineKeyboardButton(text='Изменить профиль', callback_data='change_prof_e')]
-
+        [InlineKeyboardButton(text='Изменить профиль', callback_data='change_prof_e')],
+        [InlineKeyboardButton(text='Согласие на сообщение контактных данных соискателям', callback_data='change_agreement_to_show_contacts')]
     ]
 )
 

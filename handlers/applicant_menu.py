@@ -187,12 +187,17 @@ async def expert_chosen(call: CallbackQuery):
 
     cd = call.data
     expert_id = int(cd[8:])
+    expert_agree_to_show_contacts = db.get_expert(expert_id)[18]
+    if expert_agree_to_show_contacts:
+        kb = kb3b("Отправить приглашение эксперту", f"send_invitation_{expert_id}_c",
+                  "Показать контакты", f"show_contacts_e_{expert_id}", "Назад", f"forme_{expert_id}")
+    else:
+        kb = kb2b("Отправить приглашение эксперту", f"send_invitation_{expert_id}_c",
+                  "Назад", f"forme_{expert_id}")
 
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
-                              reply_markup=kb3b("Отправить приглашение эксперту", f"send_invitation_{expert_id}_c",
-                                                "Показать контакты", f"show_contacts_e_{expert_id}",
-                                                "Назад", f"forme_{expert_id}"),
+                              reply_markup=kb,
                               disable_notification=True)
     logger.debug(f"Applicant {user_id} entered expert_chosen handler "
                  f"with expert {expert_id}")
