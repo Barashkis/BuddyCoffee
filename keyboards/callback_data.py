@@ -1,4 +1,7 @@
-from typing import Literal, Tuple
+from typing import (
+    Literal,
+    Tuple,
+)
 
 from aiogram.utils.callback_data import CallbackData
 
