@@ -12,7 +12,7 @@ __all__ = ['logger']
 
 class Formatter(logging.Formatter):
     @staticmethod
-    def converter(timestamp: float) -> datetime:
+    def converter(timestamp):
         return datetime.fromtimestamp(timestamp)
 
     def formatTime(self, record, date_format=None):

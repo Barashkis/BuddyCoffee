@@ -1,8 +1,8 @@
-from datetime import datetime
 from typing import List
 
 from sqlalchemy import (
     Column,
+    DateTime,
     ForeignKey,
     Table,
 )
@@ -42,7 +42,7 @@ class Applicant(PostgresBase):
     __tablename__ = 'applicant'
 
     id = mapped_column(BigInteger(), primary_key=True)
-    join_date: Mapped[datetime]
+    join_date = mapped_column(DateTime)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     firstname: Mapped[str] = mapped_column(String(100))
     lastname: Mapped[str] = mapped_column(String(100))
@@ -54,7 +54,8 @@ class Applicant(PostgresBase):
     empl_region = mapped_column(Text())
     hobby = mapped_column(Text())
     photo: Mapped[str]
-    last_activity_time: Mapped[datetime]
+    last_activity_time = mapped_column(DateTime)
+    last_pressed_button: Mapped[str]
     presses: Mapped[int] = mapped_column(default=0)
     direction_id = mapped_column(ForeignKey('direction.id'))
     status_id = mapped_column(ForeignKey('user_status.id'))
@@ -74,14 +75,15 @@ class Expert(PostgresBase):
     __tablename__ = 'expert'
 
     id = mapped_column(BigInteger(), primary_key=True)
-    join_date: Mapped[datetime]
+    join_date = mapped_column(DateTime)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     firstname: Mapped[str] = mapped_column(String(100))
     lastname: Mapped[str] = mapped_column(String(100))
     wr_fullname: Mapped[str] = mapped_column(String(100))
     profile = mapped_column(Text())
     photo: Mapped[str]
-    last_activity_time: Mapped[datetime]
+    last_activity_time = mapped_column(DateTime)
+    last_pressed_button: Mapped[str]
     presses: Mapped[int] = mapped_column(default=0)
     status_id = mapped_column(ForeignKey('user_status.id'))
     direction_id = mapped_column(ForeignKey('direction.id'))
@@ -113,7 +115,7 @@ class Meeting(PostgresBase):
     __tablename__ = 'meeting'
 
     api_id = mapped_column(BigInteger(), primary_key=True)
-    date: Mapped[datetime]
+    date = mapped_column(DateTime)
     link: Mapped[str]
     expert_fb = mapped_column(Text())
     applicant_fb = mapped_column(Text())
