@@ -12,15 +12,13 @@ __all__ = ['logger']
 
 class Formatter(logging.Formatter):
     @staticmethod
-    def converter(timestamp):
-        return datetime.fromtimestamp(timestamp)
+    def convert_to_datetime(timestamp):
+        return datetime.fromtimestamp(timestamp).astimezone(tz)
 
     def formatTime(self, record, date_format=None):
-        dt = self.converter(record.created).astimezone(tz)
-
         if not date_format:
             date_format = '%d-%m-%Y %H:%M:%S'
-        date_string = dt.strftime(date_format)
+        date_string = self.convert_to_datetime(record.created).strftime(date_format)
 
         return date_string
 
