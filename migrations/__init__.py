@@ -1,5 +1,6 @@
 from glob import glob
 from pathlib import Path
+from textwrap import dedent
 
 from sqlalchemy import (
     TextClause,
@@ -34,12 +35,14 @@ def run_migrations(s: sessionmaker, db_folder: str) -> None:
     with s.begin() as session:
         session.execute(
             text(
-                '''
-                CREATE TABLE IF NOT EXISTS _migration (
-                    id SERIAL,
-                    version INTEGER DEFAULT 0
-                );
-                '''
+                dedent(
+                    '''
+                    CREATE TABLE IF NOT EXISTS _migration (
+                        id SERIAL,
+                        version INTEGER DEFAULT 0
+                    );
+                    '''
+                )
             )
         )
         migration_record = session.query(Migration).first()
@@ -48,10 +51,10 @@ def run_migrations(s: sessionmaker, db_folder: str) -> None:
             migration_record = session.query(Migration).first()
         current_version = migration_record.version
 
+        workdir = str(Path('migrations', db_folder))
         unused_migrations = []
-        for migration in glob(str(Path(migrations_folder, db_folder, f'{"[0-9]" * 3}.sql'))):
-            version = int(Path(migration).stem)
-            if version > current_version:
+        for migration in glob(str(Path(workdir, migrations_folder, f'{"[0-9]" * 3}.sql'))):
+            if (version := int(Path(migration).stem)) > current_version:
                 unused_migrations.append(version)
 
         if unused_migrations:
@@ -64,8 +67,8 @@ def run_migrations(s: sessionmaker, db_folder: str) -> None:
                 )
 
             for version in unused_migrations:
-                filepath = Path(migrations_folder, db_folder, f'{str(version).rjust(3, "0")}.sql')
+                filepath = Path(workdir, migrations_folder, f'{str(version).rjust(3, "0")}.sql')
                 session.execute(_read_migration(filepath))
 
-                logger.debug(f'Executed migration {filepath}')
+                logger.debug(f'Execute migration {filepath}')
                 migration_record.version += 1
