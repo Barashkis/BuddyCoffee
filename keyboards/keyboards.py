@@ -1,18 +1,17 @@
 import math
-from datetime import datetime
 from typing import (
+    Any,
     Dict,
     List,
     Literal,
+    Mapping,
+    Optional,
+    Union,
 )
 
 from aiogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-)
-from callback_data import (
-    BaseCallbackData,
-    choosing_time_cd,
 )
 
 from config import (
@@ -21,29 +20,45 @@ from config import (
     tz,
     users_per_page,
 )
+from database import (
+    Applicant,
+    Expert,
+    Meeting,
+)
+
+from .callback_data import (
+    BaseCallbackData,
+    choosing_time_cd,
+)
 
 
-def _buttons_from_dict(data: Dict) -> List[InlineKeyboardButton]:
-    return [InlineKeyboardButton(
-        text=data[k],
-        callback_data=BaseCallbackData(k, i, 0).construct()
-    )
-        for i, k in enumerate(data)]
+CallbackQueryValue = Any
+ButtonText = str
 
 
-def kb_from_dict(data: Dict) -> InlineKeyboardMarkup:
+def _buttons_from_mapping(data: Mapping[CallbackQueryValue, ButtonText]) -> List[InlineKeyboardButton]:
+    return [
+        InlineKeyboardButton(
+            text=data[k],
+            callback_data=BaseCallbackData(k, i, 0).construct(),
+        )
+        for i, k in enumerate(data)
+    ]
+
+
+def kb_from_mapping(data: Mapping[CallbackQueryValue, ButtonText]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup()
-    for button in _buttons_from_dict(data):
+    for button in _buttons_from_mapping(data):
         kb.add(button)
 
     return kb
 
 
-def form_kb(data: Dict, chosen_buttons: List = None) -> InlineKeyboardMarkup:  # type: ignore
+def form_kb(data: Dict, chosen_buttons: Optional[List] = None) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup()
     chosen_buttons = chosen_buttons or []
 
-    buttons_list = _buttons_from_dict(data)
+    buttons_list = _buttons_from_mapping(data)
     for i, button in enumerate(buttons_list, start=1):
         if i + 1 in chosen_buttons:
             button.text += ' ✅'
@@ -59,7 +74,7 @@ def form_kb(data: Dict, chosen_buttons: List = None) -> InlineKeyboardMarkup:  #
 
 
 def suitable_users_kb(
-        suitable_users: ...,
+        suitable_users: List[Union[Applicant, Expert]],
         user_type: Literal['a', 'e'],
         page: int = 1,
         to_confirm: bool = False
@@ -80,7 +95,7 @@ def suitable_users_kb(
     choose_button = InlineKeyboardButton(
         text='Выбрать',
         callback_data=BaseCallbackData(
-            f'{"admin" if to_confirm else ""}_choose_{user_type}_{suitable_users[page - 1].get("user_id")}', 0, 1
+            f'{"admin" if to_confirm else ""}_choose_{user_type}_{suitable_users[page - 1].id}', 0, 1
         ).construct()
     )
     next_b = (
@@ -102,7 +117,7 @@ def suitable_users_kb(
 def slots_kb(
         expert_id: int,
         init_by: str,
-        slots: ...,
+        slots: List[int],
         action: str,
         meeting_id: int,
         page: int = 1
@@ -115,10 +130,10 @@ def slots_kb(
     for i, v in enumerate(range(slots_per_page * (page - 1), end_index)):
         kb.add(
             InlineKeyboardButton(
-                text=slots[v],
+                text=str(slots[v]),
                 callback_data=choosing_time_cd.new(
                     expert_id=expert_id,
-                    slot=datetime.strptime(slots[v], '%d.%m.%Y %H:%M').astimezone(tz=tz).timestamp(),
+                    slot=slots[v],
                     init_by=init_by,
                     action=action,
                     meeting_id=meeting_id,
@@ -152,7 +167,7 @@ def slots_kb(
     return kb
 
 
-def meetings_kb(meetings: ..., user_type: Literal['a', 'e'], page: int = 1) -> InlineKeyboardMarkup:
+def meetings_kb(meetings: List[Meeting], user_type: Literal['a', 'e'], page: int = 1) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup()
     meetings_count = len(meetings)
     total_pages = math.ceil(meetings_count / slots_per_page)
@@ -161,8 +176,8 @@ def meetings_kb(meetings: ..., user_type: Literal['a', 'e'], page: int = 1) -> I
     for i, v in enumerate(range(meetings_per_page * (page - 1), end_index)):
         kb.add(
             InlineKeyboardButton(
-                text=meetings[v][4],
-                callback_data=BaseCallbackData(f'meeting_{user_type}_{meetings[i][0]}', i, 0).construct()
+                text=meetings[v].date.astimezone(tz),
+                callback_data=BaseCallbackData(f'meeting_{user_type}_{meetings[i].id}', i, 0).construct()
             )
         )
 

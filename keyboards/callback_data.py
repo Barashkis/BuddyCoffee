@@ -8,6 +8,7 @@ from aiogram.utils.callback_data import CallbackData
 
 __all__ = (
     'BaseCallbackData',
+    'base_cd',
     'choosing_time_cd',
 )
 
@@ -35,6 +36,7 @@ class BaseCallbackData:
         )
 
 
+base_cd = BaseCallbackData.callback_data
 choosing_time_cd = CallbackData(
     'choosing_time_a',
     *_perform_callback_data_keys('expert_id', 'slot', 'init_by', 'action', 'meeting_id')
