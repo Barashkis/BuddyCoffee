@@ -3,7 +3,7 @@ from aiogram import (
     Dispatcher,
     types,
 )
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import sessionmaker
 
@@ -12,6 +12,7 @@ from config import (
     postgres_name,
     postgres_password,
     postgres_user,
+    redis_password,
     token,
     tz,
 )
@@ -28,7 +29,7 @@ __all__ = (
 )
 
 bot = Bot(token=token, parse_mode=types.ParseMode.HTML)
-storage = MemoryStorage()
+storage = RedisStorage2(password=redis_password)
 dp = Dispatcher(bot, storage=storage)
 
 postgres_engine = new_engine(
