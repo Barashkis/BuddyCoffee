@@ -10,10 +10,12 @@ from config import (
     postgres_password,
     postgres_user,
 )
+from database import PostgresBase
 from handlers import dp
 from loader import (
     PostgresSession,
     bot,
+    postgres_engine,
     scheduler,
     storage,
 )
@@ -25,10 +27,10 @@ async def on_startup(dp: Dispatcher):
     import middlewares
 
     await set_default_commands(dp)
-    run_migrations(
-        s=PostgresSession,
-        db_folder='postgres'
-    )
+
+    PostgresBase.metadata.create_all(postgres_engine)
+    run_migrations(PostgresSession, 'postgres')
+
     middlewares.setup(dp)
 
     logger.info('Bot is running')

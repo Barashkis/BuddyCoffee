@@ -4,38 +4,30 @@ from sqlalchemy import (
     create_engine,
 )
 
-from database.postgres import (
+from .postgres import (
     Applicant,
-    Direction,
-    Division,
     Expert,
     LocalContact,
-    LocalContactStatus,
     Meeting,
-    MeetingStatus,
     Migration,
     Notification,
     PostgresBase,
+    Statistic,
     Topic,
-    UserStatus,
 )
 
 
 __all__ = (
-    "PostgresBase",
-    "Applicant",
-    "Expert",
-    "Topic",
-    "Meeting",
-    "LocalContact",
-    "Direction",
-    "Division",
-    "Notification",
-    "MeetingStatus",
-    "UserStatus",
-    "LocalContactStatus",
-    "Migration",
-    "new_engine"
+    'PostgresBase',
+    'Applicant',
+    'Expert',
+    'Topic',
+    'Meeting',
+    'LocalContact',
+    'Notification',
+    'Migration',
+    'Statistic',
+    'new_engine',
 )
 
 

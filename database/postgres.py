@@ -5,6 +5,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Table,
+    func,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -29,7 +30,6 @@ applicant_topic_association_table = Table(
     Column('applicant_id', ForeignKey('applicant.id')),
     Column('topic_id', ForeignKey('topic.id')),
 )
-
 expert_topic_association_table = Table(
     'expert_topic_association_table',
     PostgresBase.metadata,
@@ -41,68 +41,66 @@ expert_topic_association_table = Table(
 class Applicant(PostgresBase):
     __tablename__ = 'applicant'
 
-    id = mapped_column(BigInteger(), primary_key=True)
-    join_date = mapped_column(DateTime)
-    username: Mapped[str] = mapped_column(String(50), nullable=False)
-    firstname: Mapped[str] = mapped_column(String(100))
-    lastname: Mapped[str] = mapped_column(String(100))
-    wr_firstname: Mapped[str] = mapped_column(String(100))
-    wr_lastname: Mapped[str] = mapped_column(String(100))
-    profile = mapped_column(Text())
-    institution = mapped_column(Text())
-    grad_year: Mapped[int]
-    empl_region = mapped_column(Text())
-    hobby = mapped_column(Text())
+    id = mapped_column(BigInteger(), primary_key=True, index=True)
+    created_at = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    username: Mapped[str] = mapped_column(String(50))
+    tg_firstname: Mapped[str] = mapped_column(String(100))
+    tg_lastname: Mapped[str] = mapped_column(String(100))
+    wr_firstname: Mapped[str] = mapped_column(String(100), nullable=False)
+    wr_lastname: Mapped[str] = mapped_column(String(100), nullable=False)
+    profile = mapped_column(Text(), nullable=False)
+    institution = mapped_column(Text(), nullable=False)
+    graduation_year: Mapped[int] = mapped_column(nullable=False)
+    employment_region = mapped_column(Text(), nullable=False)
+    hobby = mapped_column(Text(), nullable=False)
     photo: Mapped[str]
-    last_activity_time = mapped_column(DateTime)
-    last_pressed_button: Mapped[str]
-    presses: Mapped[int] = mapped_column(default=0)
-    direction_id = mapped_column(ForeignKey('direction.id'))
-    status_id = mapped_column(ForeignKey('user_status.id'))
+    status: Mapped[str] = mapped_column(String(100))
+    direction: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='applicant')
+    meetings: Mapped[List['Meeting']] = relationship(back_populates='applicant')
+
     topics: Mapped[List['Topic']] = relationship(
         secondary=applicant_topic_association_table,
         back_populates='applicants'
     )
 
-    status: Mapped['UserStatus'] = relationship(back_populates='applicants')
-    direction: Mapped['Direction'] = relationship(back_populates='applicants')
-
-    meetings: Mapped[List['Meeting']] = relationship(back_populates='applicant')
-    local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='applicant')
-
 
 class Expert(PostgresBase):
     __tablename__ = 'expert'
 
-    id = mapped_column(BigInteger(), primary_key=True)
-    join_date = mapped_column(DateTime)
-    username: Mapped[str] = mapped_column(String(50), nullable=False)
-    firstname: Mapped[str] = mapped_column(String(100))
-    lastname: Mapped[str] = mapped_column(String(100))
-    wr_fullname: Mapped[str] = mapped_column(String(100))
-    profile = mapped_column(Text())
+    id = mapped_column(BigInteger(), primary_key=True, index=True)
+    date_created = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    username: Mapped[str] = mapped_column(String(50))
+    tg_firstname: Mapped[str] = mapped_column(String(100))
+    tg_lastname: Mapped[str] = mapped_column(String(100))
+    wr_fullname: Mapped[str] = mapped_column(String(100), nullable=False)
+    division: Mapped[str] = mapped_column(String(100), nullable=False)
+    direction: Mapped[str] = mapped_column(String(100), nullable=False)
+    profile = mapped_column(Text(), nullable=False)
     photo: Mapped[str]
-    last_activity_time = mapped_column(DateTime)
-    last_pressed_button: Mapped[str]
-    presses: Mapped[int] = mapped_column(default=0)
-    status_id = mapped_column(ForeignKey('user_status.id'))
-    direction_id = mapped_column(ForeignKey('direction.id'))
-    division_id = mapped_column(ForeignKey('division.id'))
+    status: Mapped[str] = mapped_column(String(100))
+
+    local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='expert')
+    meetings: Mapped[List['Meeting']] = relationship(back_populates='expert')
+
     topics: Mapped[List['Topic']] = relationship(secondary=expert_topic_association_table, back_populates='experts')
 
-    status: Mapped['UserStatus'] = relationship(back_populates='experts')
-    direction: Mapped['Direction'] = relationship(back_populates='experts')
-    division: Mapped['Division'] = relationship(back_populates='experts')
 
-    meetings: Mapped[List['Meeting']] = relationship(back_populates='expert')
-    local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='expert')
+class Statistic(PostgresBase):
+    __tablename__ = 'statistic'
+
+    user_id = mapped_column(BigInteger(), primary_key=True)
+    last_activity_date = mapped_column(DateTime(timezone=True), nullable=False)
+    last_pressed_button: Mapped[str] = mapped_column(nullable=False)
+    presses: Mapped[int] = mapped_column(default=0, nullable=False)
 
 
 class Topic(PostgresBase):
     __tablename__ = 'topic'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
 
     applicants: Mapped[List['Applicant']] = relationship(
         secondary=applicant_topic_association_table,
@@ -114,20 +112,20 @@ class Topic(PostgresBase):
 class Meeting(PostgresBase):
     __tablename__ = 'meeting'
 
-    api_id = mapped_column(BigInteger(), primary_key=True)
-    date = mapped_column(DateTime)
-    link: Mapped[str]
-    expert_fb = mapped_column(Text())
-    applicant_fb = mapped_column(Text())
+    id: Mapped[int] = mapped_column(primary_key=True)
+    api_id = mapped_column(BigInteger(), nullable=False)
+    date = mapped_column(DateTime(timezone=True), nullable=False)
+    link: Mapped[str] = mapped_column(nullable=False)
+    expert_feedback = mapped_column(Text())
+    applicant_feedback = mapped_column(Text())
     expert_confirmed: Mapped[bool]
     applicant_confirmed: Mapped[bool]
+    status: Mapped[str] = mapped_column(String(100))
     applicant_id = mapped_column(ForeignKey('applicant.id'))
     expert_id = mapped_column(ForeignKey('expert.id'))
-    status_id = mapped_column(ForeignKey('meeting_status.id'))
 
     applicant: Mapped['Applicant'] = relationship(back_populates='meetings')
     expert: Mapped['Expert'] = relationship(back_populates='meetings')
-    status: Mapped['MeetingStatus'] = relationship(back_populates='meetings')
 
     notifications: Mapped[List['Notification']] = relationship(back_populates='meeting')
 
@@ -136,73 +134,25 @@ class LocalContact(PostgresBase):
     __tablename__ = 'local_contact'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    status: Mapped[str] = mapped_column(String(100))
     expert_id = mapped_column(ForeignKey('expert.id'))
     applicant_id = mapped_column(ForeignKey('applicant.id'))
-    status_id = mapped_column(ForeignKey('local_contact_status.id'))
 
     applicant: Mapped['Applicant'] = relationship(back_populates='local_contacts')
     expert: Mapped['Expert'] = relationship(back_populates='local_contacts')
-    status: Mapped['LocalContactStatus'] = relationship(back_populates='local_contacts')
-
-
-class Direction(PostgresBase):
-    __tablename__ = 'direction'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-
-    applicants: Mapped[List['Applicant']] = relationship(back_populates='direction')
-    experts: Mapped[List['Expert']] = relationship(back_populates='direction')
-
-
-class Division(PostgresBase):
-    __tablename__ = 'division'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-
-    experts: Mapped[List['Expert']] = relationship(back_populates='division')
 
 
 class Notification(PostgresBase):
     __tablename__ = 'notification'
 
     id: Mapped[str] = mapped_column(primary_key=True, autoincrement=False)
-    meeting_id = mapped_column(ForeignKey('meeting.api_id'))
+    meeting_id = mapped_column(ForeignKey('meeting.id'))
 
     meeting: Mapped['Meeting'] = relationship(back_populates='notifications')
-
-
-class UserStatus(PostgresBase):
-    __tablename__ = 'user_status'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-
-    applicants: Mapped[List['Applicant']] = relationship(back_populates='status')
-    experts: Mapped[List['Expert']] = relationship(back_populates='status')
-
-
-class MeetingStatus(PostgresBase):
-    __tablename__ = 'meeting_status'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-
-    meetings: Mapped[List['Meeting']] = relationship(back_populates='status')
-
-
-class LocalContactStatus(PostgresBase):
-    __tablename__ = 'local_contact_status'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-
-    local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='status')
 
 
 class Migration(PostgresBase):
     __tablename__ = '_migration'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    version: Mapped[int] = mapped_column(default=0)
+    version: Mapped[int] = mapped_column(default=0, nullable=False)
