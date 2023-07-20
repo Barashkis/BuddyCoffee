@@ -46,15 +46,16 @@ class Applicant(PostgresBase):
     username: Mapped[str] = mapped_column(String(50))
     tg_firstname: Mapped[str] = mapped_column(String(100))
     tg_lastname: Mapped[str] = mapped_column(String(100))
-    wr_firstname: Mapped[str] = mapped_column(String(100), nullable=False)
-    wr_lastname: Mapped[str] = mapped_column(String(100), nullable=False)
+    wr_firstname = mapped_column(Text(), nullable=False)
+    wr_lastname = mapped_column(Text(), nullable=False)
     profile = mapped_column(Text(), nullable=False)
     institution = mapped_column(Text(), nullable=False)
-    graduation_year: Mapped[int] = mapped_column(nullable=False)
+    graduation_year = mapped_column(Text(), nullable=False)
     employment_region = mapped_column(Text(), nullable=False)
     hobby = mapped_column(Text(), nullable=False)
-    photo: Mapped[str]
-    status: Mapped[str] = mapped_column(String(100))
+    photo: Mapped[str] = mapped_column(Text(), nullable=True)
+    topics_details = mapped_column(Text(), nullable=False)
+    status: Mapped[str] = mapped_column(String(100), nullable=False)
     direction: Mapped[str] = mapped_column(String(100), nullable=False)
 
     local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='applicant')
@@ -74,12 +75,12 @@ class Expert(PostgresBase):
     username: Mapped[str] = mapped_column(String(50))
     tg_firstname: Mapped[str] = mapped_column(String(100))
     tg_lastname: Mapped[str] = mapped_column(String(100))
-    wr_fullname: Mapped[str] = mapped_column(String(100), nullable=False)
+    wr_fullname: Mapped[str] = mapped_column(Text(), nullable=False)
     division: Mapped[str] = mapped_column(String(100), nullable=False)
     direction: Mapped[str] = mapped_column(String(100), nullable=False)
     profile = mapped_column(Text(), nullable=False)
-    photo: Mapped[str]
-    status: Mapped[str] = mapped_column(String(100))
+    photo: Mapped[str] = mapped_column(Text(), nullable=False)
+    status: Mapped[str] = mapped_column(String(100), nullable=False)
 
     local_contacts: Mapped[List['LocalContact']] = relationship(back_populates='expert')
     meetings: Mapped[List['Meeting']] = relationship(back_populates='expert')
@@ -120,7 +121,7 @@ class Meeting(PostgresBase):
     applicant_feedback = mapped_column(Text())
     expert_confirmed: Mapped[bool]
     applicant_confirmed: Mapped[bool]
-    status: Mapped[str] = mapped_column(String(100))
+    status: Mapped[str] = mapped_column(String(100), nullable=False)
     applicant_id = mapped_column(ForeignKey('applicant.id'))
     expert_id = mapped_column(ForeignKey('expert.id'))
 
@@ -134,7 +135,7 @@ class LocalContact(PostgresBase):
     __tablename__ = 'local_contact'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    status: Mapped[str] = mapped_column(String(100))
+    status: Mapped[str] = mapped_column(String(100), nullable=False)
     expert_id = mapped_column(ForeignKey('expert.id'))
     applicant_id = mapped_column(ForeignKey('applicant.id'))
 

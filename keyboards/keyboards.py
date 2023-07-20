@@ -1,7 +1,6 @@
 import math
 from typing import (
     Any,
-    Dict,
     List,
     Literal,
     Mapping,
@@ -54,13 +53,16 @@ def kb_from_mapping(data: Mapping[CallbackQueryValue, ButtonText]) -> InlineKeyb
     return kb
 
 
-def form_kb(data: Dict, chosen_buttons: Optional[List] = None) -> InlineKeyboardMarkup:
+def form_kb(
+        data: Mapping[int, ButtonText],
+        chosen_buttons: Optional[List[int]] = None,
+) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup()
     chosen_buttons = chosen_buttons or []
 
     buttons_list = _buttons_from_mapping(data)
     for i, button in enumerate(buttons_list, start=1):
-        if i + 1 in chosen_buttons:
+        if i in chosen_buttons:
             button.text += ' ✅'
         kb.add(button)
     kb.add(

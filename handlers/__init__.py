@@ -1,9 +1,15 @@
-from . import start
-from . import applicant_form
-from . import expert_form
-from . import applicant_menu
-from . import expert_menu
-from . import applicant_profile
-from . import notifications
-from . import admin_interface
-from . import expert_profile
+from .start import dp
+from .menu import dp
+# from .admin_interface import dp
+from .applicant_form import dp
+# from .expert_form import dp
+# from .applicant_menu import dp
+# from .expert_menu import dp
+# from .applicant_profile import dp
+# from .expert_profile import dp
+# from .notifications import dp
+
+
+__all__ = (
+    'dp',
+)

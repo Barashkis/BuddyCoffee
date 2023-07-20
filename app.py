@@ -3,7 +3,7 @@ from aiogram import (
     executor,
 )
 
-from bot_commands import set_default_commands
+from commands import set_default_commands
 from config import (
     postgres_host,
     postgres_name,
