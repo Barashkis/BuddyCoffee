@@ -206,13 +206,17 @@ async def applicant_chosen(call: CallbackQuery):
     track_user_activity(user_id, "experts", "Выбрать соискателя")
 
     applicant_id = call.data[8:]
+    applicant_agree_to_show_contacts = db.get_applicant(applicant_id)[18]
+    if applicant_agree_to_show_contacts:
+        kb = kb3b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_e_c_",
+                  "Показать контакты", f"show_contacts_a_{applicant_id}", "Назад", f"forma_{applicant_id}")
+    else:
+        kb = kb2b("Отправить приглашение соискателю", f"send_free_slots_{applicant_id}_init_by_e_c_",
+                  "Назад", f"forme_{applicant_id}")
 
     await call.message.edit_reply_markup()
     await call.message.answer(text="Выбери подходящий пункт",
-                              reply_markup=kb3b("Отправить приглашение соискателю",
-                                                f"send_free_slots_{applicant_id}_init_by_e_c_",
-                                                "Показать контакты", f"show_contacts_a_{applicant_id}",
-                                                "Назад", f"forma_{applicant_id}"),
+                              reply_markup=kb,
                               disable_notification=True)
 
     logger.debug(f"Expert {user_id} entered applicant_chosen handler "
@@ -743,18 +747,18 @@ async def uploading_photo_msg(message: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.callback_query_handler(text='change_agreement_to_show_contacts')
+@dp.callback_query_handler(text='change_agreement_to_show_contacts_e')
 async def change_agreement_to_show_contacts(call: CallbackQuery):
     expert_id = call.from_user.id
     expert_agree_to_show_contacts = db.get_expert(expert_id)[18]
     if expert_agree_to_show_contacts:
         text = f"Нажмите \"Нет\", если вы не хотите, чтобы вам писали соискатели в телеграм (@{call.from_user.username})"
-        kb = kb2b("Нет", "change_agreement", "Назад", "expert_menu")
+        kb = kb2b("Нет", "change_agreement_e", "Назад", "expert_menu")
     else:
         text = "Нажмите \"Да\", чтобы мы могли показывать ваши контактные данные в телеграм " \
                f"(@{call.from_user.username}) соискателям. Так они смогут связаться с вами, если " \
                "проблема с конференцией"
-        kb = kb2b("Да", "change_agreement", "Назад", "expert_menu")
+        kb = kb2b("Да", "change_agreement_e", "Назад", "expert_menu")
 
     await call.message.edit_reply_markup()
     await call.message.answer(text, reply_markup=kb)
@@ -762,7 +766,7 @@ async def change_agreement_to_show_contacts(call: CallbackQuery):
     logger.debug(f"Expert {expert_id} entered change_agreement_to_show_contacts")
 
 
-@dp.callback_query_handler(text='change_agreement')
+@dp.callback_query_handler(text='change_agreement_e')
 async def proceed_changing_agreement_to_show_contacts(call: CallbackQuery):
     expert_id = call.from_user.id
     expert_agree_to_show_contacts = db.get_expert(expert_id)[18]

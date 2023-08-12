@@ -13,7 +13,6 @@ class Database:
         if not parameters:
             parameters = ()
         connection = self.connection
-        # connection.set_trace_callback(db_logger)
         cursor = connection.cursor()
         data = None
         cursor.execute(sql, parameters)

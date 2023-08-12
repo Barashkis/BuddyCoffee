@@ -762,3 +762,39 @@ async def add_photo(call: CallbackQuery):
                               "Мы пришлём контакты ответным письмом.",
                               reply_markup=kb1b("Назад", "applicant_menu"),
                               disable_notification=True)
+
+
+@dp.callback_query_handler(text='change_agreement_to_show_contacts_a')
+async def change_agreement_to_show_contacts(call: CallbackQuery):
+    applicant_id = call.from_user.id
+    applicant_agree_to_show_contacts = db.get_applicant(applicant_id)[18]
+    if applicant_agree_to_show_contacts:
+        text = f"Нажми \"Нет\", если ты не хочешь, чтобы тебе писали эксперты в телеграм (@{call.from_user.username})"
+        kb = kb2b("Нет", "change_agreement_a", "Назад", "expert_menu")
+    else:
+        text = "Нажми \"Да\", чтобы мы могли показывать твои контактные данные в телеграм " \
+               f"(@{call.from_user.username}) экспертам. Так они смогут связаться с тобой, если " \
+               "проблема с конференцией"
+        kb = kb2b("Да", "change_agreement_a", "Назад", "expert_menu")
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(text, reply_markup=kb)
+
+    logger.debug(f"Expert {applicant_id} entered change_agreement_to_show_contacts")
+
+
+@dp.callback_query_handler(text='change_agreement_a')
+async def proceed_changing_agreement_to_show_contacts(call: CallbackQuery):
+    applicant_id = call.from_user.id
+    applicant_agree_to_show_contacts = db.get_applicant(applicant_id)[18]
+    if applicant_agree_to_show_contacts:
+        new_agreement_status = False
+    else:
+        new_agreement_status = True
+
+    db.update_user('applicants', 'agree_to_show_contacts', applicant_id, new_agreement_status)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer("Статус согласия был успешно изменен", reply_markup=applicant_menu_kb)
+
+    logger.debug(f"Applicant {applicant_id} entered proceed_changing_agreement_to_show_contacts")

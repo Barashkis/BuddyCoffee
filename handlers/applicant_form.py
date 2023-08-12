@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 
 from config import directions_list, topics_list
 from handlers.utils import track_user_activity
-from keyboards import directions_kb, applicant_menu_kb, topics_kb
+from keyboards import directions_kb, applicant_menu_kb, topics_kb, kb2b
 from loader import dp, db
 from my_logger import logger
 
@@ -40,7 +40,7 @@ async def applicant_1(message: Message, state: FSMContext):
     db.update_user('applicants', 'wr_firstname', user_id, message.text)
     await message.answer(text="Напиши свою фамилию.\n\n"
                               "<i>Формат: Иванов</i>",
-                              disable_notification=True)
+                         disable_notification=True)
     await state.set_state('applicant_2')
     logger.debug(f"Applicant {user_id} entered applicant_1 handler")
 
@@ -140,10 +140,10 @@ async def applicant_8_1(call: CallbackQuery, state: FSMContext):
     user_id = call.from_user.id
 
     cdata = call.data
-    if cdata != 'done':  # if user dont press "Done" button
+    if cdata != 'done':
         async with state.proxy() as data:
-            if 'list' in data:  # if it is not first click on button and list is not exist
-                if int(cdata) in data['list']:  # if button is already chosen
+            if 'list' in data:
+                if int(cdata) in data['list']:
                     data['list'].remove(int(cdata))
                 else:
                     data['list'].append(int(cdata))
@@ -175,6 +175,25 @@ async def applicant_9(message: Message, state: FSMContext):
     user_id = message.from_user.id
 
     db.update_user('applicants', 'topics_details', user_id, message.text)
+    await message.answer("Нажми \"Да\", чтобы мы могли показывать твои контактные данные в телеграм "
+                         f"(@{message.from_user.username}) экспертам. Так они смогут связаться с тобой, если "
+                         "проблема с конференцией. Если ты не хочешь, "
+                         "чтобы тебе писали эксперты, нажми \"Нет\"",
+                         reply_markup=kb2b("Да", "yes", "Нет", "no"))
+    await state.set_state('applicant_10')
+    logger.debug(f"Applicant {user_id} entered applicant_9 handler")
+
+
+@dp.callback_query_handler(state='applicant_10')
+async def applicant_10(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
+
+    if "yes" == call.data:
+        agree_to_show_contacts = True
+    else:
+        agree_to_show_contacts = False
+    db.update_user('applicants', 'agree_to_show_contacts', user_id, agree_to_show_contacts)
+
     u_data = db.get_applicant(user_id)
     firstname = u_data[5]
     lastname = u_data[6]
@@ -186,20 +205,22 @@ async def applicant_9(message: Message, state: FSMContext):
     hobby = u_data[12]
     topics = ', '.join([topics_list.get(int(i)) for i in u_data[13].split(', ')])
     topics_details = u_data[14]
-    await message.answer(text=f"Поздравляем, ты заполнил анкету. "
-                              f"Теперь, ты можешь приступить к поиску специалистов.\n\n"
-                              f"Твоя анкета:\n"
-                              f"<b>Имя:</b> {firstname}\n"
-                              f"<b>Фамилия:</b> {lastname}\n"
-                              f"<b>Направление:</b> {direction}\n"
-                              f"<b>Опыт:</b> {profile}\n"
-                              f"<b>Учебное заведение:</b> {institution}\n"
-                              f"<b>Год окончания:</b> {grad_year}\n"
-                              f"<b>Регион трудоустройства:</b> {empl_region}\n"
-                              f"<b>Хобби:</b> {hobby}\n"
-                              f"<b>Темы на обсуждение:</b> {topics}\n"
-                              f"<b>Вопросы ко встрече:</b> {topics_details}\n\n",
-                         reply_markup=applicant_menu_kb,
-                         disable_notification=True)
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(text=f"Поздравляем, ты заполнил анкету. "
+                                   f"Теперь, ты можешь приступить к поиску специалистов.\n\n"
+                                   f"Твоя анкета:\n"
+                                   f"<b>Имя:</b> {firstname}\n"
+                                   f"<b>Фамилия:</b> {lastname}\n"
+                                   f"<b>Направление:</b> {direction}\n"
+                                   f"<b>Опыт:</b> {profile}\n"
+                                   f"<b>Учебное заведение:</b> {institution}\n"
+                                   f"<b>Год окончания:</b> {grad_year}\n"
+                                   f"<b>Регион трудоустройства:</b> {empl_region}\n"
+                                   f"<b>Хобби:</b> {hobby}\n"
+                                   f"<b>Темы на обсуждение:</b> {topics}\n"
+                                   f"<b>Вопросы ко встрече:</b> {topics_details}\n\n",
+                              reply_markup=applicant_menu_kb,
+                              disable_notification=True)
     await state.finish()
-    logger.debug(f"Applicant {user_id} entered applicant_9 handler")
+    logger.debug(f"Applicant {user_id} entered applicant_11 handler")
