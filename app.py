@@ -115,4 +115,4 @@ async def on_shutdown(dispatcher):
 if __name__ == '__main__':
     scheduler.add_jobstore('sqlalchemy', url='sqlite:///main.db')
     scheduler.start()
-    executor.start_polling(dp, on_shutdown=on_shutdown, on_startup=on_startup, skip_updates=True)
+    executor.start_polling(dp, on_shutdown=on_shutdown, on_startup=on_startup)
