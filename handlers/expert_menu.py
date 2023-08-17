@@ -12,7 +12,7 @@ from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
 from handlers.utils import track_user_activity
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
     slots_kb
-from loader import bot, dp, db, scheduler
+from loader import bot, dp, db, scheduler, tz
 from my_logger import logger
 from zoom import create_meeting, update_meeting_date
 
@@ -350,7 +350,7 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
 
                 return
 
-            if datetime.strptime(slot, '%d.%m.%Y %H:%M') > datetime.today().astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None):
+            if datetime.strptime(slot, '%d.%m.%Y %H:%M').replace(tzinfo=pytz.timezone(tz)) > datetime.now(tz=pytz.timezone(tz)):
                 esl.append(slot)
 
         if esl:
@@ -453,11 +453,11 @@ async def show_contacts_a(call: CallbackQuery):
         "Обратите внимание, если Вы видите @None вместо контакта, значит, с этим пользователем "
         "можно связаться только в запланированной встрече")
 
-    local_now = datetime.now()
-    now = local_now.astimezone(pytz.timezone('Europe/Moscow')).replace(tzinfo=None)
-
-    notif_date = now + timedelta(hours=3)
-    scheduler.add_job(notif_after_show_contacts, "date", run_date=notif_date, args=(user_id, applicant_id,))
+    scheduler.add_job(
+        notif_after_show_contacts, "date",
+        run_date=datetime.now(tz=pytz.timezone(tz)) + timedelta(hours=3),
+        args=(user_id, applicant_id,),
+    )
 
     logger.debug(f"Expert {user_id} entered show_contacts handler")
 
