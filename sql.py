@@ -244,6 +244,7 @@ class Database:
         sql = f"""
         INSERT INTO meetings(date, expert, applicant, meeting_date, status) 
         VALUES('{date}', {expert_id}, {applicant_id}, '{slot}', '{status}')
+        RETURNING meeting_id
         """
         return self.execute(sql, commit=True)
 
