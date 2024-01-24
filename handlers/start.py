@@ -1,5 +1,6 @@
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message, CallbackQuery
+from handlers.utils import build_applicant_menu_message_text
 from keyboards import kb1b, applicant_menu_kb, expert_menu_kb, kb2b
 from loader import dp, db
 from my_logger import logger
@@ -14,9 +15,11 @@ async def start(message: Message):
     user_applicant = db.get_applicant(user_id)
 
     if user_applicant:
-        await message.answer(text="Ты в главном меню. Если захочешь вернуться сюда, воспользуйся командой /menu",
-                             reply_markup=applicant_menu_kb,
-                             disable_notification=True)
+        await message.answer(
+            text=build_applicant_menu_message_text(),
+            reply_markup=applicant_menu_kb,
+            disable_notification=True,
+        )
         logger.debug(f'Applicant {user_id} use /menu command')
     elif user_expert:
         if user_expert[14] != "На модерации":

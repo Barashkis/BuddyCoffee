@@ -4,7 +4,7 @@ import config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sql import Database
 
-bot = Bot(token=config.token, parse_mode=types.ParseMode.HTML)
+bot = Bot(token=config.TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 db = Database(path_to_db="main.db")

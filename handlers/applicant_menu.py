@@ -5,7 +5,7 @@ from aiogram.dispatcher.filters import Regexp
 from aiogram.types import CallbackQuery, Message
 from datetime import datetime, timedelta
 
-from handlers.utils import track_user_activity
+from handlers.utils import track_user_activity, build_applicant_menu_message_text
 from handlers.notifications import notif_init_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
     feedback_notif_applicant, feedback_notif_expert, notif_init_applicant, notif_after_show_contacts, \
@@ -27,9 +27,11 @@ async def applicant_menu(call: CallbackQuery):
     track_user_activity(user_id, "applicants", "главного меню")
 
     await call.message.edit_reply_markup()
-    await call.message.answer(text="Ты в главном меню. Если захочешь вернуться сюда, воспользуйся командой /menu",
-                              reply_markup=applicant_menu_kb,
-                              disable_notification=True)
+    await call.message.answer(
+        text=build_applicant_menu_message_text(),
+        reply_markup=applicant_menu_kb,
+        disable_notification=True,
+    )
     logger.debug(f"Applicant {user_id} entered applicant_menu handler")
 
 

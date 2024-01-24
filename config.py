@@ -1,13 +1,17 @@
 import os
 from dotenv import load_dotenv
+
+
 load_dotenv()
 
-token = str(os.getenv("token"))
-admin_id = int(os.getenv("admin_id"))
-admin_ids = [admin_id, 567213956]
+TOKEN = str(os.getenv("TOKEN"))
+ADMIN_ID = int(os.getenv("ADMINS_IDS"))
+ADMINS_IDS = [ADMIN_ID, 567213956]
 
-ZOOM_API_KEY = str(os.getenv("zoom_api_key"))
-ZOOM_API_SEC = str(os.getenv("zoom_api_secret"))
+NEW_EVENT_MESSAGE = str(os.getenv("NEW_EVENT_MESSAGE"))
+
+ZOOM_API_KEY = str(os.getenv("ZOOM_API_KEY"))
+ZOOM_API_SEC = str(os.getenv("ZOOM_API_SECRET"))
 
 
 ABS_PATH = os.path.abspath(__file__)
