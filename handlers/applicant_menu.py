@@ -5,6 +5,8 @@ from aiogram.dispatcher.filters import Regexp
 from aiogram.types import CallbackQuery, Message
 from datetime import datetime, timedelta
 
+from pytz import timezone
+
 from handlers.utils import track_user_activity, build_applicant_menu_message_text
 from handlers.notifications import notif_init_expert, \
     notif_cancel_to_expert, notif_cancel_to_expert2, notif_3hours, notif_1day, notif_5min, notif_1hour, \
@@ -309,7 +311,7 @@ async def choosing_time(call: CallbackQuery, callback_data: dict):
 
     init_by = callback_data.get('init_by')
     expert_id = callback_data.get('expert_id')
-    slot = callback_data.get('slot').replace("%", ":")
+    slot = float(callback_data.get('slot'))
     td = datetime.now(tz=pytz.timezone(tz)).strftime('%d.%m.%Y')
     action = callback_data.get('action')
 
@@ -317,8 +319,10 @@ async def choosing_time(call: CallbackQuery, callback_data: dict):
     applicant_name = db.get_applicant(applicant_id)[5]
 
     if action == "c":
+        db_slot = datetime.fromtimestamp(slot).strftime('%d.%m.%Y %H:%M')
         meeting_status = 'Инициирована экспертом' if init_by == "expert" else 'Инициирована соискателем'
-        meeting_id = db.add_meeting(td, expert_id, applicant_id, slot, meeting_status)
+        meeting_info = db.add_meeting(td, expert_id, applicant_id, db_slot, meeting_status)
+        meeting_id = meeting_info[0]
 
         if init_by == "e":
             await notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id)
@@ -535,15 +539,17 @@ async def notif_reschedule_expert_result(call: CallbackQuery):
     if "approved" in cd:
         track_user_activity(user_id, "applicants", "Подтверждаю ✅ (перенос встречи)")
 
-        new_start_time = cd[4].replace("%", ":")
-        mdzf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')
+        new_start_timestamp = float(cd[4])
+        new_start_dt = datetime.fromtimestamp(new_start_timestamp).astimezone(timezone(tz))
+        mddbf = new_start_dt.strftime('%d.%m.%Y %H:%M')
+        mdzf = new_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
 
         api_id = md[10]
 
         update_meeting_date(api_id, mdzf)
 
         db.update_meeting('status', meeting_id, "Перенесена")
-        db.update_meeting('meeting_date', meeting_id, new_start_time)
+        db.update_meeting('meeting_date', meeting_id, mddbf)
 
         db.update_user('applicants', 'status', md[3], 'Встреча перенесена')
 
@@ -556,23 +562,21 @@ async def notif_reschedule_expert_result(call: CallbackQuery):
                 except Exception as e:
                     logger.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
 
-        mddtf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M')  # meeting date in datetime format
-
         await call.message.answer("Твоя встреча была успешно перенесена! Информацию о перенесенной встрече можно "
                                   "посмотреть в разделе 'Мои встречи'")
         await bot.send_message(md[2], "Встреча была успешно перенесена")
 
-        notif_1day_time = mddtf - timedelta(days=1)
-        notif_3hours_time = mddtf - timedelta(hours=3)
-        notif_1hour_time = mddtf - timedelta(hours=1)
-        notif_5min_time = mddtf - timedelta(minutes=5)
-        feedback_notif_time = mddtf + timedelta(hours=1)
+        notif_1day_time = new_start_dt - timedelta(days=1)
+        notif_3hours_time = new_start_dt - timedelta(hours=3)
+        notif_1hour_time = new_start_dt - timedelta(hours=1)
+        notif_5min_time = new_start_dt - timedelta(minutes=5)
+        feedback_notif_time = new_start_dt + timedelta(hours=1)
 
         notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
         notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], meeting_id))
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
-        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[3]))
+        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=new_start_dt, args=(meeting_id, md[3]))
         notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(meeting_id,))
         notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(meeting_id,))
 

@@ -17,12 +17,12 @@ class Database:
         data = None
         cursor.execute(sql, parameters)
 
-        if commit:
-            connection.commit()
         if fetchall:
             data = cursor.fetchall()
         if fetchone:
             data = cursor.fetchone()
+        if commit:
+            connection.commit()
         connection.close()
         return data
 
@@ -246,7 +246,7 @@ class Database:
         VALUES('{date}', {expert_id}, {applicant_id}, '{slot}', '{status}')
         RETURNING meeting_id
         """
-        return self.execute(sql, commit=True)
+        return self.execute(sql, fetchone=True, commit=True)
 
     def get_meeting(self, meeting_id):
         sql = f'''

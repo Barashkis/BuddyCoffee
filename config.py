@@ -10,9 +10,9 @@ ADMINS_IDS = [ADMIN_ID, 567213956]
 
 NEW_EVENT_MESSAGE = str(os.getenv("NEW_EVENT_MESSAGE"))
 
-ZOOM_API_KEY = str(os.getenv("ZOOM_API_KEY"))
-ZOOM_API_SEC = str(os.getenv("ZOOM_API_SECRET"))
-
+ZOOM_CLIENT_ID = str(os.getenv("ZOOM_CLIENT_ID"))
+ZOOM_CLIENT_SECRET = str(os.getenv("ZOOM_CLIENT_SECRET"))
+ZOOM_ACCOUNT_ID = str(os.getenv("ZOOM_ACCOUNT_ID"))
 
 ABS_PATH = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(ABS_PATH)

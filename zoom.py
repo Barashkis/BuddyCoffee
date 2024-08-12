@@ -1,72 +1,79 @@
-import jwt
-import requests
+import base64
+import time
 import json
-from time import time
-from config import ZOOM_API_KEY, ZOOM_API_SEC
+from functools import lru_cache
 
-# create a function to generate a token
-# using the pyjwt library
+import requests
+
+from config import ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET
+from loader import tz
 from my_logger import logger
 
 
-def generate_token():
-    token = jwt.encode(
+def get_ttl_hash(seconds=3600):
+    return round(time.time() / seconds)
 
-        # Create a payload of the token containing
-        # API Key & expiration time
-        {'iss': ZOOM_API_KEY, 'exp': time() + 5000},
 
-        # Secret used to generate token signature
-        ZOOM_API_SEC,
+@lru_cache()
+def generate_token(ttl_hash=None):
+    del ttl_hash
 
-        # Specify the hashing alg
-        algorithm='HS256'
+    body = {
+        "account_id": ZOOM_ACCOUNT_ID,
+        "grant_type": "account_credentials",
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic " + base64.b64encode(f"{ZOOM_CLIENT_ID}:{ZOOM_CLIENT_SECRET}".encode()).decode(),
+        "Host": "zoom.us",
+    }
+    resp = requests.post(
+        "https://zoom.us/oauth/token",
+        headers=headers,
+        data=body,
     )
-    return token
+    resp_data = json.loads(resp.text)
+
+    return resp_data["access_token"]
 
 
-# send a request with headers including a token and meeting details
 def create_meeting(start_time):
-    # create json data for post requests
-    meetingdetails = {"topic": "Встреча со специалистом Росатома",
-                      "type": 2,
-                      "start_time": start_time,
-                      "duration": "40",
-                      "timezone": "Europe/Moscow",
-                      "agenda": "Встреча со специалистом Росатома",
-                      "settings": {"host_video": True,
-                                   "participant_video": True,
-                                   "join_before_host": True,
-                                   "jbh_time": 5,
-                                   "waiting_room": False
-                                   }
-                      }
+    body = {
+        "topic": "Встреча со специалистом Росатома",
+        "type": 2,
+        "start_time": start_time,
+        "duration": "40",
+        "timezone": tz,
+        "agenda": "Встреча со специалистом Росатома",
+    }
+    headers = {
+        "Authorization": "Bearer " + generate_token(),
+        "Content-Type": "application/json",
+    }
+    resp = requests.post(
+        "https://api.zoom.us/v2/users/me/meetings",
+        headers=headers,
+        data=json.dumps(body),
+    )
+    resp_data = json.loads(resp.text)
+    join_url = resp_data["join_url"]
+    api_id = resp_data["id"]
 
-    headers = {'authorization': 'Bearer ' + generate_token(),
-               'content-type': 'application/json'}
-    r = requests.post(
-        f'https://api.zoom.us/v2/users/me/meetings',
-        headers=headers, data=json.dumps(meetingdetails))
-    # converting the output into json and extracting the details
-    y = json.loads(r.text)
-    join_url = y["join_url"]
-    api_id = y["id"]
-    # meetingPassword = y["password"]
     logger.debug(f"Script generated new zoom meeting link arranged at {start_time}")
+
     return join_url, api_id
 
 
 def update_meeting_date(api_id, new_start_time):
-    body = {
-        "start_time": new_start_time
+    body = {"start_time": new_start_time}
+    headers = {
+        "Authorization": "Bearer " + generate_token(),
+        "Content-Type": "application/json",
     }
-
-    headers = {'authorization': 'Bearer ' + generate_token(),
-               'content-type': 'application/json'}
-
     requests.patch(
-        f'https://api.zoom.us/v2/meetings/{api_id}',
-        headers=headers, data=json.dumps(body)
+        f"https://api.zoom.us/v2/meetings/{api_id}",
+        headers=headers,
+        data=body,
     )
 
     logger.debug(f"Script updated meeting with api_id {api_id} to date {new_start_time}")

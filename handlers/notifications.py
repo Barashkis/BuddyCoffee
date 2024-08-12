@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import CallbackQuery
+from pytz import timezone
 
 from keyboards import kb2b
-from loader import dp, db
+from loader import dp, db, tz
 from my_logger import logger
 
 
@@ -35,18 +38,30 @@ async def notif_cancel_to_applicant3(applicant_id):
 
 
 async def notif_init_applicant(applicant_id, slot, expert_fullname, meeting_id):
-    await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} назначил вам встречу на {slot}. <b>Указано московское время</b>. '
-                                                 f'Вы подтверждаете ее?',
-                              reply_markup=kb2b("Подтверждаю ✅", f'approved_a_c_{meeting_id}',
-                                                "Не подтверждаю ❌", f"denied_a_c_{meeting_id}"))
+    await dp.bot.send_message(
+        applicant_id,
+        text=f'Специалист {expert_fullname} назначил вам встречу на '
+             f'{datetime.fromtimestamp(slot).astimezone(timezone(tz)).strftime("%d.%m.%Y %H:%M")}. '
+             '<b>Указано московское время</b>. Вы подтверждаете ее?',
+        reply_markup=kb2b(
+            "Подтверждаю ✅", f'approved_a_c_{meeting_id}',
+            "Не подтверждаю ❌", f"denied_a_c_{meeting_id}",
+        )
+    )
     logger.debug(f'Applicant {applicant_id} got notif_init_applicant notification')
 
 
 async def notif_reschedule_applicant(applicant_id, slot, expert_fullname, meeting_id):
-    await dp.bot.send_message(applicant_id, text=f'Специалист {expert_fullname} предлагает перенести встречу на {slot}. <b>Указано московское время</b>. '
-                                                 f'Вы подтверждаете перенос?',
-                              reply_markup=kb2b("Подтверждаю ✅", f'approved_a_r_{meeting_id}_{slot.replace(":", "%")}',
-                                                "Не подтверждаю ❌", f"denied_a_r_{meeting_id}"))
+    await dp.bot.send_message(
+        applicant_id,
+        text=f'Специалист {expert_fullname} предлагает перенести встречу на '
+             f'{datetime.fromtimestamp(slot).astimezone(timezone(tz)).strftime("%d.%m.%Y %H:%M")}. '
+             '<b>Указано московское время</b>. Вы подтверждаете перенос?',
+        reply_markup=kb2b(
+            "Подтверждаю ✅", f'approved_a_r_{meeting_id}_{slot}',
+            "Не подтверждаю ❌", f"denied_a_r_{meeting_id}"
+        )
+    )
     logger.debug(f'Applicant {applicant_id} got notif_reschedule_applicant notification')
 
 
@@ -94,7 +109,7 @@ async def notif_init_expert(expert_id, slot, applicant_name, meeting_id):
 async def notif_reschedule_expert(expert_id, slot, applicant_name, meeting_id):
     await dp.bot.send_message(expert_id, text=f'Соискатель {applicant_name} предлагает перенести встречу на {slot}. <b>Указано московское время</b>. '
                                               f'Вы подтверждаете ее?',
-                              reply_markup=kb2b("Подтверждаю ✅", f'approved_e_r_{meeting_id}_{slot.replace(":", "%")}',
+                              reply_markup=kb2b("Подтверждаю ✅", f'approved_e_r_{meeting_id}_{slot}',
                                                 "Не подтверждаю ❌", f'denied_e_r_{meeting_id}'))
     logger.debug(f'Expert {expert_id} got notif_reschedule_expert notification about meeting {meeting_id}')
 

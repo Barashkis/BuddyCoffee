@@ -1,4 +1,6 @@
 import math
+from calendar import monthrange
+from datetime import datetime
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
@@ -50,6 +52,15 @@ def kb4b(txt1, cd1, txt2, cd2, txt3, cd3, txt4, cd4):
         ]
     )
     return kb
+
+
+def kb(texts, cds):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=text, callback_data=cd)]
+            for text, cd in zip(texts, cds)
+        ],
+    )
 
 
 directions_kb = InlineKeyboardMarkup(
@@ -107,6 +118,45 @@ applicant_menu_kb = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='Согласие на сообщение контактных данных экспертам', callback_data='change_agreement_to_show_contacts_a')]
     ]
 )
+
+
+def months_kb(start_month):
+    months_mapping = {
+        1: "Январь",
+        2: "Февраль",
+        3: "Март",
+        4: "Апрель",
+        5: "Май",
+        6: "Июнь",
+        7: "Июль",
+        8: "Август",
+        9: "Сентябрь",
+        10: "Октябрь",
+        11: "Ноябрь",
+        12: "Декабрь",
+    }
+    buttons = [
+        InlineKeyboardButton(text=months_mapping[num], callback_data=f'choose_slot_month_{num}')
+        for num in range(start_month, 13)
+    ]
+    kb = InlineKeyboardMarkup(row_width=1)
+    for b in buttons:
+        kb.add(b)
+
+    return kb
+
+
+def days_kb(year, month, start_day):
+    _, end_day = monthrange(year, month)
+    buttons = [
+        InlineKeyboardButton(text=str(day), callback_data=f'choose_slot_day_{day}')
+        for day in range(start_day, end_day + 1)
+    ]
+    kb = InlineKeyboardMarkup(row_width=7)
+    for b in buttons:
+        kb.add(b)
+
+    return kb
 
 
 def topics_kb(chosen_buttons: list = None):
@@ -239,39 +289,50 @@ def slots_kb(expert_id: int, init_by: str, slots: list, action: str, meeting_id:
     l = len(slots)
     n_pages = math.ceil(l / spl)  # number of pages
 
+    beg_index = spl * (page - 1) if n_pages > 1 else 0
+    end_index = spl * page if n_pages > 1 and page < n_pages else l
+
+    for i in range(beg_index, end_index):
+        slot_cd = datetime.strptime(slots[i], "%d.%m.%Y %H:%M").timestamp()
+
+        slots_keyboard.add(
+            InlineKeyboardButton(
+                text=slots[i],
+                callback_data=choosing_time_cd.new(
+                    expert_id=expert_id,
+                    slot=slot_cd,
+                    init_by=init_by,
+                    action=action,
+                    meeting_id=meeting_id,
+                ),
+            ),
+        )
+
     if n_pages > 1:
-        end_index = spl * page if page < n_pages else l
-
-        for i in range(spl * (page - 1), end_index):
-            slot_for_cd = slots[i].replace(":", "%")
-
-            try:
-                slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                        callback_data=choosing_time_cd.new(expert_id=expert_id,
-                                                                                           slot=slot_for_cd,
-                                                                                           init_by=init_by,
-                                                                                           action=action,
-                                                                                           meeting_id=meeting_id)))
-            except IndexError:
-                pass
         if page == 1:
-            prev_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+            prev_b = InlineKeyboardButton(
+                text=' ',
+                callback_data=f'no_callback',
+            )
         else:
-            prev_b = InlineKeyboardButton(text='⏮', callback_data=f'skbp_{expert_id}_{page - 1}_init_by_{init_by}_{action}_{meeting_id}')
+            prev_b = InlineKeyboardButton(
+                text='⏮',
+                callback_data=f'skbp_{expert_id}_{page - 1}_init_by_{init_by}_{action}_{meeting_id}',
+            )
+
         if page == n_pages:
-            next_b = InlineKeyboardButton(text=' ', callback_data=f'no_callback')
+            next_b = InlineKeyboardButton(
+                text=' ',
+                callback_data=f'no_callback',
+            )
         else:
-            next_b = InlineKeyboardButton(text='⏭', callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}_{action}_{meeting_id}')
+            next_b = InlineKeyboardButton(
+                text='⏭',
+                callback_data=f'skbp_{expert_id}_{page + 1}_init_by_{init_by}_{action}_{meeting_id}',
+            )
+
         slots_keyboard.row(prev_b, next_b)
-    else:
-        for i in range(0, l):
-            slot_for_cd = slots[i].replace(":", "%")
-            slots_keyboard.add(InlineKeyboardButton(text=slots[i],
-                                                    callback_data=choosing_time_cd.new(expert_id=expert_id,
-                                                                                       slot=slot_for_cd,
-                                                                                       init_by=init_by,
-                                                                                       action=action,
-                                                                                       meeting_id=meeting_id)))
+
     return slots_keyboard
 
 

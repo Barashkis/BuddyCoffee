@@ -1,17 +1,17 @@
-import re
 from datetime import datetime, timedelta
 
 import pytz
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Regexp
 from aiogram.types import Message, CallbackQuery
+from pytz import timezone
 
 from handlers.notifications import notif_cancel_to_applicant, notif_1day, \
     notif_3hours, notif_cancel_to_applicant2, notif_after_show_contacts, notif_1hour, notif_5min, \
     feedback_notif_applicant, feedback_notif_expert, notif_cancel_to_applicant3
 from handlers.utils import track_user_activity
 from keyboards import expert_menu_kb, kb1b, kb3b, suitable_applicants_kb2, kb2b, meetings_e_kb, \
-    slots_kb
+    slots_kb, months_kb, days_kb
 from loader import bot, dp, db, scheduler, tz
 from my_logger import logger
 from zoom import create_meeting, update_meeting_date
@@ -253,7 +253,6 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
 
     await call.message.edit_reply_markup()
 
-    await state.set_state('input_slots')
     async with state.proxy() as data:
         call_data_list = call.data.split("_")
 
@@ -281,23 +280,212 @@ async def send_free_slots(call: CallbackQuery, state: FSMContext):
         data["action"] = action
         data["applicant_id"] = int(call_data_list[3])
         data["init_by"] = init_by
+        data["slots"] = set()
 
-    kwargs = {}
     if init_by == "e":
-        kwargs["reply_markup"] = kb1b("Назад (отменить отправку временных слотов)", "cancel_sending_slots")
+        reply_markup = kb2b(
+            "Добавить слоты", "add_new_slots",
+            "Назад (отменить отправку временных слотов)", "cancel_sending_slots",
+        )
+    else:
+        reply_markup = kb1b("Добавить слоты", "add_new_slots")
 
-    await call.message.answer(f"Введите временные слоты, "
-                              f"{'когда вам удобно провести' if action == 'c' else 'на которые вы хотите перенести'}"
-                              f"встречу, желательно указать несколько. <b>Укажите московское время</b>\n\n"
-                              "<i>Формат:\n"
-                              "25.01.2022 17:00, 27.01.2022 12:30, "
-                              "28.01.2022 10:00, 31.01.2022 10:45, 02.02.2022 16:15</i>",
-                              **kwargs)
+    await call.message.answer(
+        f"Введите временные слоты, "
+        f"{'когда вам удобно провести' if action == 'c' else 'на которые вы хотите перенести'} "
+        f"встречу, желательно указать несколько. <b>Указывайте московское время</b>",
+        reply_markup=reply_markup,
+    )
 
     logger.debug(f"Expert {user_id} entered send_free_slots handler")
 
 
-@dp.callback_query_handler(text='cancel_sending_slots', state='input_slots')
+@dp.callback_query_handler(text='add_new_slots')
+async def add_new_slots(call: CallbackQuery):
+    user_id = call.from_user.id
+
+    track_user_activity(user_id, "experts", "Добавить слоты")
+
+    year = datetime.now(tz=pytz.timezone(tz)).year
+    next_year = year + 1
+    reply_markup = kb2b(
+        str(year), f"choose_slot_year_{year}",
+        str(next_year), f"choose_slot_year_{next_year}",
+    )
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(
+        "Выберите год",
+        reply_markup=reply_markup,
+    )
+
+    logger.debug(f"Expert {user_id} entered send_free_slots handler")
+
+
+@dp.callback_query_handler(Regexp(r'^choose_slot_year_'))
+async def choose_slot_year(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+
+    user_id = call.from_user.id
+
+    cd = call.data
+    slot_year = int(cd.split("_")[-1])
+
+    current_year = datetime.now().astimezone(timezone(tz)).year
+    if current_year > slot_year:
+        next_year = current_year + 1
+        reply_markup = kb2b(
+            str(current_year), f"choose_slot_year_{current_year}",
+            str(next_year), f"choose_slot_year_{next_year}",
+        )
+        await call.message.answer(
+            "Год, который Вы выбрали, уже прошел. Выберите год еще раз",
+            reply_markup=reply_markup,
+        )
+
+        return
+
+    async with state.proxy() as data:
+        data["year"] = slot_year
+
+    current_month = datetime.now().astimezone(timezone(tz)).month
+    await call.message.answer(
+        "Выберите месяц",
+        reply_markup=months_kb(current_month),
+    )
+
+    logger.debug(f"Expert {user_id} entered choose_slot_year handler")
+
+
+@dp.callback_query_handler(Regexp(r'^choose_slot_month_'))
+async def choose_slot_month(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+
+    user_id = call.from_user.id
+
+    cd = call.data
+    slot_month = int(cd.split("_")[-1])
+
+    current_month = datetime.now().astimezone(timezone(tz)).month
+    if current_month > slot_month:
+        await call.message.answer(
+            "Месяц, который Вы выбрали, уже прошел. Выберите месяц еще раз",
+            reply_markup=months_kb(current_month),
+        )
+
+        return
+
+    async with state.proxy() as data:
+        slot_year = data["year"]
+        data["month"] = slot_month
+
+    current_day = datetime.now().astimezone(timezone(tz)).day
+    await call.message.answer(
+        "Выберите день",
+        reply_markup=days_kb(slot_year, slot_month, current_day),
+    )
+
+    logger.debug(f"Expert {user_id} entered choose_slot_month handler")
+
+
+@dp.callback_query_handler(Regexp(r'^choose_slot_day_'))
+async def choose_slot_day(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+
+    user_id = call.from_user.id
+
+    cd = call.data
+    slot_day = int(cd.split("_")[-1])
+
+    async with state.proxy() as data:
+        slot_year = data["year"]
+        slot_month = data["month"]
+
+    current_day = datetime.now().astimezone(timezone(tz)).day
+    if current_day > slot_day:
+        await call.message.answer(
+            "День, который Вы выбрали, уже прошел. Выберите день еще раз",
+            reply_markup=days_kb(slot_year, slot_month, current_day),
+        )
+
+        return
+
+    async with state.proxy() as data:
+        data["day"] = slot_day
+
+    await call.message.answer(
+        f"Введите через пробел время для выбранной Вами даты - {slot_month:02d}.{slot_year}\n\n"
+        "<i>Например, 12:00 14:35</i>",
+    )
+    await state.set_state("input_time")
+
+    logger.debug(f"Expert {user_id} entered choose_slot_day handler")
+
+
+@dp.message_handler(state="input_time")
+async def choose_slot_time(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+
+    await state.reset_state(with_data=False)
+    async with state.proxy() as data:
+        init_by = data["init_by"]
+        slot_year = data["year"]
+        slot_month = data["month"]
+        slot_day = data["day"]
+
+    slots = set()
+    slot_times = message.text.split()
+    for time in slot_times:
+        try:
+            slot_hour, slot_minute = [int(t) for t in time.split(":")]
+            slot = datetime(slot_year, slot_month, slot_day, slot_hour, slot_minute).timestamp()
+        except ValueError:
+            await message.answer(f"Вы допустили ошибку во времени <i>{time}</i>. Пожалуйста, повторите попытку еще раз")
+            await state.set_state("input_time")
+
+            return
+
+        if slot < datetime.now().timestamp():
+            continue
+
+        slots.add(slot)
+
+    async with state.proxy() as data:
+        for s in slots:
+            data["slots"].add(s)
+
+        slots_dts = [datetime.fromtimestamp(t) for t in data["slots"]]
+        formatted_slots = [f"{dt.day:02d}.{dt.month:02d}.{dt.year} {dt.hour}:{dt.minute:02d}" for dt in slots_dts]
+
+    if formatted_slots:
+        text = "Текущие слоты:\n\n" + '\n'.join(formatted_slots)
+        if init_by == "e":
+            reply_markup = kb3b(
+                "Добавить слоты", "add_new_slots",
+                "Отправить слоты", "send_slots",
+                "Назад (отменить отправку временных слотов)", "cancel_sending_slots",
+            )
+        else:
+            reply_markup = kb2b(
+                "Добавить слоты", "add_new_slots",
+                "Отправить слоты", "send_slots",
+            )
+    else:
+        text = "Действующие слоты отсутствуют"
+        if init_by == "e":
+            reply_markup = kb2b(
+                "Добавить слоты", "add_new_slots",
+                "Назад (отменить отправку временных слотов)", "cancel_sending_slots",
+            )
+        else:
+            reply_markup = kb1b("Добавить слоты", "add_new_slots")
+
+    await message.answer(text, reply_markup=reply_markup)
+
+    logger.debug(f"Expert {user_id} entered choose_slot_time handler")
+
+
+@dp.callback_query_handler(text='cancel_sending_slots')
 async def cancel_sending_slots(call: CallbackQuery, state: FSMContext):
     user_id = call.from_user.id
 
@@ -321,9 +509,9 @@ async def failed_cancel_sending_slots(call: CallbackQuery):
     await call.message.answer(text="Вы уже отправили слоты соискателю и не можете отменить отправку")
 
 
-@dp.message_handler(state='input_slots')
-async def notify_applicant_about_slots(message: Message, state: FSMContext):
-    user_id = message.from_user.id
+@dp.callback_query_handler(text='send_slots')
+async def notify_applicant_about_slots(call: CallbackQuery, state: FSMContext):
+    user_id = call.from_user.id
 
     async with state.proxy() as data:
         meeting_id = data.get("meeting_id")
@@ -333,87 +521,66 @@ async def notify_applicant_about_slots(message: Message, state: FSMContext):
         action = data["action"]
         applicant_id = data["applicant_id"]
         init_by = data["init_by"]
+        slots = data["slots"]
 
-    message_text = message.text
-    try:
-        slots_list = message_text.split(',')
-        slots_list = [slot.lstrip().rstrip() for slot in slots_list]
-        esl = []
-        for slot in slots_list:
-            if not re.match("^\d{2}\.\d{2}\.\d{4} \d{1,2}:\d{2}$", slot):
-                await message.answer(text=f'Бот не смог распознать следующий слот: <i>{slot}</i>\n\n'
-                                          'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                                     disable_notification=True)
-                await state.set_state('input_slots')
-                logger.debug(
-                    f"Expert {user_id} entered notify_applicant_about_slots handler but write incorrect slot: {slot}")
+    esl = [datetime.strftime(datetime.fromtimestamp(s).astimezone(timezone(tz)), "%d.%m.%Y %H:%M") for s in slots]
+    if not esl:
+        return
 
-                return
+    ed = db.get_expert(user_id)
+    if ed[7]:
+        division = ed[7]
+    else:
+        division = ed[8]
 
-            if datetime.strptime(slot, '%d.%m.%Y %H:%M').replace(tzinfo=pytz.timezone(tz)) > datetime.now(tz=pytz.timezone(tz)):
-                esl.append(slot)
+    text = f"Эксперт {ed[5]} отправил тебе временные слоты, " \
+           f"{'когда он может провести' if action == 'c' else 'на которые он может перенести'} " \
+           "конференцию. Выбери один из них\n\n" \
+           "Профиль эксперта:\n\n" \
+           f"<b>Имя:</b> {ed[5]}\n" \
+           f"<b>Направление:</b> {ed[6]}\n" \
+           f"<b>Дивизион:</b> {division}\n" \
+           f"<b>Экспертный профиль:</b> {ed[10]}\n"
 
-        if esl:
-            ed = db.get_expert(user_id)
-
-            if ed[7]:
-                division = ed[7]
-            else:
-                division = ed[8]
-
-            text = f"Эксперт {ed[5]} отправил тебе временные слоты, " \
-                   f"{'когда он может провести' if action == 'c' else 'на которые он может перенести'} " \
-                   "конференцию. Выбери один из них\n\n" \
-                   "Профиль эксперта:\n\n" \
-                   f"<b>Имя:</b> {ed[5]}\n" \
-                   f"<b>Направление:</b> {ed[6]}\n" \
-                   f"<b>Дивизион:</b> {division}\n" \
-                   f"<b>Экспертный профиль:</b> {ed[10]}\n"
-
-            if ed[15]:
-                if len(text) <= 1024:
-                    await bot.send_photo(applicant_id,
-                                         photo=ed[15],
-                                         caption=text,
-                                         reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id))
-                else:
-                    await bot.send_photo(applicant_id, photo=ed[15])
-                    await bot.send_message(applicant_id,
-                                           text=text,
-                                           reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
-                                           disable_notification=True)
-            else:
-                await bot.send_message(applicant_id,
-                                       text=text,
-                                       reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
-                                       disable_notification=True)
-
-            db.update_user("experts", "slots", user_id, message_text)
-
-            await message.answer(text="Слоты были отправлены выбранному соискателю. "
-                                      "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
-                                      "информацию о встрече, если она будет подтверждена",
-                                 reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
-                                 disable_notification=True)
-            await state.finish()
-
-            logger.debug(
-                f"Expert {user_id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}")
+    if ed[15]:
+        if len(text) <= 1024:
+            await bot.send_photo(
+                applicant_id,
+                photo=ed[15],
+                caption=text,
+                reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
+            )
         else:
-            logger.warning(
-                f"Expert {user_id} entered notify_applicant_about_slots handler but slots is overdue")
-            await message.answer(text='Ни один из введенных Вами слотов не является действующим. '
-                                      'Отправьте временные слоты еще раз',
-                                 disable_notification=True)
-            await state.set_state('input_slots')
+            await bot.send_photo(applicant_id, photo=ed[15])
+            await bot.send_message(
+                applicant_id,
+                text=text,
+                reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
+                disable_notification=True,
+            )
+    else:
+        await bot.send_message(
+            applicant_id,
+            text=text,
+            reply_markup=slots_kb(user_id, init_by, esl, action, meeting_id),
+            disable_notification=True,
+        )
 
-    except Exception as e:
-        logger.warning(
-            f"Expert {user_id} entered notify_applicant_about_slots handler but got an error: {e}")
-        await message.answer(text=f'Бот не смог распознать ваш ответ\n\n'
-                                  f'Пожалуйста, придерживайтесь формата. Отправьте временные слоты еще раз',
-                             disable_notification=True)
-        await state.set_state('input_slots')
+    db.update_user("experts", "slots", user_id, ",".join(esl))
+
+    await call.message.edit_reply_markup()
+    await call.message.answer(
+        text="Слоты были отправлены выбранному соискателю. "
+             "Оставайтесь на связи, мы сообщим вам о выборе соискателя и дальнейшую "
+             "информацию о встрече, если она будет подтверждена",
+        reply_markup=kb1b('Вернуться в главное меню', 'expert_menu'),
+        disable_notification=True,
+    )
+    await state.finish()
+
+    logger.debug(
+        f"Expert {user_id} entered notify_applicant_about_slots handler and sent slots to applicant {applicant_id}",
+    )
 
 
 @dp.callback_query_handler(text='expert_meetings')
@@ -455,7 +622,7 @@ async def show_contacts_a(call: CallbackQuery):
 
     scheduler.add_job(
         notif_after_show_contacts, "date",
-        run_date=datetime.now(tz=pytz.timezone(tz)) + timedelta(hours=3),
+        run_date=datetime.now(tz=timezone(tz)) + timedelta(hours=3),
         args=(user_id, applicant_id,),
     )
 
@@ -607,15 +774,17 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
     if "approved" in cd:
         track_user_activity(user_id, "experts", "Подтверждаю ✅ (перенос встречи)")
 
-        new_start_time = cd[4].replace("%", ":")
-        mdzf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M').strftime('%Y-%m-%dT%H:%M:%S')
+        new_start_timestamp = float(cd[4])
+        new_start_dt = datetime.fromtimestamp(new_start_timestamp).astimezone(timezone(tz))
+        mddbf = new_start_dt.strftime('%d.%m.%Y %H:%M')
+        mdzf = new_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
 
         api_id = md[10]
 
         update_meeting_date(api_id, mdzf)
 
         db.update_meeting('status', meeting_id, "Перенесена")
-        db.update_meeting('meeting_date', meeting_id, new_start_time)
+        db.update_meeting('meeting_date', meeting_id, mddbf)
 
         db.update_user('applicants', 'status', md[3], 'Встреча перенесена')
 
@@ -628,23 +797,21 @@ async def notif_reschedule_applicant_result(call: CallbackQuery):
                 except Exception as e:
                     logger.warning(f"Job {job} from meeting {meeting_id} was not deleted: {e}")
 
-        mddtf = datetime.strptime(new_start_time, '%d.%m.%Y %H:%M')  # meeting date in datetime format
-
         await call.message.answer("Встреча была успешно перенесена")
         await bot.send_message(md[3], "Твоя встреча была успешно перенесена! Информацию о перенесенной встрече можно "
                                       "посмотреть в разделе 'Мои встречи'")
 
-        notif_1day_time = mddtf - timedelta(days=1)
-        notif_3hours_time = mddtf - timedelta(hours=3)
-        notif_1hour_time = mddtf - timedelta(hours=1)
-        notif_5min_time = mddtf - timedelta(minutes=5)
-        feedback_notif_time = mddtf + timedelta(hours=1)
+        notif_1day_time = new_start_dt - timedelta(days=1)
+        notif_3hours_time = new_start_dt - timedelta(hours=3)
+        notif_1hour_time = new_start_dt - timedelta(hours=1)
+        notif_5min_time = new_start_dt - timedelta(minutes=5)
+        feedback_notif_time = new_start_dt + timedelta(hours=1)
 
         notif1 = scheduler.add_job(notif_1day, "date", run_date=notif_1day_time, args=(md[3],))
         notif2 = scheduler.add_job(notif_3hours, "date", run_date=notif_3hours_time, args=(md[3], meeting_id))
         notif3 = scheduler.add_job(notif_1hour, "date", run_date=notif_1hour_time, args=(md[3],))
         notif4 = scheduler.add_job(notif_5min, "date", run_date=notif_5min_time, args=(md[3],))
-        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=mddtf, args=(meeting_id, md[2], md[3]))
+        notif5 = scheduler.add_job(meeting_took_place, "date", run_date=new_start_dt, args=(meeting_id, md[2], md[3]))
         notif6 = scheduler.add_job(feedback_notif_applicant, "date", run_date=feedback_notif_time, args=(meeting_id,))
         notif7 = scheduler.add_job(feedback_notif_expert, "date", run_date=feedback_notif_time, args=(meeting_id,))
 
